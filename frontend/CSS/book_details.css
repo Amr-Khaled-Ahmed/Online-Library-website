@@ -1,0 +1,33 @@
+@import url('_variables.css');
+.book-cover img {
+    width: 350px ;
+    border-radius: 5px;
+
+}
+
+.container {
+    display: flex;
+    background: var(--form-bg-color);
+    color: var(--text-color);
+    padding: 20px;
+    border-radius: 8px; 
+    align-items: center;
+
+}
+
+.details {
+    padding: 20px ;
+}
+
+.btn{
+    border-radius: 3px ;
+     width: 100 ; 
+     height: 50 ;
+     background-color: var(--primary-color);
+     
+}
+
+.bodyStyle{
+    background-color: var(--bg-color);
+} 
+  
