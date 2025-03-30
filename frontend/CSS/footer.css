@@ -1,0 +1,11 @@
+#foot {
+    background-color: var(--border-color);
+    color: var(--text-color);
+    text-align: center;
+    padding: 5px 0;
+    font-size: 12px;
+    position: fixed;
+    width: 100%;
+    bottom: 0;
+    left: 0;
+}
