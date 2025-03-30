@@ -256,6 +256,147 @@ main {
 }
 
 
-@media (min-width: 900px){
+@media (min-width: 1200px) {
+    .hero-content h1 {
+        font-size: 4rem;
+    }
 
+    .feature-card {
+        padding: 2.5rem;
+    }
+
+    .feature-card i {
+        font-size: 3rem;
+    }
+}
+
+
+/* Medium devices (tablets, 750px and up) */
+@media (min-width: 750px) {
+    .hero {
+        flex-direction: row;
+        padding: 4rem 2rem;
+    }
+
+    .hero-content {
+        text-align: left;
+    }
+
+    .hero-buttons {
+        justify-content: flex-start;
+    }
+
+    .features {
+        flex-direction: row;
+        flex-wrap: wrap;
+    }
+
+    .feature-card {
+        min-width: calc(50% - 1rem);
+    }
+
+    .newsletter-form {
+        flex-direction: row;
+    }
+}
+
+/* Large devices (desktops, 900px and up) */
+@media (min-width: 900px) {
+    .hero {
+        padding: 6rem 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 3.5rem;
+    }
+
+    .hero-content p {
+        font-size: 1.2rem;
+    }
+
+    .features {
+        padding: 6rem 2rem;
+    }
+
+    .feature-card {
+        min-width: calc(33.333% - 1.333rem);
+    }
+
+    .featured-books {
+        padding: 6rem 2rem;
+    }
+
+    .newsletter {
+        padding: 6rem 2rem;
+    }
+
+    .newsletter h2 {
+        font-size: 2.5rem;
+    }
+}
+
+
+
+/* Small devices (phones, less than 750px) */
+@media (max-width: 749px) {
+    .hero {
+        flex-direction: column-reverse;
+        padding: 2rem 1rem;
+        text-align: center;
+        gap: 2rem;
+    }
+
+    .hero-content h1 {
+        font-size: 2.2rem;
+    }
+
+    .hero-content p {
+        font-size: 1rem;
+        max-width: 100%;
+    }
+
+    .hero-buttons {
+        justify-content: center;
+        flex-wrap: wrap;
+    }
+
+    .features {
+        flex-direction: column;
+        padding: 2rem 1rem;
+        gap: 1.5rem;
+    }
+
+    .feature-card {
+        width: 100%;
+        padding: 1.5rem;
+    }
+
+    .featured-books {
+        padding: 2rem 1rem;
+    }
+
+    .section-header {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 1rem;
+    }
+
+    .book-container {
+        grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+        gap: 1.5rem;
+    }
+
+    .newsletter {
+        padding: 2rem 1rem;
+    }
+
+    .newsletter-form {
+        flex-direction: column;
+    }
+}
+
+/* Animation for skeleton loading */
+@keyframes loading {
+    0% { transform: translateX(-100%); }
+    100% { transform: translateX(100%); }
 }
