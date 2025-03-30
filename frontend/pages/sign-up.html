@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="/css/forms-style.css">
+    <title>Online-library</title>
+</head>
+<body>
+    <section class="sign-up">
+        <form >
+            <h2>Sign-Up</h2>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-user"></i>
+                    <label for="username">Username</label>
+                </div>
+                <input class="input" type="text" id="username" name="username" placeholder="Enter username" required>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-lock"></i>
+                    <label for="password">password</label>
+                </div>
+                <input class="input" type="password" id="password" name="password" placeholder="Enter password" required>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-pencil"></i>
+                    <label for="pass-confirm">Confirm password</label>
+                </div>
+                <input class="input" type="password" id="pass-confirm" name="pass-confirm" placeholder="Confirm password" required>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-envelope"></i>
+                    <label for="email">Email</label>
+                </div>
+                <input class="input" type="email" id="email" name="pass-confirm" placeholder="Enter email" required>
+            </div>
+            <button type="submit">Sign up</button>
+            <div class="sign-in">
+                <span>Already have an account ?</span>
+                <a href="#" id="toggle-form">Sign in</a>
+            </div>
+        </form>
+        <img src="/css/assets/woman-reading-chair.png" alt="man reading a book">
+    </section>
+    <script>
+        document.getElementById("toggle-form").addEventListener("click", function(e) {
+            e.preventDefault();
+            window.location.href = "sign-in.html"; 
+        });
+    </script>
+</body>
+</html>
