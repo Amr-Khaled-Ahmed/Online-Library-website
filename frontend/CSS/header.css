@@ -10,11 +10,11 @@ header {
 
 .header-container {
     display: flex;
-    justify-content: space-between;
+    flex-direction: column; /* Stack items vertically by default */
     align-items: center;
     max-width: 1200px;
     margin: 0 auto;
-    padding: 1rem 2rem;
+    padding: 1rem;
     position: relative;
 }
 
@@ -25,6 +25,7 @@ header {
     font-size: 1.5rem;
     font-weight: 700;
     z-index: 101;
+    margin-bottom: 1rem; /* Space between logo and nav */
 }
 
 .logo i {
@@ -34,8 +35,18 @@ header {
 
 .nav-bar {
     display: flex;
+    flex-direction: column; /* Stack nav items vertically by default */
     list-style: none;
-    gap: 1.5rem;
+    gap: 0.5rem;
+    width: 100%;
+    padding: 0;
+    margin: 0;
+    align-items: center;
+}
+
+.nav-bar li {
+    width: 100%;
+    text-align: center;
 }
 
 .nav-bar li a {
@@ -43,10 +54,12 @@ header {
     color: var(--text-color);
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
     transition: color 0.3s ease;
     padding: 0.5rem 1rem;
     border-radius: 5px;
+    width: 100%;
 }
 
 .nav-bar li a:hover {
@@ -63,5 +76,30 @@ header {
     font-size: 1rem;
 }
 
+/* For screens larger than 768px - horizontal layout */
+@media (min-width: 900px) {
+    .header-container {
+        flex-direction: row;
+        justify-content: space-between;
+        padding: 1rem 2rem;
+    }
 
+    .logo {
+        margin-bottom: 0; /* Remove space between logo and nav */
+    }
 
+    .nav-bar {
+        flex-direction: row; /* Horizontal nav items */
+        width: auto;
+        gap: 1.5rem;
+    }
+
+    .nav-bar li {
+        width: auto;
+    }
+
+    .nav-bar li a {
+        justify-content: flex-start;
+        width: auto;
+    }
+}
