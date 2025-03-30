@@ -1,133 +1,135 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link rel="stylesheet" href="CSS/variables.css">
-  <link rel="stylesheet" href="CSS/header.css">
-  <link rel="stylesheet" href="CSS/footer.css">
-  <link rel="stylesheet" href="CSS/index.css">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-  <script defer src="JS/auth.js"></script>
-  <script defer src="JS/books.js"></script>
-  <title>Libra | Online Library</title>
-</head>
-<body>
-  <header>
-    <div class="header-container">
-      <div class="logo">
-        <i class="fas fa-book-open"></i>
-        <span>Libra</span>
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="CSS/_variables.css">
+    <link rel="stylesheet" href="CSS/header.css">
+    <link rel="stylesheet" href="CSS/footer.css">
+    <link rel="stylesheet" href="CSS/index.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <title>Online Library</title>
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+          <div class="logo">
+              <i class="fas fa-book-open"></i>
+              <span>none</span>
+          </div>
+          <nav>
+              <ul class="nav-bar">
+                  <li><a href="#hero" class="active"><i class="fas fa-home"></i> Home</a></li>
+                  <li><a href="#features"><i class="fas fa-info-circle"></i> About</a></li>
+                  <li><a href="pages/books.html"><i class="fas fa-book"></i> Books</a></li>
+                  <li><a href="pages/sign-in.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
+                  <li><a href="pages/sign-up.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li>
+                  <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+              </ul>
+          </nav>
       </div>
-      <nav>
-        <ul class="nav-bar">
-          <li><a href="index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-          <li><a href="books.html"><i class="fas fa-book"></i> Books</a></li>
-          <li><a href="login.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-          <li><a href="register.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li>
-          <li><a href="dashboard.html" id="dashboard-link" style="display: none;"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
-          <li><a href="admin.html" id="admin-link" style="display: none;"><i class="fas fa-users-cog"></i> Admin Panel</a></li>
-          <li><a href="#" id="logout-link" style="display: none;"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-        </ul>
-      </nav>
-      <div class="mobile-menu-toggle">
-        <i class="fas fa-bars"></i>
-      </div>
-    </div>
   </header>
 
-  <main>
-    <section class="hero">
-      <div class="hero-content">
-        <h1>Discover Your Next <span class="accent-text">Great Read</span></h1>
-        <p>Access thousands of books from the comfort of your home. Browse, borrow, and explore our extensive collection.</p>
-        <div class="hero-buttons">
-          <a href="books.html" class="btn primary-btn">Browse Collection</a>
-          <a href="register.html" class="btn secondary-btn">Sign Up Free</a>
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-content">
+          <h1>Discover Your Next <span class="accent-text">Great
+              Read</span></h1>
+          <p>Access thousands of books from the comfort of your home. Browse,
+            borrow, and explore our extensive collection.</p>
+          <div class="hero-buttons">
+            <a href="pages/sign-in.html" class="btn primary-btn">Sign in to see more books</a>
+            <a href="register.html" class="btn secondary-btn">Sign Up Free</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="CSS/assets/online-education.gif" alt="Books illustration">
+        </div>
+      </section>
+
+      <section class="features" id="features">
+        <div class="feature-card">
+          <i class="fas fa-globe"></i>
+          <h3>Access Anywhere</h3>
+          <p>Read from any device, anytime, anywhere.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-users"></i>
+          <h3>Community</h3>
+          <p>Join reading groups and discuss your favorite books.</p>
+        </div>
+        <div class="feature-card">
+          <i class="fas fa-bell"></i>
+          <h3>Notifications</h3>
+          <p>Get alerts for new releases and due dates.</p>
+        </div>
+      </section>
+
+      <section class="featured-books">
+        <div class="section-header">
+          <h2>Featured Books</h2>
+          <a href="pages/books.html" class="view-all">View All <i
+              class="fas fa-arrow-right"></i></a>
+        </div>
+        <div id="book-list" class="book-container">
+          <!-- Books will be dynamically inserted here by books.js -->
+          <div class="book-card skeleton"></div>
+          <div class="book-card skeleton"></div>
+          <div class="book-card skeleton"></div>
+          <div class="book-card skeleton"></div>
+        </div>
+      </section>
+
+      <section class="newsletter">
+        <div class="newsletter-content">
+          <h2>Stay Updated</h2>
+          <p>Subscribe to our newsletter for new arrivals, reading
+            recommendations, and library news.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required>
+            <button type="submit" class="btn primary-btn">Subscribe</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content" id="contact">
+        <div class="footer-section">
+          <h3>Online Library</h3>
+          <p>Your gateway to knowledge and imagination.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="pages/books.html">Books</a></li>
+            <li><a href="#features">features</a></li>
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
+          <p><i class="fas fa-phone"></i> +20100100100</p>
         </div>
       </div>
-      <div class="hero-image">
-        <img src="/api/placeholder/500/400" alt="Books illustration">
+      <div class="footer-bottom">
+        <p>&copy; 2025 Online Library. All rights reserved.</p>
       </div>
-    </section>
+    </footer>
 
-    <section class="features">
-      <div class="feature-card">
-        <i class="fas fa-globe"></i>
-        <h3>Access Anywhere</h3>
-        <p>Read from any device, anytime, anywhere.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-users"></i>
-        <h3>Community</h3>
-        <p>Join reading groups and discuss your favorite books.</p>
-      </div>
-      <div class="feature-card">
-        <i class="fas fa-bell"></i>
-        <h3>Notifications</h3>
-        <p>Get alerts for new releases and due dates.</p>
-      </div>
-    </section>
-
-    <section class="featured-books">
-      <div class="section-header">
-        <h2>Featured Books</h2>
-        <a href="books.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-      </div>
-      <div id="book-list" class="book-container">
-        <!-- Books will be dynamically inserted here by books.js -->
-        <div class="book-card skeleton"></div>
-        <div class="book-card skeleton"></div>
-        <div class="book-card skeleton"></div>
-        <div class="book-card skeleton"></div>
-      </div>
-    </section>
-
-    <section class="newsletter">
-      <div class="newsletter-content">
-        <h2>Stay Updated</h2>
-        <p>Subscribe to our newsletter for new arrivals, reading recommendations, and library news.</p>
-        <form class="newsletter-form">
-          <input type="email" placeholder="Your email address" required>
-          <button type="submit" class="btn primary-btn">Subscribe</button>
-        </form>
-      </div>
-    </section>
-  </main>
-
-  <footer>
-    <div class="footer-content">
-      <div class="footer-section">
-        <h3>Libra Online Library</h3>
-        <p>Your gateway to knowledge and imagination.</p>
-        <div class="social-icons">
-          <a href="#"><i class="fab fa-facebook"></i></a>
-          <a href="#"><i class="fab fa-twitter"></i></a>
-          <a href="#"><i class="fab fa-instagram"></i></a>
-        </div>
-      </div>
-      <div class="footer-section">
-        <h3>Quick Links</h3>
-        <ul>
-          <li><a href="index.html">Home</a></li>
-          <li><a href="books.html">Books</a></li>
-          <li><a href="about.html">About Us</a></li>
-          <li><a href="contact.html">Contact</a></li>
-        </ul>
-      </div>
-      <div class="footer-section">
-        <h3>Contact Us</h3>
-        <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
-        <p><i class="fas fa-phone"></i> +1 (555) 123-4567</p>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2025 Libra Online Library. All rights reserved.</p>
-    </div>
-  </footer>
-
-</body>
+  </body>
 </html>

@@ -1,63 +1,67 @@
-#head_nav {
-    background: var(--form-bg-color);
-    padding: 10px 20px;
+@import url('_variables.css');
+
+/* Header Styles */
+header {
+    background-color: var(--header-bg-color);
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
+
+.header-container {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    border-radius: 10px;
-    box-shadow: 0px 4px 6px var(--shadow-color);
-    flex-wrap: wrap;
-    gap: 15px;
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 1rem 2rem;
+    position: relative;
 }
-#head_h1 {
-    margin: 0;
-    font-size: 24px;
+
+.logo {
     display: flex;
     align-items: center;
     gap: 10px;
-    color: var(--text-color);
-    white-space: nowrap;
+    font-size: 1.5rem;
+    font-weight: 700;
+    z-index: 101;
 }
-#head_h1 img {
-    width: 30px;
-    height: 30px;
+
+.logo i {
+    font-size: 1.8rem;
+    color: var(--primary-color);
 }
-nav ul {
-    list-style: none;
-    padding: 0;
-    margin: 0;
+
+.nav-bar {
     display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
+    list-style: none;
+    gap: 1.5rem;
 }
-nav ul li {
-    position: relative;
-    cursor: pointer;
-    text-align: center;
-}
-nav ul li a {
-    display: block;
-    padding: 12px 18px;
-    color: var(--text-color);
+
+.nav-bar li a {
     text-decoration: none;
-    transition: background 0.3s ease-in-out;
-    white-space: nowrap;
+    color: var(--text-color);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    transition: color 0.3s ease;
+    padding: 0.5rem 1rem;
     border-radius: 5px;
 }
-nav ul li:hover a {
-    background: var(--primary-hover);
+
+.nav-bar li a:hover {
+    color: var(--primary-color);
+    background-color: rgba(255, 255, 255, 0.1);
 }
-nav ul li::after {
-    content: "";
-    position: absolute;
-    left: 50%;
-    bottom: 0;
-    width: 0;
-    height: 2px;
-    background: var(--text-color);
-    transition: width 0.4s ease-in-out, left 0.4s ease-in-out;
+
+.nav-bar li a.active {
+    color: var(--primary-color);
+    font-weight: 500;
 }
-nav ul li:hover::after {
-    width: 100%;
-    left: 0;
+
+.nav-bar li a i {
+    font-size: 1rem;
 }
+
+
+
