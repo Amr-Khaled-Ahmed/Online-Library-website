@@ -10,6 +10,10 @@
 <body>
     <section class="sign-up">
         <form >
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span style="color: var(--text-color);">Online Library</span>
+            </div>
             <h2>Sign-Up</h2>
             <div class="field">
                 <div class="field-heading">
@@ -40,18 +44,14 @@
                 <input class="input" type="email" id="email" name="pass-confirm" placeholder="Enter email" required>
             </div>
             <button type="submit">Sign up</button>
+            <a class="cancel-button" href="/frontend/index.html">Cancel</a>
             <div class="sign-in">
                 <span>Already have an account ?</span>
-                <a href="#" id="toggle-form">Sign in</a>
+                <a href="sign-in.html">Sign in</a>
             </div>
         </form>
         <img src="/frontend/CSS/assets/woman-reading-chair.png" alt="man reading a book">
     </section>
-    <script>
-        document.getElementById("toggle-form").addEventListener("click", function(e) {
-            e.preventDefault();
-            window.location.href = "sign-in.html"; 
-        });
-    </script>
+    
 </body>
 </html>
