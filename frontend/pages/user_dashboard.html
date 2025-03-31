@@ -4,10 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="../CSS/dashboard.css">
-    <link rel="stylesheet" href="../CSS/footer.css">
-    <link rel="stylesheet" href="../CSS/header.css">
-    <link rel="stylesheet" href="../CSS/user_dashboard.css">
+    <link rel="stylesheet" href="/frontend/CSS/user_dashboard.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
 </head>
 <body>
@@ -15,45 +12,145 @@
         <div class="header-container">
             <div class="logo">
                 <i class="fas fa-book-open"></i>
-                <span>none</span>
+                <span>Online Library</span>
             </div>
             <nav>
                 <ul class="nav-bar">
-                    <li><a href="../index.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="book_details.html"><i class="fas fa-book"></i> Books</a></li>
-                    <li><a href="logout.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="/frontend/index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/frontend/pages/books.html"><i class="fas fa-book"></i> Books</a></li>
+                    <li><a href="/frontend/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
     </header>
-    <main>
-        <div class="dashboard">
-            <h2>Welcome, User</h2>
-            <p>Membership: Active/Expired</p>
-            <div class="Borrowed_Books">
-                <h2>📚 Borrowed Books</h2>
-                <ul class="book-list">
-                    
-                </ul>
-            </div>
-            <div class="Search_Books">
-                <h2>🔍 Search Books</h2>
-                <input type="text" placeholder="Search by title, author, or genre">
-            </div>
-            <div class="Favorites">
-                <h2>❤️ Favorites</h2>
-                <ul class="book-list">
-                    
-                </ul>
-            </div>
-            <div class="Notifications">
+
+    <main class="dashboard">
+        <div class="user-info">
+            <h2>Welcome, <span class="username">User</span></h2>
+            <p>Membership: <span class="membership-status">Active</span></p>
+        </div>
+
+        <div class="dashboard-content">
+            <div class="notifications">
                 <h2>🔔 Notifications</h2>
-                <ul class="book-list">
-                    
+                <ul class="notification-list">
+                    <li>Reminder: Return "Book 1" by April 5th.</li>
+                    <li>New book added: "Book 4".</li>
                 </ul>
+            </div>
+            <section class="community-friends">
+                <h2>👥 Community & Friends</h2>
+                <ul class="friends-list">
+                    <li>
+                        <img src="/frontend/CSS/assets/friend1.jpeg" alt="User 1">
+                        <span>Emma Doe - Reading "The Great Gatsby"</span>
+                    </li>
+                    <li>
+                        <img src="/frontend/CSS/assets/friend2.jpeg" alt="User 2">
+                        <span>Jane Smith - Reading "1984"</span>
+                    </li>
+                    <li>
+                        <img src="/frontend/CSS/assets/friend4.jpeg" alt="User 3">
+                        <span>Mike Johnson - Finished "To Kill a Mockingbird"</span>
+                    </li>
+                </ul>
+                <button type="submit">Add friends</button>
+            </section>
+
+            <div class="favorites">
+                <h2>❤️ Favorites</h2>
+                <div class="search-books">
+                    <h3>🔍 Search</h2>
+                    <input type="text" name="query" placeholder="Search by title, author, or genre">
+                    <button type="submit">Search</button>
+                </div>
+                <div class="book-grid">
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book1.jpeg" alt="Book 1">
+                        <div class="book-info">
+                            <h3>Book Title</h3>
+                            <p>Author: John Doe</p>
+                            <p>Genre: Fiction</p>
+                        </div>
+                    </div>
+                    
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book2.jpeg" alt="Book 2">
+                        <div class="book-info">
+                            <h3>Another Book</h3>
+                            <p>Author: Jane Doe</p>
+                            <p>Genre: Mystery</p>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book3.jpeg" alt="Book 1">
+                        <div class="book-info">
+                            <h3>Book Title</h3>
+                            <p>Author: John Doe</p>
+                            <p>Genre: Fiction</p>
+                        </div>
+                    </div>
+                    
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book4.jpeg" alt="Book 2">
+                        <div class="book-info">
+                            <h3>Another Book</h3>
+                            <p>Author: Jane Doe</p>
+                            <p>Genre: Mystery</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                
+
+            <div class="borrowed-books">
+                <h2>📚 Borrowed Books</h2>
+                <div class="search-books">
+                    <h3>🔍 Search</h3>
+                        <input type="text" name="query" placeholder="Search by title, author, or genre">
+                        <button type="submit">Search</button>
+                </div>
+                <div class="book-grid">
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book5.jpeg" alt="Book 1">
+                        <div class="book-info">
+                            <h3>Book Title</h3>
+                            <p>Author: John Doe</p>
+                            <p>Genre: Fiction</p>
+                        </div>
+                    </div>
+                    
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book3.jpeg" alt="Book 2">
+                        <div class="book-info">
+                            <h3>Another Book</h3>
+                            <p>Author: Jane Doe</p>
+                            <p>Genre: Mystery</p>
+                        </div>
+                    </div>
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book1.jpeg" alt="Book 1">
+                        <div class="book-info">
+                            <h3>Book Title</h3>
+                            <p>Author: John Doe</p>
+                            <p>Genre: Fiction</p>
+                        </div>
+                    </div>
+                    
+                    <div class="book-card">
+                        <img src="/frontend/CSS/assets/book2.jpeg" alt="Book 2">
+                        <div class="book-info">
+                            <h3>Another Book</h3>
+                            <p>Author: Jane Doe</p>
+                            <p>Genre: Mystery</p>
+                        </div>
+                    </div>
+                </div>
+                
             </div>
         </div>
     </main>
+
     <footer>
         <p>&copy; 2025 Online Library. All Rights Reserved.</p>
     </footer>
