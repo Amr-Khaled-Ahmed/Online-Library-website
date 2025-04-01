@@ -21,22 +21,27 @@
   <body>
     <header>
       <div class="header-container">
-          <div class="logo">
-              <i class="fas fa-book-open"></i>
-              <span style="color: var(--text-color);">none</span>
-          </div>
-          <nav>
-              <ul class="nav-bar">
-                  <li><a href="#hero" class="active"><i class="fas fa-home"></i> Home</a></li>
-                  <li><a href="#features"><i class="fas fa-info-circle"></i> About</a></li>
-                  <li><a href="pages/books.html"><i class="fas fa-book"></i> Books</a></li>
-                  <li><a href="pages/sign-in.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                  <li><a href="pages/sign-up.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li>
-                  <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-              </ul>
-          </nav>
+        <div class="logo">
+          <i class="fas fa-book-open"></i>
+          <span style="color: var(--text-color);">Online Library</span>
+        </div>
+        <nav>
+          <ul class="nav-bar">
+            <li><a href="#hero" class="active"><i class="fas fa-home"></i>
+                Home</a></li>
+            <li><a href="#features"><i class="fas fa-info-circle"></i>
+                About</a></li>
+            <li><a href="#books"><i class="fas fa-book"></i> Books</a></li>
+            <li><a href="pages/sign-in.html" id="login-link"><i
+                  class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="pages/sign-up.html" id="register-link"><i
+                  class="fas fa-user-plus"></i> Register</a></li>
+            <li><a href="#contact"><i class="fas fa-envelope"></i>
+                Contact</a></li>
+          </ul>
+        </nav>
       </div>
-  </header>
+    </header>
 
     <main>
       <section class="hero" id="hero">
@@ -46,7 +51,8 @@
           <p>Access thousands of books from the comfort of your home. Browse,
             borrow, and explore our extensive collection.</p>
           <div class="hero-buttons">
-            <a href="pages/sign-in.html" class="btn primary-btn">Sign in to see more books</a>
+            <a href="pages/sign-in.html" class="btn primary-btn">Sign in to see
+              more books</a>
             <a href="register.html" class="btn secondary-btn">Sign Up Free</a>
           </div>
         </div>
@@ -55,36 +61,60 @@
         </div>
       </section>
 
-      <section class="features" id="features">
-        <div class="feature-card">
-          <i class="fas fa-globe"></i>
-          <h3>Access Anywhere</h3>
-          <p>Read from any device, anytime, anywhere.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-users"></i>
-          <h3>Community</h3>
-          <p>Join reading groups and discuss your favorite books.</p>
-        </div>
-        <div class="feature-card">
-          <i class="fas fa-bell"></i>
-          <h3>Notifications</h3>
-          <p>Get alerts for new releases and due dates.</p>
-        </div>
+      <section id="features">
+        <h2 class="feature-header">
+          our Features
+        </h2>
+        <section class="features-container">
+          <div class="feature-card">
+            <i class="fas fa-globe"></i>
+            <h3>Access Anywhere</h3>
+            <p>Read from any device, anytime, anywhere.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-users"></i>
+            <h3>Community</h3>
+            <p>Join reading groups and discuss your favorite books.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-bell"></i>
+            <h3>Notifications</h3>
+            <p>Get alerts for new releases and due dates.</p>
+          </div>
+        </section>
+
       </section>
 
-      <section class="featured-books">
+      <section class="available-books" id="books">
         <div class="section-header">
-          <h2>Featured Books</h2>
-          <a href="pages/books.html" class="view-all">View All <i
+          <h2>Available Books</h2>
+          <a href="pages/sign-up.html" class="view-all">View All <i
               class="fas fa-arrow-right"></i></a>
         </div>
         <div id="book-list" class="book-container">
           <!-- Books will be dynamically inserted here by books.js -->
-          <div class="book-card skeleton"></div>
-          <div class="book-card skeleton"></div>
-          <div class="book-card skeleton"></div>
-          <div class="book-card skeleton"></div>
+          <div class="book-card">
+            <a href="pages/sign-up.html">
+              <img src="CSS/assets/book1.jpeg" alt="book1">
+            </a>
+          </div>
+          <div class="book-card">
+
+            <a href="pages/sign-up.html">
+              <img src="CSS/assets/book2.jpeg" alt="book2">
+            </a>
+          </div>
+          <div class="book-card">
+            <a href="pages/sign-up.html">
+              <img src="CSS/assets/book3.jpeg" alt="book3">
+            </a>
+          </div>
+          <div class="book-card">
+            <a href="pages/sign-up.html">
+              <img src="CSS/assets/book4.jpeg" alt="book4">
+            </a>
+          </div>
+
         </div>
       </section>
 
@@ -116,7 +146,7 @@
           <h3>Quick Links</h3>
           <ul>
             <li><a href="index.html">Home</a></li>
-            <li><a href="pages/books.html">Books</a></li>
+            <li><a href="#books">Books</a></li>
             <li><a href="#features">features</a></li>
           </ul>
         </div>

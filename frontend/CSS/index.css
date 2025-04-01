@@ -18,6 +18,10 @@ body {
     flex-direction: column;
 }
 
+html {
+    scroll-behavior: smooth;
+}
+
 
 main {
     flex: 1;
@@ -104,7 +108,14 @@ main {
 }
 
 /* Features Section */
-.features {
+.feature-header {
+    font-size: 2.375rem;
+    padding: 4rem 2rem;
+    text-align: center;
+}
+
+.features-container {
+
     display: flex;
     justify-content: center;
     gap: 2rem;
@@ -143,14 +154,15 @@ main {
     line-height: 1.6;
 }
 
-/* Featured Books Section */
-.featured-books {
+/* available Books Section */
+.available-books {
     padding: 4rem 2rem;
     max-width: 1200px;
     margin: 0 auto;
 }
 
 .section-header {
+
     display: flex;
     justify-content: space-between;
     align-items: center;
@@ -192,14 +204,15 @@ main {
     transform: translateY(-5px);
 }
 
-.book-card.skeleton {
-    height: 350px;
+.book-card img {
+    height: 100%;
+    width: 100%;
     background-color: var(--border-color);
     position: relative;
     overflow: hidden;
 }
 
-.book-card.skeleton::after {
+.book-card.hero-buttons {
     content: '';
     position: absolute;
     top: 0;
@@ -286,7 +299,7 @@ main {
         justify-content: flex-start;
     }
 
-    .features {
+    .features-container {
         flex-direction: row;
         flex-wrap: wrap;
     }
@@ -314,7 +327,7 @@ main {
         font-size: 1.2rem;
     }
 
-    .features {
+    .features-container {
         padding: 6rem 2rem;
     }
 
@@ -322,7 +335,7 @@ main {
         min-width: calc(33.333% - 1.333rem);
     }
 
-    .featured-books {
+    .available-books {
         padding: 6rem 2rem;
     }
 
@@ -360,7 +373,7 @@ main {
         flex-wrap: wrap;
     }
 
-    .features {
+    .features-container {
         flex-direction: column;
         padding: 2rem 1rem;
         gap: 1.5rem;
@@ -371,7 +384,7 @@ main {
         padding: 1.5rem;
     }
 
-    .featured-books {
+    .available-books {
         padding: 2rem 1rem;
     }
 
