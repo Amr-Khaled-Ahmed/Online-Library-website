@@ -1,0 +1,347 @@
+@import url('_variables.css');
+@import url('header.css');
+@import url('footer.css');
+
+.borrowed-header {
+    background-color: var(--form-bg-color);
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.borrowed-header h1 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.borrowed-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.action-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-btn i {
+    font-size: 1.1rem;
+}
+
+.export-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.export-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.tab-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+}
+
+.tabs {
+    display: flex;
+    background-color: var(--form-bg-color);
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.tab-input {
+    display: none;
+}
+
+.tab {
+    padding: 1rem 2rem;
+    background-color: var(--form-bg-color);
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+    flex: 1;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+}
+
+.tab:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* <Panel switching logic> */
+.tab-panel {
+    display: none;
+    background-color: var(--form-bg-color);
+    border-radius: 0 0 10px 10px;
+    padding: 2rem;
+}
+
+#tab1:checked ~ .tab-panels #current-borrows,
+#tab2:checked ~ .tab-panels #borrowing-history
+{
+    display: block;
+}
+
+#tab1:checked ~ .tabs label[for="tab1"],
+#tab2:checked ~ .tabs label[for="tab2"]
+{
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 3px solid var(--primary-color);
+}
+/* </Panel switching logic> */
+
+.borrowed-list {
+    background-color: var(--form-bg-color);
+    border-radius: 0 0 10px 10px;
+    padding: 2rem;
+}
+
+.borrowed-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.borrowed-item:hover {
+    transform: translateY(-5px);
+}
+
+.borrowed-cover {
+    width: 100px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.borrowed-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.borrowed-cover i {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.borrowed-details {
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.borrowed-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.borrowed-author {
+    font-size: 0.9rem;
+    color: rgba(255, 255, 255, 0.8);
+    margin-bottom: 1rem;
+}
+
+.borrowed-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.6);
+    margin-bottom: 0.3rem;
+}
+
+.info-value {
+    
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.due-soon {
+    background-color: #f39c12;
+    color: white;
+}
+
+.due-tomorrow {
+    background-color: #e67e22;
+    color: white;
+}
+
+.overdue {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.on-time {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.returned {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+.late-return {
+    background-color: #9b59b6;
+    color: white;
+}
+
+.fine-paid {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fine-paid i {
+    font-size: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.renew-btn, .return-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.renew-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.renew-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.renew-btn:disabled {
+    border-color: #7f8c8d;
+    color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.return-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.return-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.fines-section {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.fines-section h3 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.fines-divider {
+    border: 0;
+    height: 1px;
+    background-color: rgba(231, 76, 60, 0.3);
+    margin: 1rem 0;
+}
+
+.fine-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+}
+
+.fine-item:last-child {
+    border-bottom: none;
+}
+
+.fine-amount {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.total-fine {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+
+@media (max-width: 768px) {
+    .borrowed-item {
+        flex-direction: column;
+    }
+
+    .borrowed-cover {
+        width: 80px;
+        height: 120px;
+        align-self: center;
+    }
+
+    .action-buttons {
+        align-self: center;
+        margin-left: 0;
+    }
+}
