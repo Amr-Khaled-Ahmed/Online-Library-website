@@ -34,24 +34,6 @@
     color: var(--primary-color);
 }
 
-.search-books {
-    display: flex;
-    gap: 10px;
-    justify-content: center;
-    margin-bottom: 20px;
-}
-
-.search-books input {
-    width: 70%;
-    max-width: 400px;
-    padding: 8px;
-    border: 1px solid var(--border-color);
-    border-radius: 4px;
-    background: var(--bg-color);
-    color: var(--text-color);
-}
-
-.search-books button,
 .community-friends button {
     padding: 8px 12px;
     background: var(--primary-color);
@@ -61,12 +43,9 @@
     border-radius: 4px;
 }
 
-.search-books button:hover,
 .community-friends button:hover {
     background: var(--primary-hover);
 }
-
-.search-books button:active,
 .community-friends button:active {
     background: var(--primary-active);
 }
@@ -135,9 +114,9 @@
     box-shadow: 0px 0px 5px var(--shadow-color);
     grid-column: span 4;
 }
-.favorites h2,
-.borrowed-books h2 {
-    margin-bottom: 20px;
+.section-header{
+    display: flex;
+    justify-content: space-between;
 }
 
 .book-grid {
@@ -170,8 +149,8 @@
     width: 100%;
     padding: 10px;
     background: var(--form-bg-color);
-    
-    
+
+
 }
 
 .book-info h3 {
@@ -215,11 +194,11 @@
 
 @media (max-width: 580px) {
     .dashboard-content {
-        grid-template-columns: 1fr; 
+        grid-template-columns: 1fr;
     }
 
     .notifications {
-        grid-column: span 1; 
+        grid-column: span 1;
     }
 
     .community-friends {
@@ -229,25 +208,25 @@
     .favorites, .borrowed-books {
         grid-column: span 1;
     }
-    
+
     .book-grid {
         display: flex;
         flex-direction: column;
-        align-items: center; 
+        align-items: center;
     }
 
     .book-card {
-        width: 90%; 
-        max-width: 250px; 
+        width: 90%;
+        max-width: 250px;
     }
 
     .book-card img {
-        height: 250px; 
+        height: 250px;
     }
 
     .book-info {
         padding: 5px;
-        text-align: center; 
+        text-align: center;
     }
 
     .book-info h3 {
@@ -257,8 +236,5 @@
     .book-info p {
         font-size: 12px;
     }
-    
-}
-.logo i {
-    color: white;
+
 }
