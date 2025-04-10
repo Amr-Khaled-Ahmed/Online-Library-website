@@ -1,0 +1,372 @@
+@import url('_variables.css');
+@import url('footer.css');
+@import url('header.css');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: var(--font-primary);
+}
+
+.header-content {
+    margin-bottom: 20px;
+    font-family: 'Poppins';
+}
+
+.footer-content {
+    margin-top: 20px;
+    font-family: 'Poppins';
+}
+
+.definition {
+    background-color: var(--form-bg-color);
+    padding: 2.5vw;
+    margin: 2.5vw 8vw;
+    text-align: center;
+    border-radius: 10px;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+}
+
+.dashboard-container {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    padding: 2.5vw;
+}
+
+#title {
+    text-align: center;
+}
+
+.search-form {
+    background-color: var(--form-bg-color);
+    display: flex;
+    flex-direction: column;
+    flex-wrap: wrap;
+    margin: 2.5vw 8vw;
+    align-items: center;
+    padding: 2.5vw;
+    border-radius: 10px;
+    gap: 2vw;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+}
+
+.search-box {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 1vw;
+}
+
+.filter-group {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    align-items: center;
+    gap: 1vw;
+    width: 100%;
+}
+
+.filter-select {
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 12vw;
+    height: 40px;
+    border-radius: 5px;
+}
+
+.search-input {
+    display: flex;
+    flex-wrap: wrap;
+    border-radius: 5px;
+    background-color: var(--bg-color);
+    color: var(--text-color);
+    width: 90%;
+    height: 45px;
+    padding: 1vw;
+    border: none;
+}
+
+.dashboard-container a {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    text-decoration: none;
+    padding: 5px;
+    font-size: 15px;
+}
+
+#add-book {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+    border-radius: 10px;
+    border: 1px bold var(--primary-color);
+    width: 100px;
+    height: 30px;
+}
+
+.books-container {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    padding: 1vw;
+}
+
+.book {
+    display: flex;
+    flex-wrap: wrap;
+    flex-direction: column;
+    position: relative;
+    width: 250px;
+    height: 553px;
+    background-color: var(--form-bg-color);
+    margin: 1.5vw;
+    border-radius: 10px;
+    border: 1px solid var(--border-color);
+    box-shadow: 0px 0px 15px var(--shadow-color);
+    overflow: hidden;
+    transition: all 0.3s ease;
+}
+
+.img-holder {
+    display: flex;
+    background-color: var(--bg-color);
+    width: 100%;
+    height: 300px;
+    justify-content: center;
+    align-items: center;
+    border-top-left-radius: 10px;
+    border-top-right-radius: 10px;
+    transition: all 0.3s ease;
+    margin-bottom: 10px;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+    overflow: hidden;
+}
+
+.img-holder i {
+    transform: scale(5);
+    color: var(--form-bg-color);
+    transition: all 0.3s ease;
+}
+
+.img-holder img{
+    width: 100%;
+    height: 100%;
+    transition: all 0.3s ease;
+}
+
+.book-cover:hover {
+    transform: scale(1.05);
+}
+
+.book-title {
+    font-weight: bold;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
+.author {
+    font-size: smaller;
+    font-weight: none;
+    padding-left: 10px;
+    padding-bottom: 5px;
+}
+
+.book-information,
+.book-status {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between 5px;
+    width: 100%;
+    padding-top: 10px;
+    padding-left: 10px;
+    row-gap: 10px;
+    column-gap: 5px;
+}
+
+.book-information label,
+.book-status label {
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: x-small;
+    border: none;
+    padding: 7px 5px;
+    border-radius: 6px;
+}
+
+.book-information label {
+    background-color: var(--bg-color);
+}
+
+.available {
+    background-color: var(--primary-active);
+}
+
+.low-stock {
+    background-color: #B6761E;
+}
+
+.unavailable {
+    background-color: #C2352A;
+}
+
+.late-fees {
+    background-color: #9C27B0;
+}
+
+.lvl1-borrow {
+    background-color: var(--lvl1-borrow);
+}
+
+.lvl2-borrow {
+    background-color: var(--lvl2-borrow);
+}
+
+.lvl3-borrow {
+    background-color: var(--lvl3-borrow);
+}
+
+.lvl4-borrow {
+    background-color: var(--lvl4-borrow);
+}
+
+.lvl5-borrow {
+    background-color: var(--lvl5-borrow);
+}
+
+.borrow-duration {
+    background-color: #CC9900;
+}
+
+.book button,
+.book a {
+    border-radius: 6px;
+    height: 30px;
+    font-family: Arial, Helvetica, sans-serif;
+}
+
+button,
+a {
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.edit {
+    background-color: var(--bg-color);
+    color: #007BFF;
+    border: 1px solid;
+    position: absolute;
+    width: 50px;
+    bottom: 50px;
+    left: 10px;
+}
+
+.delete {
+    background-color: var(--bg-color);
+    color: #C2352A;
+    border: 1px solid;
+    position: absolute;
+    width: 50px;
+    bottom: 50px;
+    right: 10px;
+}
+
+.borrowers-list {
+    display: flex;
+    align-items: center;
+    background-color: var(--primary-active);
+    color: var(--font-primary);
+    border: none;
+    position: absolute;
+    bottom: 10px;
+    left: 70px;
+    width: fit-content;
+}
+
+.search-btn {
+    background-color: var(--bg-color);
+    color: var(--primary-color);
+    border-radius: 30px;
+    border: none;
+    width: 50px;
+    height: 45px;
+}
+
+.book:hover {
+    transform: translateY(-2px);
+}
+
+#add-book:hover,
+.search-btn:hover,
+.borrowers-list:hover,
+.books-pages button:hover {
+    background-color: var(--primary-hover);
+    color: var(--text-color);
+}
+
+.edit:hover,
+.delete:hover {
+    color: var(--font-primary);
+    border: none;
+}
+
+.edit:hover {
+    background-color: #007BFF;
+}
+
+.delete:hover {
+    background-color: #C2352A;
+}
+
+.books-pages {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 5px;
+}
+
+.hidden {
+    display: none;
+}
+
+.books-pages label {
+    background-color: var(--form-bg-color);
+    color: var(--text-color);
+    width: 32px;
+    height: 32px;
+    font-size: 10px;
+    text-align: center;
+    padding-top: 12px;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+}
+
+.books-pages label:hover {
+    background-color: var(--primary-hover);
+}
+
+.hidden:checked + .btn  {
+    background-color: var(--primary-active);
+    outline: none;
+}
+
+@media (max-width: 600px) {
+
+    .filter-group {
+        flex-direction: column;
+    }
+
+    .filter-select {
+        width: 90%;
+    }
+}
+
+@media (max-width: 300px) {
+    body {
+        width: 300px;
+    }
+}
