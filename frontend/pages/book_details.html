@@ -13,6 +13,9 @@
         <link rel="stylesheet" href="./../CSS/book_details.css">
         <link rel="stylesheet" href="./../CSS/footer.css">
         <link rel="stylesheet" href="./../CSS/header.css">
+
+        
+          
     </head>
 
     <body class="bodyStyle">
@@ -37,12 +40,12 @@
 
         <div class="container">
             <div class="book-cover">
-                <img src="./../CSS/assets/book_cover.jpg" alt="Ice & Fire book cover">
+                <img id="imagePath" alt="Ice & Fire book cover">
             </div>
             <div class="details">
-                <h1>Ice & Fire</h1>
-                <h2>R.R Martin</h2>
-                <p>A Song of Ice and Fire' is Martin's epic fantasy saga, spanning thousands of pages, which captured the imagination of millions and inspired the HBO hit show <b style="color: var(--primary-color);">'Game of Thrones'</b>.</p>
+                <h1 id = "book-title"></h1>
+                <h2 id = "book-author" ></h2>
+                <p id = "about"><b style="color: var(--primary-color);">'Game of Thrones'</b>.</p>
 
                 <div class="rating">
                     <i class="fas fa-star"></i>
@@ -56,23 +59,23 @@
                 <div class="book-meta">
                     <div class="meta-item">
                         <i class="fas fa-check-circle"></i>
-                        <p><strong>Status:</strong> Available</p>
+                        <strong>Status:</strong><p id="status"> </p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-tags"></i>
-                        <p><strong>Genre:</strong> Fiction, Mystery</p>
+                        <strong>Genre:</strong> <p id="Genre" > </p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-calendar-alt"></i>
-                        <p><strong>Published:</strong> 2022</p>
+                        <strong>Published:</strong>  <p id = "book-year" > </p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-file-alt"></i>
-                        <p><strong>Pages:</strong> 320</p>
+                        <strong>Pages:</strong> <p id ="Pages"> </p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-language"></i>
-                        <p><strong>Language:</strong> English</p>
+                        <strong>Language:</strong> <p id ="Language"> </p>
                     </div>
                 </div>
 
@@ -87,6 +90,29 @@
             <p>&copy; 2025 Online Library. All Rights Reserved.</p>
         </footer>
 
+        <script>
+            const urlParams = new URLSearchParams(window.location.search);
+            const title = urlParams.get('title');
+            const author = urlParams.get('author');
+            const year = urlParams.get('year');
+            const about = urlParams.get('about');
+            const status = urlParams.get('status');
+            const Genre = urlParams.get('Genre');
+            const Pages = urlParams.get('Pages');
+            const Language = urlParams.get('Language');
+            const imagePath = urlParams.get('imagePath');
 
+            document.getElementById("book-title").textContent = title;
+            document.getElementById("book-author").textContent =  author;
+            document.getElementById("book-year").textContent = year;
+            document.getElementById("about").textContent = about;
+            document.getElementById("status").textContent = status;
+            document.getElementById("Genre").textContent = Genre;
+            document.getElementById("Pages").textContent = Pages;
+            document.getElementById("Language").textContent = Language;
+            document.getElementById("imagePath").src = imagePath;
+
+            
+          </script>
     </body>
 </html>
