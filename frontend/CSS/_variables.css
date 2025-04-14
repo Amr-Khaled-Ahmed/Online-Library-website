@@ -6,20 +6,24 @@
     --primary-hover: rgb(84, 182, 84);
     --primary-active: #138f3a;
     --text-color: white;
+    --text-secondary: #cccccc;
     --link-color: rgb(79, 79, 221);
     --shadow-color: rgba(0, 0, 0, 0.3);
+    --overlay-color: rgba(0, 0, 0, 0.7);
     --header-bg-color: var(--bg-color);
-    
-
-
+    --accent-color: var(--primary-color);
+    --white: #ffffff;
+    --black: #000000;
+    --transparent: transparent;
 
     --font-primary: 'Poppins', sans-serif;
-
-
-
+    --scrolled-header-color: #122c12f6;
     --lvl1-borrow: #A7D0E1; /*1-5*/
     --lvl2-borrow: #5AA9E6; /*6-15*/
     --lvl3-borrow: #3A86FF; /*16-30*/
     --lvl4-borrow: #2667FF; /*31-50*/
     --lvl5-borrow: #0038A8; /*+50*/
+
+    --nav-underline-height: 2px;
+    --nav-transition-speed: 0.3s;
 }
