@@ -10,7 +10,7 @@ header {
 
 header.scrolled {
     /* var(--navigation-bg-color); */
-    background-color: var(--scrolled-header-color);
+    background-color: var(--scrolled-header-color) !important;
     box-shadow: 0 2px 10px var(--shadow-color);
 }
 
