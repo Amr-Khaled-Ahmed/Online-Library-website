@@ -14,34 +14,67 @@ This project is built using **pure HTML, CSS, JavaScript (Frontend), and Python 
 ## 📁 Folder Structure
 
 ```
-online-library/
-│── backend/              # Backend (Python + Django)
-│   ├── library/          # Django project folder
-│   ├── books/            # Books app (handles book management)
-│   ├── users/            # Users app (handles authentication & roles)
-│   ├── templates/        # HTML templates (for Django rendering)
-│   ├── static/           # Static files (CSS, JS, images)
-│   ├── db.sqlite3        # SQLite database (default for Django)
-│   ├── manage.py         # Django management script
-│── frontend/             # Frontend (Pure HTML, CSS, JS)
-│   ├── css/              # Stylesheets
-│   │   ├── styles.css    # Main styles
-│   ├── js/               # JavaScript files (AJAX, DOM manipulation)
-│   │   ├── auth.js       # Login & registration scripts
-│   │   ├── books.js      # Fetch and display books
-│   │   ├── borrow.js     # Borrowing functionality
-│   │   ├── admin.js      # Admin panel scripts
-│   ├── images/           # Book covers, icons
-│   ├── index.html        # Home page
-│   ├── books.html        # Book listing & search
-│   ├── book-details.html # Individual book details
-│   ├── login.html        # Login form
-│   ├── register.html     # User registration
-│   ├── dashboard.html    # User dashboard (borrowed books)
-│   ├── admin.html        # Admin panel (add/edit/delete books)
-│   ├── borrowed.html     # Borrowed books list
-│── database/             # Database (Django ORM - SQL)
-│── README.md             # Documentation
+D:.
+|   index.html
+|   LICENSE
+|   README.md
+|
+\---frontend
+    +---CSS
+    |   |   add_edit.css
+    |   |   admin_dashboard.css
+    |   |   books.css
+    |   |   book_details.css
+    |   |   borrowed.css
+    |   |   footer.css
+    |   |   forms-style.css
+    |   |   header.css
+    |   |   index.css
+    |   |   user_dashboard.css
+    |   |   _variables.css
+    |   |
+    |   \---assets
+    |           book1.jpeg
+    |           book2.jpeg
+    |           book3.jpeg
+    |           book4.jpeg
+    |           book5.jpeg
+    |           book_cover.jpg
+    |           ChildOfTheKindred_ebook1.jpg
+    |           ChildOfTheKindred_ebook1.png
+    |           crime-and-mystery-cover-scaled-1.jpeg
+    |           enceladus.jpg
+    |           friend1.jpeg
+    |           friend2.jpeg
+    |           friend3.jpeg
+    |           friend4.jpeg
+    |           man-reading-design.png
+    |           online-education.gif
+    |           woman-reading-chair.png
+    |
+    \---pages
+        |   add_edit.html
+        |   admin_dashboard.html
+        |   books.html
+        |   book_details.html
+        |   borrowed.html
+        |   footer.html
+        |   header.html
+        |   sign-in.html
+        |   sign-up.html
+        |   user_dashboard.html
+    |
+    \---Script
+        |   add_edit.js
+        |   admin_dashboard.js
+        |   books.js
+        |   book_details.js
+        |   borrowed.js
+        |   footer.js
+        |   header.js
+        |   sign-in.js
+        |   sign-up.js
+        |   user_dashboard.js
 ```
 
 ---
