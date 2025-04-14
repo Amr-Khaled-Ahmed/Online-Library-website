@@ -60,6 +60,7 @@
 .notification-list {
     list-style: none;
     padding: 0;
+    cursor: pointer;
 }
 
 .notification-list li {
@@ -69,6 +70,50 @@
     padding: 10px;
     border-radius: 5px;
 }
+.small_page {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow:auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    padding-top: 35px;
+}
+
+.smallPage-content {
+    background-color: var(--form-bg-color);
+    margin: auto;
+    padding: 40px 20px 20px 20px;
+    border: 1px solid #888;
+    width: 90%;
+    max-width: 400px;
+    position: relative;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    box-sizing: border-box;
+}
+
+
+.close-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background-color: var(--form-bg-color);
+    color: white;
+    border: none;
+    font-size: 20px;
+    padding: 5px 10px;
+    cursor: pointer;
+    border-radius: 50%;
+}
+.close-button:hover {
+    background-color: #0a1269;
+    color: #ffffff;
+}
+
 
 .community-friends {
     background: var(--border-color);
@@ -165,6 +210,55 @@
     margin: 2px 0;
 }
 
+.custom-notification {
+    position: fixed;
+    top: 60px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #e74c3c;
+    color: #fff;
+    padding: 12px 20px;
+    border-radius: 6px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    font-weight: bold;
+    z-index: 9999;
+    animation: shakeAndFadeOutUp 3s ease-in-out forwards;
+    opacity: 0;
+}
+
+@keyframes shakeAndFadeOutUp {
+    0% {
+        opacity: 0;
+        transform: translate(-50%, 20px);
+    }
+    10% {
+        transform: translate(-50%, 20px) rotate(-5deg);
+    }
+    20% {
+        transform: translate(-50%, 20px) rotate(5deg);
+    }
+    30% {
+        transform: translate(-50%, 20px) rotate(-5deg);
+    }
+    40% {
+        transform: translate(-50%, 20px) rotate(5deg);
+    }
+    50% {
+        transform: translate(-50%, 20px) rotate(0deg);
+    }
+    60% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+    85% {
+        opacity: 1;
+        transform: translate(-50%, 0);
+    }
+    100% {
+        opacity: 0;
+        transform: translate(-20%, -60px);
+    }
+}
 
 @media (max-width: 768px) {
     .dashboard {
@@ -191,7 +285,6 @@
 
     }
 }
-
 @media (max-width: 580px) {
     .dashboard-content {
         grid-template-columns: 1fr;
