@@ -138,4 +138,14 @@ input::placeholder {
         display: none;
     }
 }
+.error-text {
+    color: red;
+    font-size: 0.8em;
+    margin-top: 4px;
+    display: block;
+  }
+  
+.field.incorrect input {
+border-bottom: 2px solid red;
+}
 
