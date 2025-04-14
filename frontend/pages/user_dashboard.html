@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>User Dashboard</title>
-    <link rel="stylesheet" href="./../CSS/user_dashboard.css">
+    <link rel="stylesheet" href="../CSS/user_dashboard.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
 </head>
 <body>
@@ -16,9 +16,9 @@
             </div>
             <nav>
                 <ul class="nav-bar">
-                    <li><a href="./index.html"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="./pages/books.html"><i class="fas fa-book"></i> Books</a></li>
-                    <li><a href="./index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                    <li><a href="/index.html"><i class="fas fa-home"></i> Home</a></li>
+                    <li><a href="/pages/books.html"><i class="fas fa-book"></i> Books</a></li>
+                    <li><a href="/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                 </ul>
             </nav>
         </div>
@@ -36,21 +36,28 @@
                 <ul class="notification-list">
                     <li>Reminder: Return "Book 1" by April 5th.</li>
                     <li>New book added: "Book 4".</li>
+                    <li>Your Friend:"Mohamed Ahmed" reacts like for your book that you are published .</li>
                 </ul>
+            </div>
+            <div id="smallPage" class="small_page">
+                <div class="smallPage-content">
+                    <button id="closePage" class="close-button">X</button>
+                    <p id="page_content"></p>
+                </div>
             </div>
             <section class="community-friends">
                 <h2>👥 Community & Friends</h2>
                 <ul class="friends-list">
                     <li>
-                        <img src="./../CSS/assets/friend1.jpeg" alt="User 1">
+                        <img src="../CSS/assets/friend1.jpeg" alt="User 1">
                         <span>Emma Doe - Reading "The Great Gatsby"</span>
                     </li>
                     <li>
-                        <img src="./../CSS/assets/friend2.jpeg" alt="User 2">
+                        <img src="../CSS/assets/friend2.jpeg" alt="User 2">
                         <span>Jane Smith - Reading "1984"</span>
                     </li>
                     <li>
-                        <img src="./../CSS/assets/friend4.jpeg" alt="User 3">
+                        <img src="../CSS/assets/friend4.jpeg" alt="User 3">
                         <span>Mike Johnson - Finished "To Kill a Mockingbird"</span>
                     </li>
                 </ul>
@@ -60,11 +67,11 @@
             <div class="favorites">
                 <div class="section-header">
                     <h2>❤️ Favorites</h2>
-                    <a href="./borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                    <a href="borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="book-grid">
                     <div class="book-card">
-                        <img src="./../CSS/assets/book1.jpeg" alt="Book 1">
+                        <img src="../CSS/assets/book1.jpeg" alt="Book 1">
                         <div class="book-info">
                             <h3>Book Title</h3>
                             <p>Author: John Doe</p>
@@ -73,7 +80,7 @@
                     </div>
 
                     <div class="book-card">
-                        <img src="./../CSS/assets/book2.jpeg" alt="Book 2">
+                        <img src="../CSS/assets/book2.jpeg" alt="Book 2">
                         <div class="book-info">
                             <h3>Another Book</h3>
                             <p>Author: Jane Doe</p>
@@ -81,7 +88,7 @@
                         </div>
                     </div>
                     <div class="book-card">
-                        <img src="./../CSS/assets/book3.jpeg" alt="Book 1">
+                        <img src="../CSS/assets/book3.jpeg" alt="Book 1">
                         <div class="book-info">
                             <h3>Book Title</h3>
                             <p>Author: John Doe</p>
@@ -90,7 +97,7 @@
                     </div>
 
                     <div class="book-card">
-                        <img src="./../CSS/assets/book4.jpeg" alt="Book 2">
+                        <img src="../CSS/assets/book4.jpeg" alt="Book 2">
                         <div class="book-info">
                             <h3>Another Book</h3>
                             <p>Author: Jane Doe</p>
@@ -104,11 +111,11 @@
             <div class="borrowed-books">
                 <div class="section-header">
                     <h2>📚 Borrowed Books</h2>
-                <a href="./borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
+                <a href="borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
                 </div>
                 <div class="book-grid">
                     <div class="book-card">
-                        <img src="./../CSS/assets/book5.jpeg" alt="Book 1">
+                        <img src="../CSS/assets/book5.jpeg" alt="Book 1">
                         <div class="book-info">
                             <h3>Book Title</h3>
                             <p>Author: John Doe</p>
@@ -117,7 +124,7 @@
                     </div>
 
                     <div class="book-card">
-                        <img src="./../CSS/assets/book3.jpeg" alt="Book 2">
+                        <img src="../CSS/assets/book3.jpeg" alt="Book 2">
                         <div class="book-info">
                             <h3>Another Book</h3>
                             <p>Author: Jane Doe</p>
@@ -125,7 +132,7 @@
                         </div>
                     </div>
                     <div class="book-card">
-                        <img src="./../CSS/assets/book1.jpeg" alt="Book 1">
+                        <img src="../CSS/assets/book1.jpeg" alt="Book 1">
                         <div class="book-info">
                             <h3>Book Title</h3>
                             <p>Author: John Doe</p>
@@ -134,7 +141,7 @@
                     </div>
 
                     <div class="book-card">
-                        <img src="./../CSS/assets/book2.jpeg" alt="Book 2">
+                        <img src="../CSS/assets/book2.jpeg" alt="Book 2">
                         <div class="book-info">
                             <h3>Another Book</h3>
                             <p>Author: Jane Doe</p>
@@ -148,7 +155,34 @@
     </main>
 
     <footer>
-        <p>&copy; 2025 Online Library. All Rights Reserved.</p>
+        <div class="footer-content" id="contact">
+            <div class="footer-section">
+            <h3>Online Library</h3>
+            <p>Your gateway to knowledge and imagination.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="./../../index.html#">Home</a></li>
+                <li><a href="../pages/books.html">Books</a></li>
+                <li><a href="./../../index.html#features">features</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
+            <p><i class="fas fa-phone"></i> +20100100100</p>
+        </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Online Library. All rights reserved.</p>
+        </div>
     </footer>
+    <script src = "../Script/user_dashboard.js"></script>
 </body>
 </html>
