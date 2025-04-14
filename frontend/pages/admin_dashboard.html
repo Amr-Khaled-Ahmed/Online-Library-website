@@ -1,17 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
     <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="./../CSS/admin_dashboard.css">
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <script src="./../Script/admin_dashboard.js"></script>
+    <script src="./../Script/header.js"></script>
+    <script src="./../Script/footer.js"></script>
     <title>Admin Dashboard</title>
 </head>
+
 <body>
     <header>
         <div class="header-container">
@@ -23,7 +28,8 @@
                 <ul class="nav-bar">
                     <li><a href="./../../index.html#"><i class="fas fa-home"></i> Home</a></li>
                     <li><a href="./../../index.html#features"><i class="fas fa-info-circle"></i> About</a></li>
-                    <li><a href="./admin_dashboard.html" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                    <li><a href="./admin_dashboard.html" class="active"><i class="fa-solid fa-table-columns"></i>
+                            Dashboard</a></li>
                     <li><a href="./../../index.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
                     <li><a href="./../../index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
                 </ul>
@@ -31,17 +37,19 @@
         </div>
     </header>
 
+    <button id="add-book"><i class="fa-solid fa-plus"></i></button>
+
     <main class="dashboard-container">
         <div class="definition">
             <h1><i class="fa-solid fa-table-columns"></i> Admin Dashboard</h1>
             <p>You can add, edit, delete books to the library.</p>
         </div>
-            <section class="search-container">
-                <form class="search-form">
-                    <div class="search-box">
-                        <input type="search" class="search-input" placeholder="Search by title, author, or ISBN...">
-                        <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-                    </div>
+        <section class="search-container">
+            <form class="search-form">
+                <div class="search-box">
+                    <input type="search" class="search-input" placeholder="Search by title, author, or ISBN...">
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                </div>
 
                 <div class="filter-group">
                     <select class="filter-select">
@@ -85,197 +93,15 @@
                         <option value="Low Stock">Low Stock</option>
                         <option value="all">All</option>
                     </select>
-                    <a href="./add_edit.html" id="add-book"> <pre><i class="fa-solid fa-book"></i> Add Book</pre> </a>
                 </div>
             </form>
         </section>
+
         <h1 id="title">Books</h1>
-        <div class="books-container">
-            <div class="book">
-                <div class="img-holder">
-                    <img src="./../CSS/assets/ChildOfTheKindred_ebook1.jpg" alt="Book Cover" class="book-cover">
-                </div>
-                <p class="book-title">Child of The Kindred</p>
-                <p class="author">M. T. Magee</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Fantasy</label>
-                    <label for="book" class="book-format">Paperback</label>
-                    <label for="book" class="book-year-pub">2020</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="unavailable">Unavailable</label>
-                    <label for="book" class="lvl2-borrow">10 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <img src="./../CSS/assets/enceladus.jpg" alt="Book Cover" class="book-cover">
-                </div>
-                <p class="book-title">Enceladus</p>
-                <p class="author">By Brandon Q. Morris</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Science Fiction</label>
-                    <label for="book" class="book-format">E-Book</label>
-                    <label for="book" class="book-year-pub">2023</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="available">Available: 100 Books</label>
-                    <label for="book" class="lvl5-borrow">60 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <img src="./../CSS/assets/crime-and-mystery-cover-scaled-1.jpeg" alt="Book Cover" class="book-cover">
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl2-borrow">10 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl4-borrow">40 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl2-borrow">10 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl3-borrow">20 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl2-borrow">10 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
-            <div class="book">
-                <div class="img-holder">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <p class="book-title">Fortress Blood</p>
-                <p class="author">By L. D. Goffigan</p>
-                <div class="book-information">
-                    <label for="book" class="book-genre">Mystery</label>
-                    <label for="book" class="book-format">Hardcover</label>
-                    <label for="book" class="book-year-pub">2021</label>
-                </div>
-                <div class="book-status">
-                    <label for="book" class="low-stock">Low Stock: 10 Books</label>
-                    <label for="book" class="lvl1-borrow">3 Borrows</label>
-                    <label for="book" class="late-fees">Late Fee: 10$</label>
-                    <label for="book" class="borrow-duration">Max Borrow Duration: 1 month</label>
-                </div>
-                <div class="buttons">
-                    <a href="./add_edit.html" class="edit">Edit</a>
-                    <button class="delete">Delete</button>
-                    <button class="borrowers-list"> <pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre></button>
-                </div>
-            </div>
+
+        <div class="books-container" id="books-container">
         </div>
+
         <div class="books-pages">
             <input type="radio" id="btn1" name="toggle" class="hidden" checked>
             <label for="btn1" class="btn">1</label>
@@ -291,31 +117,32 @@
     <footer>
         <div class="footer-content" id="contact">
             <div class="footer-section">
-            <h3>Online Library</h3>
-            <p>Your gateway to knowledge and imagination.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
+                <h3>Online Library</h3>
+                <p>Your gateway to knowledge and imagination.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
             </div>
-        </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="./../../index.html">Home</a></li>
-                <li><a href="./books.html">Books</a></li>
-                <li><a href="./../../index.html#features">features</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
-            <p><i class="fas fa-phone"></i> +20100100100</p>
-        </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="./../../index.html">Home</a></li>
+                    <li><a href="./pages/books.html">Books</a></li>
+                    <li><a href="./../../index.html#features">features</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
+                <p><i class="fas fa-phone"></i> +20100100100</p>
+            </div>
         </div>
         <div class="footer-bottom">
             <p>&copy; 2025 Online Library. All rights reserved.</p>
         </div>
     </footer>
 </body>
+
 </html>

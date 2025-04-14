@@ -9,6 +9,10 @@
     font-family: var(--font-primary);
 }
 
+body {
+    background-color: var(--bg-color);
+}
+
 .all {
     background-color: var(--bg-color);
     padding: 7vh 1vw;
@@ -49,7 +53,7 @@
     margin: 0px 10px 30px;
 }
 
-.back-btn a {
+.back-btn button {
     background-color: var(--bg-color);
     display: inline-block;
     color: var(--primary-color);
@@ -64,9 +68,10 @@
     transition: all 0.3s ease;
 }
 
-.back-btn a:hover {
+.back-btn button:hover {
     background-color: var(--primary-color);
     color: var(--text-color);
+    cursor: pointer;
 }
 
 .img-holder {
