@@ -1,118 +1,126 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E
+
+<head>
+    <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E
         %3Ctext y='0.9em' font-size='90'%3E📖%3C/text%3E
         %3C/svg%3E">
-        <title>Online Library</title>
+    <title>Online Library</title>
 
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
 
-        <link rel="stylesheet" href="./../CSS/book_details.css">
-        <link rel="stylesheet" href="./../CSS/footer.css">
-        <link rel="stylesheet" href="./../CSS/header.css">
+    <link rel="stylesheet" href="./../CSS/book_details.css">
+    <link rel="stylesheet" href="./../CSS/footer.css">
+    <link rel="stylesheet" href="./../CSS/header.css">
+    <script src="./../Script/header.js"></script>
+    <script src="./../Script/footer.js"></script>
 
-        
-          
-    </head>
+</head>
 
-    <body class="bodyStyle">
-        <header>
-            <div class="header-container">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span>Online Library</span>
-                </div>
-                <nav>
-                    <ul class="nav-bar">
-                        <li><a href="./../pages/user_dashboard.html" class="active"><i class="fas fa-home"></i> Home</a></li>
-                        <li><a href="./../pages/books.html"><i class="fas fa-book"></i> Books</a></li>
-                        <!-- <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li> -->
-                        <!-- <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li> -->
-                        <!-- <li><a href="pages/sign-in.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li> -->
-                        <!-- <li><a href="pages/sign-up.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li> -->
-                    </ul>
-                </nav>
+<body class="bodyStyle">
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span>Online Library</span>
             </div>
-        </header>
+            <nav>
+                <ul class="nav-bar">
+                    <li><a href="./../pages/user_dashboard.html" class="active"><i class="fas fa-home"></i> Home</a>
+                    </li>
+                    <li><a href="./../pages/books.html"><i class="fas fa-book"></i> Books</a></li>
+                    <!-- <li><a href="#about"><i class="fas fa-info-circle"></i> About</a></li> -->
+                    <!-- <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li> -->
+                    <!-- <li><a href="pages/sign-in.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li> -->
+                    <!-- <li><a href="pages/sign-up.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li> -->
+                </ul>
+            </nav>
+        </div>
+    </header>
 
-        <div class="container">
-            <div class="book-cover">
-                <img id="imagePath" alt="Ice & Fire book cover">
+    <div class="container">
+        <div class="book-cover">
+            <img id="imagePath" alt="Ice & Fire book cover">
+        </div>
+        <div class="details">
+            <h1 id="book-title"></h1>
+            <h2 id="book-author"></h2>
+            <p id="about"><b style="color: var(--primary-color);">'Game of Thrones'</b>.</p>
+
+            <div class="rating">
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star"></i>
+                <i class="fas fa-star-half-alt"></i>
+                <span>(4.5/5)</span>
             </div>
-            <div class="details">
-                <h1 id = "book-title"></h1>
-                <h2 id = "book-author" ></h2>
-                <p id = "about"><b style="color: var(--primary-color);">'Game of Thrones'</b>.</p>
 
-                <div class="rating">
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star"></i>
-                    <i class="fas fa-star-half-alt"></i>
-                    <span>(4.5/5)</span>
+            <div class="book-meta">
+                <div class="meta-item">
+                    <i class="fas fa-check-circle"></i>
+                    <strong>Status:</strong>
+                    <p id="status"> </p>
                 </div>
+                <div class="meta-item">
+                    <i class="fas fa-tags"></i>
+                    <strong>Genre:</strong>
+                    <p id="Genre"> </p>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-calendar-alt"></i>
+                    <strong>Published:</strong>
+                    <p id="book-year"> </p>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-file-alt"></i>
+                    <strong>Pages:</strong>
+                    <p id="Pages"> </p>
+                </div>
+                <div class="meta-item">
+                    <i class="fas fa-language"></i>
+                    <strong>Language:</strong>
+                    <p id="Language"> </p>
+                </div>
+            </div>
 
-                <div class="book-meta">
-                    <div class="meta-item">
-                        <i class="fas fa-check-circle"></i>
-                        <strong>Status:</strong><p id="status"> </p>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fas fa-tags"></i>
-                        <strong>Genre:</strong> <p id="Genre" > </p>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fas fa-calendar-alt"></i>
-                        <strong>Published:</strong>  <p id = "book-year" > </p>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fas fa-file-alt"></i>
-                        <strong>Pages:</strong> <p id ="Pages"> </p>
-                    </div>
-                    <div class="meta-item">
-                        <i class="fas fa-language"></i>
-                        <strong>Language:</strong> <p id ="Language"> </p>
-                    </div>
-                </div>
-
-                <div class="button-container">
-                    <a href="./../pages/books.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Books</a>
-                    <button class="btn"><i class="fas fa-book-reader"></i> <strong>Borrow Now</strong></button>
-                </div>
+            <div class="button-container">
+                <a href="./../pages/books.html" class="back-btn"><i class="fas fa-arrow-left"></i> Back to Books</a>
+                <button class="btn"><i class="fas fa-book-reader"></i> <strong>Borrow Now</strong></button>
             </div>
         </div>
+    </div>
 
-        <footer id="foot">
-            <p>&copy; 2025 Online Library. All Rights Reserved.</p>
-        </footer>
+    <footer id="foot">
+        <p>&copy; 2025 Online Library. All Rights Reserved.</p>
+    </footer>
 
-        <script>
-            const urlParams = new URLSearchParams(window.location.search);
-            const title = urlParams.get('title');
-            const author = urlParams.get('author');
-            const year = urlParams.get('year');
-            const about = urlParams.get('about');
-            const status = urlParams.get('status');
-            const Genre = urlParams.get('Genre');
-            const Pages = urlParams.get('Pages');
-            const Language = urlParams.get('Language');
-            const imagePath = urlParams.get('imagePath');
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const title = urlParams.get('title');
+        const author = urlParams.get('author');
+        const year = urlParams.get('year');
+        const about = urlParams.get('about');
+        const status = urlParams.get('status');
+        const Genre = urlParams.get('Genre');
+        const Pages = urlParams.get('Pages');
+        const Language = urlParams.get('Language');
+        const imagePath = urlParams.get('imagePath');
 
-            document.getElementById("book-title").textContent = title;
-            document.getElementById("book-author").textContent =  author;
-            document.getElementById("book-year").textContent = year;
-            document.getElementById("about").textContent = about;
-            document.getElementById("status").textContent = status;
-            document.getElementById("Genre").textContent = Genre;
-            document.getElementById("Pages").textContent = Pages;
-            document.getElementById("Language").textContent = Language;
-            document.getElementById("imagePath").src = imagePath;
+        document.getElementById("book-title").textContent = title;
+        document.getElementById("book-author").textContent = author;
+        document.getElementById("book-year").textContent = year;
+        document.getElementById("about").textContent = about;
+        document.getElementById("status").textContent = status;
+        document.getElementById("Genre").textContent = Genre;
+        document.getElementById("Pages").textContent = Pages;
+        document.getElementById("Language").textContent = Language;
+        document.getElementById("imagePath").src = imagePath;
 
-            
-          </script>
-    </body>
+
+    </script>
+</body>
+
 </html>
