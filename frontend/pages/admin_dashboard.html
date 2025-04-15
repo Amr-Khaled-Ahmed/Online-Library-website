@@ -1,181 +1,204 @@
 <!DOCTYPE html>
 <html lang="en">
 
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
-    <link rel="icon"
-        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="stylesheet" href="./../CSS/admin_dashboard.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <script src="./../Script/admin_dashboard.js"></script>
-    <script src="./../Script/header.js"></script>
-    <script src="./../Script/footer.js"></script>
-    <title>Admin Dashboard</title>
-</head>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
+        <link rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="stylesheet" href="./../CSS/admin_dashboard.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <script src="./../Script/admin_dashboard.js"></script>
+        <script src="./../Script/header.js"></script>
+        <script src="./../Script/footer.js"></script>
+        <title>Admin Dashboard</title>
+    </head>
 
-<body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-book-open"></i>
-                <span style="color: var(--text-color);">Online Library</span>
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span style="color: var(--text-color);">Online Library</span>
+                </div>
+                <nav>
+                    <ul class="nav-bar">
+                        <li><a href="./../../index.html#"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="./../../index.html#features"><i class="fas fa-info-circle"></i> About</a></li>
+                        <li><a href="./admin_dashboard.html" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                        <li><a href="./../../index.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                        <li><a href="./../../index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                    </ul>
+                </nav>
+                <!-- Mobile menu toggle -->
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <nav>
-                <ul class="nav-bar">
-                    <li><a href="./../../index.html#"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="./../../index.html#features"><i class="fas fa-info-circle"></i> About</a></li>
-                    <li><a href="./admin_dashboard.html" class="active"><i class="fa-solid fa-table-columns"></i>
-                            Dashboard</a></li>
-                    <li><a href="./../../index.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
-                    <li><a href="./../../index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                </ul>
-            </nav>
+        </header>
+
+        <!-- Mobile menu structure -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav">
+                <li><a href="./../../index.html#"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="./../../index.html#features"><i class="fas fa-info-circle"></i> About</a></li>
+                <li><a href="./admin_dashboard.html"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
+                <li><a href="./../../index.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                <li><a href="./../../index.html#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
         </div>
-    </header>
 
-    <button id="add-book"><i class="fa-solid fa-plus"></i></button>
+        <button id="add-book"><i class="fa-solid fa-plus"></i></button>
 
-    <div class="overlayer hide">
-        <div class="confirmation">
-            <h4>Are you sure to delete this book?</h4>
-            <div class="book-details">
-                <div class="img-holder">
-                    <img src="./../CSS/assets/enceladus.jpg" alt="Book Cover" class="book-cover">
+        <div class="overlayer hide">
+            <div class="confirmation">
+                <h4>Are you sure to delete this book?</h4>
+                <div class="book-details">
+                    <div class="img-holder">
+                        <img src="./../CSS/assets/enceladus.jpg"
+                            alt="Book Cover" class="book-cover">
+                    </div>
+                    <div class="info">
+                        <label for="confirmation" class="book-title"></label>
+                        <label for="confirmation" class="author"></label>
+                    </div>
                 </div>
-                <div class="info">
-                    <label for="confirmation" class="book-title"></label>
-                    <label for="confirmation" class="author"></label>
-                </div>
-            </div>
-            <div class="confirm-btns">
-                <button id="confirm-delete">Delete</button>
-                <button id="cancel-delete">Cancel</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="saved hide">
-        <p>The book has been saved</p>
-        <img src="./../CSS/assets/add.gif" alt="saved icon">
-    </div>
-
-    <div class="deleted hide">
-        <p>The book has been deleted</p>
-        <img src="./../CSS/assets/delete.gif" alt="Deleted icon">
-    </div>
-
-
-    <main class="dashboard-container">
-        <div class="definition">
-            <h1><i class="fa-solid fa-table-columns"></i> Admin Dashboard</h1>
-            <p>You can add, edit, delete books to the library.</p>
-        </div>
-        <section class="search-container">
-            <form class="search-form">
-                <div class="search-box">
-                    <input type="search" class="search-input" placeholder="Search by title, author, or ISBN...">
-                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
-                </div>
-
-                <div class="filter-group">
-                    <select class="filter-select">
-                        <option value="">All Genres</option>
-                        <option value="fiction">Fiction</option>
-                        <option value="non-fiction">Non-Fiction</option>
-                        <option value="mystery">Mystery</option>
-                        <option value="fantasy">Fantasy</option>
-                        <option value="sci-fi">Science Fiction</option>
-                        <option value="romance">Romance</option>
-                        <option value="biography">Biography</option>
-                        <option value="history">History</option>
-                        <option value="self-help">Self-Help</option>
-                        <option value="all">All</option>
-                    </select>
-
-                    <select class="filter-select">
-                        <option value="">All Formats</option>
-                        <option value="hardcover">Hardcover</option>
-                        <option value="paperback">Paperback</option>
-                        <option value="ebook">E-Book</option>
-                        <option value="audiobook">Audiobook</option>
-                        <option value="all">All</option>
-                    </select>
-
-                    <select class="filter-select">
-                        <option value="">Sort By</option>
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="title-asc">Title (A-Z)</option>
-                        <option value="title-desc">Title (Z-A)</option>
-                        <option value="author-asc">Author (A-Z)</option>
-                        <option value="author-desc">Author (Z-A)</option>
-                        <option value="popular">Most Popular</option>
-                    </select>
-
-                    <select class="filter-select">
-                        <option value="">Availability</option>
-                        <option value="available">Available</option>
-                        <option value="unavailable">Unavailable</option>
-                        <option value="low-stock">Low Stock</option>
-                        <option value="all">All</option>
-                    </select>
-                </div>
-            </form>
-        </section>
-
-        <h1 id="title">Books</h1>
-
-        <div class="books-container" id="books-container">
-        </div>
-
-        <div class="books-pages">
-            <input type="radio" id="btn1" name="toggle" class="hidden" checked>
-            <label for="btn1" class="btn">1</label>
-
-            <input type="radio" id="btn2" name="toggle" class="hidden">
-            <label for="btn2" class="btn">2</label>
-
-            <input type="radio" id="btn3" name="toggle" class="hidden">
-            <label for="btn3" class="btn"><i class="fa fa-angle-right" aria-hidden="true"></i></label>
-        </div>
-    </main>
-
-    <footer>
-        <div class="footer-content" id="contact">
-            <div class="footer-section">
-                <h3>Online Library</h3>
-                <p>Your gateway to knowledge and imagination.</p>
-                <div class="social-icons">
-                    <a href="#"><i class="fab fa-facebook"></i></a>
-                    <a href="#"><i class="fab fa-twitter"></i></a>
-                    <a href="#"><i class="fab fa-instagram"></i></a>
+                <div class="confirm-btns">
+                    <button id="confirm-delete">Delete</button>
+                    <button id="cancel-delete">Cancel</button>
                 </div>
             </div>
-            <div class="footer-section">
-                <h3>Quick Links</h3>
-                <ul>
-                    <li><a href="./../../index.html">Home</a></li>
-                    <li><a href="./books.html">Books</a></li>
-                    <li><a href="./../../index.html#features">features</a></li>
-                </ul>
-            </div>
-            <div class="footer-section">
-                <h3>Contact Us</h3>
-                <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
-                <p><i class="fas fa-phone"></i> +20100100100</p>
-            </div>
         </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Online Library. All rights reserved.</p>
+
+        <div class="saved hide">
+            <p>The book has been saved</p>
+            <img src="./../CSS/assets/add.gif" alt="saved icon">
         </div>
-    </footer>
+
+        <div class="deleted hide">
+            <p>The book has been deleted</p>
+            <img src="./../CSS/assets/delete.gif" alt="Deleted icon">
+        </div>
+
+        <main class="dashboard-container">
+            <div class="definition">
+                <h1><i class="fa-solid fa-table-columns"></i> Admin
+                    Dashboard</h1>
+                <p>You can add, edit, delete books to the library.</p>
+            </div>
+            <section class="search-container">
+                <form class="search-form">
+                    <div class="search-box">
+                        <input type="search" class="search-input"
+                            placeholder="Search by title, author, or ISBN...">
+                        <button type="submit" class="search-btn"><i
+                                class="fas fa-search"></i></button>
+                    </div>
+
+                    <div class="filter-group">
+                        <select class="filter-select">
+                            <option value>All Genres</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="sci-fi">Science Fiction</option>
+                            <option value="romance">Romance</option>
+                            <option value="biography">Biography</option>
+                            <option value="history">History</option>
+                            <option value="self-help">Self-Help</option>
+                            <option value="all">All</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>All Formats</option>
+                            <option value="hardcover">Hardcover</option>
+                            <option value="paperback">Paperback</option>
+                            <option value="ebook">E-Book</option>
+                            <option value="audiobook">Audiobook</option>
+                            <option value="all">All</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>Sort By</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="author-asc">Author (A-Z)</option>
+                            <option value="author-desc">Author (Z-A)</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>Availability</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                            <option value="low-stock">Low Stock</option>
+                            <option value="all">All</option>
+                        </select>
+                    </div>
+                </form>
+            </section>
+
+            <h1 id="title">Books</h1>
+
+            <div class="books-container" id="books-container">
+            </div>
+
+            <div class="books-pages">
+                <input type="radio" id="btn1" name="toggle" class="hidden"
+                    checked>
+                <label for="btn1" class="btn">1</label>
+
+                <input type="radio" id="btn2" name="toggle" class="hidden">
+                <label for="btn2" class="btn">2</label>
+
+                <input type="radio" id="btn3" name="toggle" class="hidden">
+                <label for="btn3" class="btn"><i class="fa fa-angle-right"
+                        aria-hidden="true"></i></label>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content" id="contact">
+                <div class="footer-section">
+                    <h3>Online Library</h3>
+                    <p>Your gateway to knowledge and imagination.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="./../../index.html">Home</a></li>
+                        <li><a href="./books.html">Books</a></li>
+                        <li><a
+                                href="./../../index.html#features">features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i>
+                        support@libraryonline.com</p>
+                    <p><i class="fas fa-phone"></i> +20100100100</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Online Library. All rights reserved.</p>
+            </div>
+        </footer>
         <button class="scroll-top">
             <i class="fas fa-arrow-up"></i>
         </button>
-</body>
+    </body>
 
 </html>
