@@ -39,6 +39,36 @@
 
     <button id="add-book"><i class="fa-solid fa-plus"></i></button>
 
+    <div class="overlayer hide">
+        <div class="confirmation">
+            <h4>Are you sure to delete this book?</h4>
+            <div class="book-details">
+                <div class="img-holder">
+                    <img src="./../CSS/assets/enceladus.jpg" alt="Book Cover" class="book-cover">
+                </div>
+                <div class="info">
+                    <label for="confirmation" class="book-title">Child of The Kindred</label>
+                    <label for="confirmation" class="author">By M. T. Magee</label>
+                </div>
+            </div>
+            <div class="confirm-btns">
+                <button id="confirm-delete">Delete</button>
+                <button id="cancel-delete">Cancel</button>
+            </div>
+        </div>
+    </div>
+
+    <div class="saved hide">
+        <p>The book has been saved</p>
+        <img src="./../CSS/assets/add.gif" alt="saved icon">
+    </div>
+
+    <div class="deleted hide">
+        <p>The book has been deleted</p>
+        <img src="./../CSS/assets/delete.gif" alt="Deleted icon">
+    </div>
+
+
     <main class="dashboard-container">
         <div class="definition">
             <h1><i class="fa-solid fa-table-columns"></i> Admin Dashboard</h1>
@@ -90,7 +120,7 @@
                         <option value="">Availability</option>
                         <option value="available">Available</option>
                         <option value="unavailable">Unavailable</option>
-                        <option value="Low Stock">Low Stock</option>
+                        <option value="low-stock">Low Stock</option>
                         <option value="all">All</option>
                     </select>
                 </div>
@@ -129,7 +159,7 @@
                 <h3>Quick Links</h3>
                 <ul>
                     <li><a href="./../../index.html">Home</a></li>
-                    <li><a href="./pages/books.html">Books</a></li>
+                    <li><a href="./books.html">Books</a></li>
                     <li><a href="./../../index.html#features">features</a></li>
                 </ul>
             </div>

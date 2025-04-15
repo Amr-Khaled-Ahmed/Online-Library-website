@@ -13,6 +13,172 @@ body {
     background-color: var(--bg-color);
 }
 
+.overlayer {
+    background-color: rgb(0, 0, 0,0.25);
+    position: fixed;
+    height: 100%;
+    width: 100%;
+    z-index: 200;
+    display: flex;
+    justify-content: center;
+    transition: all 0.3s ease;
+}
+
+.confirmation {
+    background-color: var(--form-bg-color);
+    color: var(--text-color);
+    position: fixed;
+    text-align: center;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+    padding: 20px;
+    bottom: 18%;
+    border-radius: 20px;
+}
+
+/* @keyframes cancel {
+    50% {
+        rotate: 360deg;
+    }
+    100% {
+        translate: 1000px -550px;
+        rotate: 45deg;
+    }
+}
+
+@keyframes delete {
+    50% {
+        rotate: -360deg;
+    }
+    100% {
+        translate: -1000px -550px;
+        rotate: -45deg;
+    }
+} */
+
+@keyframes cancel {
+    25% {
+        rotate: 45deg;
+    }
+    40% {
+        translate: -300% 100%;
+        rotate: 45deg;
+    }
+    100% {
+        translate: 300% -110%;
+        rotate: 45deg;
+    }
+}
+
+@keyframes delete {
+    25% {
+        rotate: -45deg;
+    }
+    40% {
+        translate: 300% 100%;
+        rotate: -45deg;
+    }
+    100% {
+        translate: -300% -110%;
+        rotate: -45deg;
+    }
+}
+
+.confirmation h4 {
+    margin-bottom: 10px;
+}
+
+.info {
+    display: flex;
+    flex-direction: column;
+    text-align: center;
+    margin: 15px 0px;
+}
+
+.confirm-btns {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+#confirm-delete {
+    background-color: #C2352A;
+    color: var(--text-color);
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 6px;
+}
+
+#confirm-delete:hover {
+    background-color: var(--bg-color);
+    color: #C2352A;
+    border: 2px solid #C2352A;
+    outline: none;
+}
+
+#cancel-delete {
+    background-color: #007BFF;
+    color: var(--text-color);
+    height: 30px;
+    width: 60px;
+    border: none;
+    border-radius: 6px;
+}
+
+#cancel-delete:hover {
+    background-color: var(--bg-color);
+    color: #007BFF;
+    border: 2px solid #007BFF;
+    outline: none;
+}
+
+.deleted,
+.saved {
+    color: var(--text-color);
+    opacity: 0.9;
+    z-index: 200;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 20%;
+    height: 60px;
+    left: 40%;
+    top: 15%;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+}
+
+.deleted {
+    background-color: #C2352A;
+}
+
+.saved {
+    background-color: var(--primary-color);
+}
+
+.deleted img,
+.saved img {
+    width: 30%;
+    height: 150%;
+}
+
+.deleted p,
+.saved p {
+    font-weight: bold;
+    font-size: 14px;
+    margin: 5px;
+}
+
+@keyframes notification {
+    25% {
+        translate: 0px 100px;
+    }
+    100% {
+        translate: 0px -300px;
+    }
+}
+
 .hide {
     display: none;
 }

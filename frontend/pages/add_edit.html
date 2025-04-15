@@ -1,21 +1,22 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
     <link rel="icon"
-    href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="./../CSS/add_edit.css">
-    <link rel="stylesheet"
-    href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <script src="./../Script/header.js"></script>
     <script src="./../Script/add_edit.js"></script>
-    
     <script src="./../Script/footer.js"></script>
     <title>Add/Edit Book</title>
 </head>
+
 <body>
     <header>
         <div class="header-container">
@@ -51,17 +52,19 @@
                                 <i class="fa-solid fa-book"></i>
                                 <label for="title">Book Title</label>
                             </div>
-                            <input type="text" id="title" name="book-title" placeholder="Enter Book Title" autocomplete="off" required>
+                            <input type="text" id="title" name="book-title" placeholder="Enter Book Title"
+                                autocomplete="off" required>
                         </div>
                         <div class="field">
                             <div class="input-header">
                                 <i class="fa-solid fa-pen"></i>
                                 <label for="author">Author</label>
                             </div>
-                            <input type="text" id="author" name="author" placeholder="Enter Author" autocomplete="off" required>
+                            <input type="text" id="author" name="author" placeholder="Enter Author" autocomplete="off"
+                                required>
                         </div>
                         <div class="select-field">
-                            <select class="filter-select" name="book-genre" required>
+                            <select class="filter-select" id="genre" name="book-genre" required>
                                 <option value="">All Genres</option>
                                 <option value="fiction">Fiction</option>
                                 <option value="non-fiction">Non-Fiction</option>
@@ -73,18 +76,18 @@
                                 <option value="history">History</option>
                                 <option value="self-help">Self-Help</option>
                             </select>
-                            <select class="filter-select" name="book-format" required>
+                            <select class="filter-select" id="format" name="book-format" required>
                                 <option value="">All Formats</option>
                                 <option value="hardcover">Hardcover</option>
                                 <option value="paperback">Paperback</option>
                                 <option value="ebook">E-Book</option>
                                 <option value="audiobook">Audiobook</option>
                             </select>
-                            <select class="filter-select" name="book-availability" required>
+                            <select class="filter-select" id="availability" name="book-availability" required>
                                 <option value="">Availability</option>
                                 <option value="available">Available</option>
                                 <option value="unavailable">Unavailable</option>
-                                <option value="Low Stock">Low Stock</option>
+                                <option value="low-stock">Low Stock</option>
                             </select>
                         </div>
                         <div class="field">
@@ -92,41 +95,27 @@
                                 <i class="fa-regular fa-calendar"></i>
                                 <label for="pub-time">Year of Publication</label>
                             </div>
-                            <input
-                            type="number"
-                            id="pub-time"
-                            placeholder="2025"
-                            name="year-of-publication"
-                            min="1900"
-                            max="2025"
-                            required>
+                            <input type="number" id="pub-time" placeholder="2025" name="year-of-publication" min="1900"
+                                max="2025" required>
                         </div>
                         <div class="field">
                             <div class="input-header">
                                 <i class="fa-solid fa-money-bill-wave"></i>
                                 <label for="late-fee">Late Fee</label>
                             </div>
-                            <input
-                            type="text"
-                            id="late-fee"
-                            autocomplete="off"
-                            oninput="this.value = this.value.replace(/[^0-9.]/g, '');"
-                            placeholder="Enter Late Fee"
-                            name="late-fee"
-                            required>
+                            <input type="text" id="late-fee" autocomplete="off"
+                                oninput="this.value = this.value.replace(/[^0-9.]/g, '');" placeholder="Enter Late Fee"
+                                name="late-fee" required>
                         </div>
                         <div class="field">
                             <div class="input-header">
                                 <i class="fa-regular fa-calendar-days"></i>
-                                <label for="mx-brw-dur">Max Borrow Duration <pre> <span style="font-size: small;"> by month</span></pre></label>
+                                <label for="mx-brw-dur">Max Borrow Duration
+                                    <pre> <span style="font-size: small;"> by month</span></pre>
+                                </label>
                             </div>
-                            <input
-                            type="text"
-                            id="mx-brw-dur"
-                            placeholder="Enter Max Borrow Duration"
-                            name="mx-brw-dur"
-                            autocomplete="off"
-                            oninput="this.value = this.value.replace(/[^0-9]/g, '');">
+                            <input type="text" id="mx-brw-dur" placeholder="Enter Max Borrow Duration" name="mx-brw-dur"
+                                autocomplete="off" oninput="this.value = this.value.replace(/[^0-9]/g, '');">
                         </div>
                         <div class="field">
                             <div class="input-header">
@@ -147,22 +136,22 @@
     <footer>
         <div class="footer-content" id="contact">
             <div class="footer-section">
-            <h3>Online Library</h3>
-            <p>Your gateway to knowledge and imagination.</p>
+                <h3>Online Library</h3>
+                <p>Your gateway to knowledge and imagination.</p>
                 <div class="social-icons">
                     <a href="#"><i class="fab fa-facebook"></i></a>
                     <a href="#"><i class="fab fa-twitter"></i></a>
                     <a href="#"><i class="fab fa-instagram"></i></a>
                 </div>
             </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="./../../index.html">Home</a></li>
-                <li><a href="./books.html">Books</a></li>
-                <li><a href="./../../index.html#features">features</a></li>
-            </ul>
-        </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="./../../index.html">Home</a></li>
+                    <li><a href="./books.html">Books</a></li>
+                    <li><a href="./../../index.html#features">features</a></li>
+                </ul>
+            </div>
             <div class="footer-section">
                 <h3>Contact Us</h3>
                 <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
@@ -174,4 +163,5 @@
         </div>
     </footer>
 </body>
+
 </html>

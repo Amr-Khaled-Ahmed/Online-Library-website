@@ -79,7 +79,7 @@ body {
     background-color: var(--bg-color);
     width: 35%;
     height: 100%;
-    margin: 0% 2.5%;
+    margin: 0% 2.5% 3%;
     justify-content: center;
     align-items: center;
     border-radius: 10px;

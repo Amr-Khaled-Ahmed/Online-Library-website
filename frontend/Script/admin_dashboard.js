@@ -1,34 +1,105 @@
+// All things
+document.addEventListener('DOMContentLoaded', function() {
+    for(let i = 0; i < 6; ++i)
+        addBook(i);
+
+    document.getElementById('add-book').addEventListener('click',() => {
+        window.location.href = "./add_edit.html";
+    })
+
+    window.addEventListener('load', () => {
+        if (sessionStorage.getItem('showMessage') === 'true') {
+            let savedNotification = document.querySelector('.saved');
+            savedNotification.classList.remove('hide');
+            savedNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
+            savedNotification.addEventListener('animationend', () => {
+                savedNotification.classList.add('hide');
+                savedNotification.style.animation = '';
+            },{once: true});
+            sessionStorage.removeItem('showMessage');
+        }
+    });
+});
+
 // Confirm to delete book
 function deleteBook(book) {
-    let response = confirm("Are you sure to delete this book?");
-    if(response) {
+    let overlayer = document.querySelector('.overlayer');
+    let confirmation = document.querySelector('.confirmation');
+    let deleteNotification = document.querySelector('.deleted');
+    overlayer.classList.remove('hide');
+
+    return new Promise((resolve) => {
+        document.getElementById('confirm-delete').addEventListener('click',() => {
+            confirmation.style.animation = 'delete 1.7s ease-in-out backwards';
+
+            confirmation.addEventListener('animationend',() => {
+                confirmation.style.animation = '';
+                overlayer.classList.add('hide');
+                resolve(true);
+                deleteNotification.classList.remove('hide');
+                deleteNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
+                deleteNotification.addEventListener('animationend',() => {
+                    deleteNotification.style.animation = '';
+                    deleteNotification.classList.add('hide');
+                },{once: true});
+            },{once: true});
+        });
+
+        document.getElementById('cancel-delete').addEventListener('click',() => {
+            confirmation.style.animation = 'cancel 1.7s ease-in-out backwards';
+
+            confirmation.addEventListener('animationend',() => {
+                confirmation.style.animation = '';
+                overlayer.classList.add('hide');
+                resolve(false);
+            },{once: true});
+        });
+    });
+}
+
+async function handleDelete(book) {
+    const willDelete = await deleteBook(book);
+    if(willDelete)
         console.log('Deleted');
-    }
 }
 
 // Add book
-// All // will be dynamic
-function addBook(book) {
+// Book Data will be dynamic in backend phase
+function addBook(id,book) {
     let bookContainer = document.createElement('div');
     bookContainer.classList.add('book');
+    bookContainer.id = id;
+
+    const bookData = {
+        title: 'Child of The Kindred',
+        author: 'By M. T. Magee',
+        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
+        genre: 'fantasy',
+        format: 'paperback',
+        yearPub: '2020',
+        availability: 'unavailable',
+        borrowNum: '10',
+        maxDuration: '1',
+        lateFees: '10'
+    };
 
     let imgHolder = document.createElement('div');
     imgHolder.classList.add('img-holder');
 
     let img = document.createElement('img');
     img.classList.add('book-cover');
-    img.src = "./../CSS/assets/ChildOfTheKindred_ebook1.jpg"; //
+    img.src = bookData.coverPath;
     img.alt = "Book Cover";
 
     imgHolder.appendChild(img);
 
     let title = document.createElement('p');
     title.classList.add('book-title');
-    title.textContent = 'Child of The Kindred'; //
+    title.textContent = bookData.title;
 
     let author = document.createElement('p');
     author.classList.add('author');
-    author.textContent = 'By M. T. Magee'; //
+    author.textContent = bookData.author;
 
     let bookInfo = document.createElement('div');
     bookInfo.classList.add('book-information');
@@ -36,17 +107,17 @@ function addBook(book) {
     let bookGenre = document.createElement('label');
     bookGenre.classList.add('book-genre');
     bookGenre.htmlFor = "book";
-    bookGenre.textContent = 'Fantasy'; //
+    bookGenre.textContent = bookData.genre;
 
     let bookFormat = document.createElement('label');
     bookFormat.classList.add('book-format');
     bookFormat.htmlFor = "book";
-    bookFormat.textContent = 'Paperback'; //
+    bookFormat.textContent = bookData.format;
 
     let bookYearPub = document.createElement('label');
     bookYearPub.classList.add('book-year-pub');
     bookYearPub.htmlFor = "book";
-    bookYearPub.textContent = '2020'; //
+    bookYearPub.textContent = bookData.yearPub;
 
     bookInfo.appendChild(bookGenre);
     bookInfo.appendChild(bookFormat);
@@ -57,24 +128,22 @@ function addBook(book) {
 
     let availability = document.createElement('label');
     availability.htmlFor = "book";
-    availability.textContent = 'Unavailable'; //
-    let y = 'Unavailable';
-    if(y === 'Available')
+    availability.textContent = bookData.availability;
+    if(bookData.availability === 'Available')
         availability.classList.add('available');
     else
         availability.classList.add('unavailable');
 
     let borrowNum = document.createElement('label');
     borrowNum.htmlFor = "book";
-    borrowNum.textContent = '10' + ' Borrows'; //
-    let x = 10;
-    if(x <= 5)
+    borrowNum.textContent = bookData.borrowNum + ' Borrows';
+    if(bookData.borrowNum <= 5)
         borrowNum.classList.add('lvl1-borrow');
-    else if(x <= 15)
+    else if(bookData.borrowNum <= 15)
         borrowNum.classList.add('lvl2-borrow');
-    else if(x <= 30)
+    else if(bookData.borrowNum <= 30)
         borrowNum.classList.add('lvl3-borrow');
-    else if(x <= 50)
+    else if(bookData.borrowNum <= 50)
         borrowNum.classList.add('lvl4-borrow');
     else
         borrowNum.classList.add('lvl5-borrow');
@@ -82,13 +151,13 @@ function addBook(book) {
     let lateFees = document.createElement('label');
     lateFees.classList.add('late-fees');
     lateFees.htmlFor = "book";
-    lateFees.textContent = 'Late Fee: ' + '10' + '$'; //
+    lateFees.textContent = 'Late Fee: ' + bookData.lateFees + '$';
 
 
     let borrowDuration = document.createElement('label');
     borrowDuration.classList.add('borrow-duration');
     borrowDuration.htmlFor = "book";
-    borrowDuration.textContent = 'Max Borrow Duration: ' + '1' + 'month'; //
+    borrowDuration.textContent = 'Max Borrow Duration: ' + bookData.maxDuration + ' month';
 
     bookStatus.appendChild(availability);
     bookStatus.appendChild(borrowNum);
@@ -102,23 +171,38 @@ function addBook(book) {
     editBtn.classList.add('edit','add-edit');
     editBtn.textContent = 'Edit';
     editBtn.addEventListener('click', function() {
-        window.location.href = "./add_edit.html";
+        const dataParams = new URLSearchParams();
+        for(const [key,value] of Object.entries(bookData)) {
+            dataParams.append(key,value);
+        }
+        window.sessionStorage.setItem('edit','true');
+        window.location.href = `./add_edit.html?${dataParams.toString()}`;
     });
 
     let deleteBtn = document.createElement('button');
     deleteBtn.classList.add('delete');
     deleteBtn.textContent = 'Delete';
-    deleteBtn.addEventListener('click',() => deleteBook(book));
+    deleteBtn.addEventListener('click',() => {
+        let img = document.querySelector('.confirmation img');
+        let title = document.querySelector('.confirmation .book-title');
+        let author = document.querySelector('.confirmation .author');
+        img.src = bookData.coverPath;
+        title.textContent = bookData.title;
+        author.textContent = bookData.author;
+    },{once: true});
+    deleteBtn.addEventListener('click',() => handleDelete(book));
+
 
     let brListBtn = document.createElement('button');
     brListBtn.classList.add('borrowers-list');
     brListBtn.innerHTML = '<pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre>';
-    brListBtn.addEventListener('click',() => toBorrowersList(book));
+    brListBtn.addEventListener('click',() => {
+
+    });
 
     btns.appendChild(editBtn);
     btns.appendChild(deleteBtn);
     btns.appendChild(brListBtn);
-
 
     bookContainer.appendChild(imgHolder);
     bookContainer.appendChild(title);
@@ -130,20 +214,3 @@ function addBook(book) {
     let booksContainer = document.getElementById('books-container');
     booksContainer.appendChild(bookContainer);
 }
-
-
-// Get Borrowers list for a book
-function toBorrowersList(book) {
-
-}
-
-
-// All things
-document.addEventListener('DOMContentLoaded', function() {
-    for(let i = 0; i < 6; ++i)
-        addBook();
-
-    document.getElementById('add-book').addEventListener('click',() => {
-        window.location.href = "./add_edit.html";
-    })
-});
