@@ -552,6 +552,13 @@ a {
     .filter-select {
         width: 90%;
     }
+
+    #add-book{
+        bottom: 20px;
+        right: 20px;
+        width: 45px;
+        height: 45px;
+    }
 }
 
 @media (max-width: 300px) {
