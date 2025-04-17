@@ -1,188 +1,220 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard</title>
-    <link rel="stylesheet" href="../CSS/user_dashboard.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
-</head>
-<body>
-    <header>
-        <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-book-open" style="color: 1DB954;"></i>
-                <span>Online Library</span>
-            </div>
-            <nav>
-                <ul class="nav-bar">
-                    <li><a href="/index.html"><i class="fas fa-home"></i> Home</a></li>
-                    <li><a href="/pages/books.html"><i class="fas fa-book"></i> Books</a></li>
-                    <li><a href="/index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
-                </ul>
-            </nav>
-        </div>
-    </header>
-
-    <main class="dashboard">
-        <div class="user-info">
-            <h2>Welcome, <span class="username">User</span></h2>
-            <p>Membership: <span class="membership-status">Active</span></p>
-        </div>
-
-        <div class="dashboard-content">
-            <div class="notifications">
-                <h2>🔔 Notifications</h2>
-                <ul class="notification-list">
-                    <li>Reminder: Return "Book 1" by April 5th.</li>
-                    <li>New book added: "Book 4".</li>
-                    <li>Your Friend:"Mohamed Ahmed" reacts like for your book that you are published .</li>
-                </ul>
-            </div>
-            <div id="smallPage" class="small_page">
-                <div class="smallPage-content">
-                    <button id="closePage" class="close-button">X</button>
-                    <p id="page_content"></p>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../CSS/user_dashboard.css">
+        <script
+            src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
+        <link rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        <title>Online Library</title>
+    </head>
+    <body>
+        <!-- Header -->
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-book-open" style="color: #1DB954;"></i>
+                    <span style="color: var(--text-color);">Online
+                        Library</span>
                 </div>
+                <nav>
+                    <ul class="nav-bar">
+                        <li><a href="#hero"><i class="fas fa-home"></i>
+                                Home</a></li>
+                        <li><a href="./../pages/books.html"><i
+                                    class="fas fa-book"></i> Books</a></li>
+                        <li><a href="./../../index.html#features"><i
+                                    class="fas fa-sign-out-alt"></i> Log
+                                Out</a></li>
+                    </ul>
+                </nav>
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
             </div>
-            <section class="community-friends">
-                <h2>👥 Community & Friends</h2>
-                <ul class="friends-list">
-                    <li>
-                        <img src="../CSS/assets/friend1.jpeg" alt="User 1">
-                        <span>Emma Doe - Reading "The Great Gatsby"</span>
-                    </li>
-                    <li>
-                        <img src="../CSS/assets/friend2.jpeg" alt="User 2">
-                        <span>Jane Smith - Reading "1984"</span>
-                    </li>
-                    <li>
-                        <img src="../CSS/assets/friend4.jpeg" alt="User 3">
-                        <span>Mike Johnson - Finished "To Kill a Mockingbird"</span>
-                    </li>
-                </ul>
-                <button type="submit">Add friends</button>
-            </section>
+        </header>
 
-            <div class="favorites">
-                <div class="section-header">
-                    <h2>❤️ Favorites</h2>
-                    <a href="borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="book-grid">
-                    <div class="book-card">
-                        <img src="../CSS/assets/book1.jpeg" alt="Book 1">
-                        <div class="book-info">
-                            <h3>Book Title</h3>
-                            <p>Author: John Doe</p>
-                            <p>Genre: Fiction</p>
-                        </div>
-                    </div>
-
-                    <div class="book-card">
-                        <img src="../CSS/assets/book2.jpeg" alt="Book 2">
-                        <div class="book-info">
-                            <h3>Another Book</h3>
-                            <p>Author: Jane Doe</p>
-                            <p>Genre: Mystery</p>
-                        </div>
-                    </div>
-                    <div class="book-card">
-                        <img src="../CSS/assets/book3.jpeg" alt="Book 1">
-                        <div class="book-info">
-                            <h3>Book Title</h3>
-                            <p>Author: John Doe</p>
-                            <p>Genre: Fiction</p>
-                        </div>
-                    </div>
-
-                    <div class="book-card">
-                        <img src="../CSS/assets/book4.jpeg" alt="Book 2">
-                        <div class="book-info">
-                            <h3>Another Book</h3>
-                            <p>Author: Jane Doe</p>
-                            <p>Genre: Mystery</p>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-
-            <div class="borrowed-books">
-                <div class="section-header">
-                    <h2>📚 Borrowed Books</h2>
-                <a href="borrowed.html" class="view-all">View All <i class="fas fa-arrow-right"></i></a>
-                </div>
-                <div class="book-grid">
-                    <div class="book-card">
-                        <img src="../CSS/assets/book5.jpeg" alt="Book 1">
-                        <div class="book-info">
-                            <h3>Book Title</h3>
-                            <p>Author: John Doe</p>
-                            <p>Genre: Fiction</p>
-                        </div>
-                    </div>
-
-                    <div class="book-card">
-                        <img src="../CSS/assets/book3.jpeg" alt="Book 2">
-                        <div class="book-info">
-                            <h3>Another Book</h3>
-                            <p>Author: Jane Doe</p>
-                            <p>Genre: Mystery</p>
-                        </div>
-                    </div>
-                    <div class="book-card">
-                        <img src="../CSS/assets/book1.jpeg" alt="Book 1">
-                        <div class="book-info">
-                            <h3>Book Title</h3>
-                            <p>Author: John Doe</p>
-                            <p>Genre: Fiction</p>
-                        </div>
-                    </div>
-
-                    <div class="book-card">
-                        <img src="../CSS/assets/book2.jpeg" alt="Book 2">
-                        <div class="book-info">
-                            <h3>Another Book</h3>
-                            <p>Author: Jane Doe</p>
-                            <p>Genre: Mystery</p>
-                        </div>
-                    </div>
-                </div>
-
-            </div>
-        </div>
-    </main>
-
-    <footer>
-        <div class="footer-content" id="contact">
-            <div class="footer-section">
-            <h3>Online Library</h3>
-            <p>Your gateway to knowledge and imagination.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="./../../index.html#">Home</a></li>
-                <li><a href="../pages/books.html">Books</a></li>
-                <li><a href="./../../index.html#features">features</a></li>
+        <!-- Mobile Menu Side Panel -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav">
+                <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="./../pages/books.html"><i class="fas fa-book"></i>
+                        Books</a></li>
+                <li><a href="./../../index.html#features"><i
+                            class="fas fa-sign-out-alt"></i> Log Out</a></li>
             </ul>
         </div>
-        <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
-            <p><i class="fas fa-phone"></i> +20100100100</p>
-        </div>
-        </div>
-        <div class="footer-bottom">
-            <p>&copy; 2025 Online Library. All rights reserved.</p>
-        </div>
-    </footer>
-    <script src = "../Script/user_dashboard.js"></script>
-</body>
+
+        <!-- Overlay for Mobile Menu -->
+        <div class="overlay"></div>
+
+        <main class="dashboard" id="hero">
+            <div class="user-info">
+                <h2>Welcome, <span class="username">User</span></h2>
+                <p>Membership: <span class="membership-status">Active</span></p>
+            </div>
+
+            <div class="dashboard-content">
+                <div class="notifications">
+                    <h2>🔔 Notifications</h2>
+                    <ul class="notification-list">
+                        <li>Reminder: Return "Book 1" by April 5th.</li>
+                        <li>New book added: "Book 4".</li>
+                        <li>Your Friend:"Mohamed Ahmed" reacts like for your
+                            book that you are published .</li>
+                    </ul>
+                </div>
+                <div id="smallPage" class="small_page">
+                    <div class="smallPage-content">
+                        <button id="closePage" class="close-button">X</button>
+                        <p id="page_content"></p>
+                    </div>
+                </div>
+                <section class="community-friends">
+                    <h2>👥 Community & Friends</h2>
+                    <ul class="friends-list">
+                        <li>
+                            <img src="../CSS/assets/friend1.jpeg" alt="User 1">
+                            <span>Emma Doe - Reading "The Great Gatsby"</span>
+                        </li>
+                        <li>
+                            <img src="../CSS/assets/friend2.jpeg" alt="User 2">
+                            <span>Jane Smith - Reading "1984"</span>
+                        </li>
+                        <li>
+                            <img src="../CSS/assets/friend4.jpeg" alt="User 3">
+                            <span>Mike Johnson - Finished
+                                "To Kill a Mockingbird"</span>
+                        </li>
+                    </ul>
+                    <button type="submit">Add friends</button>
+                </section>
+
+                <div class="favorites">
+                    <div class="section-header">
+                        <h2>❤️ Favorites</h2>
+                        <a href="borrowed.html" class="view-all">View All <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="book-grid">
+                        <div class="book-card">
+                            <img src="../CSS/assets/book1.jpeg" alt="Book 1">
+                            <div class="book-info">
+                                <h3>Book Title</h3>
+                                <p>Author: John Doe</p>
+                                <p>Genre: Fiction</p>
+                            </div>
+                        </div>
+
+                        <div class="book-card">
+                            <img src="../CSS/assets/book2.jpeg" alt="Book 2">
+                            <div class="book-info">
+                                <h3>Another Book</h3>
+                                <p>Author: Jane Doe</p>
+                                <p>Genre: Mystery</p>
+                            </div>
+                        </div>
+                        <div class="book-card">
+                            <img src="../CSS/assets/book3.jpeg" alt="Book 1">
+                            <div class="book-info">
+                                <h3>Book Title</h3>
+                                <p>Author: John Doe</p>
+                                <p>Genre: Fiction</p>
+                            </div>
+                        </div>
+
+                        <div class="book-card">
+                            <img src="../CSS/assets/book4.jpeg" alt="Book 2">
+                            <div class="book-info">
+                                <h3>Another Book</h3>
+                                <p>Author: Jane Doe</p>
+                                <p>Genre: Mystery</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="borrowed-books">
+                    <div class="section-header">
+                        <h2>📚 Borrowed Books</h2>
+                        <a href="borrowed.html" class="view-all">View All <i
+                                class="fas fa-arrow-right"></i></a>
+                    </div>
+                    <div class="book-grid">
+                        <div class="book-card">
+                            <img src="../CSS/assets/book5.jpeg" alt="Book 1">
+                            <div class="book-info">
+                                <h3>Book Title</h3>
+                                <p>Author: John Doe</p>
+                                <p>Genre: Fiction</p>
+                            </div>
+                        </div>
+
+                        <div class="book-card">
+                            <img src="../CSS/assets/book3.jpeg" alt="Book 2">
+                            <div class="book-info">
+                                <h3>Another Book</h3>
+                                <p>Author: Jane Doe</p>
+                                <p>Genre: Mystery</p>
+                            </div>
+                        </div>
+                        <div class="book-card">
+                            <img src="../CSS/assets/book1.jpeg" alt="Book 1">
+                            <div class="book-info">
+                                <h3>Book Title</h3>
+                                <p>Author: John Doe</p>
+                                <p>Genre: Fiction</p>
+                            </div>
+                        </div>
+
+                        <div class="book-card">
+                            <img src="../CSS/assets/book2.jpeg" alt="Book 2">
+                            <div class="book-info">
+                                <h3>Another Book</h3>
+                                <p>Author: Jane Doe</p>
+                                <p>Genre: Mystery</p>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content" id="contact">
+                <div class="footer-section">
+                    <h3>Online Library</h3>
+                    <p>Your gateway to knowledge and imagination.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="./../../index.html#">Home</a></li>
+                        <li><a href="../pages/books.html">Books</a></li>
+                        <li><a
+                                href="./../../index.html#features">features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i>
+                        support@libraryonline.com</p>
+                    <p><i class="fas fa-phone"></i> +20100100100</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Online Library. All rights reserved.</p>
+            </div>
+        </footer>
+        <script src="./../Script/header.js"></script>
+        <script src="./../Script/user_dashboard.js"></script>
+    </body>
 </html>

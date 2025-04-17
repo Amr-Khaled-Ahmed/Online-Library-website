@@ -1,7 +1,6 @@
 document.addEventListener("DOMContentLoaded", function () {
   const menuToggle = document.querySelector(".menu-toggle");
   const mobileMenu = document.querySelector(".mobile-menu");
-  const overlay = document.querySelector(".overlay");
   const header = document.querySelector("header");
 
   // Toggle mobile menu
@@ -16,9 +15,22 @@ document.addEventListener("DOMContentLoaded", function () {
   const mobileNavLinks = document.querySelectorAll(".mobile-nav a");
   mobileNavLinks.forEach((link) => link.addEventListener("click", toggleMenu));
 
-  // Event listeners
+  // Toggle button click
   menuToggle?.addEventListener("click", toggleMenu);
-  overlay?.addEventListener("click", toggleMenu);
+
+  // Close menu on clicking outside
+  document.addEventListener("click", function (e) {
+    const isClickInsideMenu = mobileMenu.contains(e.target);
+    const isClickOnToggle = menuToggle.contains(e.target);
+
+    if (
+      !isClickInsideMenu &&
+      !isClickOnToggle &&
+      mobileMenu.classList.contains("active")
+    ) {
+      toggleMenu();
+    }
+  });
 
   // Close menu on window resize (when hitting desktop breakpoint)
   window.addEventListener("resize", function () {

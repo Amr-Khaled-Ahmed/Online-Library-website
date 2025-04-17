@@ -1,385 +1,454 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="../CSS/_variables.css">
-    <link rel="stylesheet" href="../CSS/header.css">
-    <link rel="stylesheet" href="../CSS/footer.css">
-    <link rel="stylesheet" href="../CSS/index.css">
-    <link rel="stylesheet" href="../CSS/books.css">
-    <link rel="stylesheet" href="../CSS/modal.css">
-     
-    <link rel="stylesheet"
-          href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="../CSS/_variables.css">
+        <link rel="stylesheet" href="../CSS/header.css">
+        <link rel="stylesheet" href="../CSS/footer.css">
+        <link rel="stylesheet" href="../CSS/index.css">
+        <link rel="stylesheet" href="../CSS/books.css">
+        <link rel="stylesheet" href="../CSS/modal.css">
+
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
             href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
             rel="stylesheet">
-    <link rel="icon"
-          href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-    <title>Book Catalog - Online Library</title>
-</head>
+        <link rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        <title>Book Catalog - Online Library</title>
+    </head>
 
-<body>
-<header>
-    <div class="header-container">
-        <div class="logo">
-            <i class="fas fa-book-open"></i>
-            <span style="color: var(--text-color);">Online Library</span>
-        </div>
-        <nav>
-            <ul class="nav-bar">
-                <li><a href="./../../index.html"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="#features"><i class="fas fa-info-circle"></i> About</a></li>
-                <li><a href="./books.html" class="active"><i class="fas fa-book"></i> Books</a></li>
-                <li><a href="./sign-in.html" id="login-link"><i class="fas fa-sign-in-alt"></i> Login</a></li>
-                <li><a href="./sign-up.html" id="register-link"><i class="fas fa-user-plus"></i> Register</a></li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-            </ul>
-        </nav>
-    </div>
-</header>
-
-<main>
-    <section class="catalog-header">
-        <h1>Explore Our Book Collection</h1>
-        <p>Discover thousands of books across various genres, authors, and formats</p>
-    </section>
-
-    <section class="search-container">
-        <form class="search-form">
-            <input type="text" class="search-input" placeholder="Search by title, author, or ISBN...">
-            <button type="submit" class="btn primary-btn">Search</button>
-
-            <div class="filter-group">
-                <select class="filter-select">
-                    <option value="">All Genres</option>
-                    <option value="fiction">Fiction</option>
-                    <option value="non-fiction">Non-Fiction</option>
-                    <option value="mystery">Mystery</option>
-                    <option value="fantasy">Fantasy</option>
-                    <option value="sci-fi">Science Fiction</option>
-                    <option value="romance">Romance</option>
-                    <option value="biography">Biography</option>
-                    <option value="history">History</option>
-                    <option value="self-help">Self-Help</option>
-                </select>
-
-                <select class="filter-select">
-                    <option value="">All Formats</option>
-                    <option value="hardcover">Hardcover</option>
-                    <option value="paperback">Paperback</option>
-                    <option value="ebook">E-Book</option>
-                    <option value="audiobook">Audiobook</option>
-                </select>
-
-                <select class="filter-select">
-                    <option value="">Sort By</option>
-                    <option value="newest">Newest First</option>
-                    <option value="oldest">Oldest First</option>
-                    <option value="title-asc">Title (A-Z)</option>
-                    <option value="title-desc">Title (Z-A)</option>
-                    <option value="author-asc">Author (A-Z)</option>
-                    <option value="author-desc">Author (Z-A)</option>
-                    <option value="popular">Most Popular</option>
-                </select>
-
-                <select class="filter-select">
-                    <option value="">Availability</option>
-                    <option value="available">Available</option>
-                    <option value="unavailable">Unavailable</option>
-                    <option value="all">All</option>
-                </select>
-            </div>
-        </form>
-    </section>
-
-    <section class="featured-section">
-        <h2 class="featured-title">Featured Books</h2>
-        <div class="book-grid">
-            <div class="book-item">
-                <div class="book-cover">
-                    <img src="./../CSS/assets/book_cover.jpg" alt="A Song of Ice and Fire book cover">
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span style="color: var(--text-color);">Online
+                        Library</span>
                 </div>
-                <div class="book-details">
-                    <h3 class="book-title">A Song of Ice and Fire</h3>
-                    <p class="book-author">By R.R. Martin</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Fantasy</span>
-                        <span class="meta-item">Hardcover</span>
-                        <span class="meta-item">2018</span>
+                <nav>
+                    <ul class="nav-bar">
+                        <li><a href="#hero"><i
+                                    class="fas fa-home"></i> Home</a></li>
+                        <li><a href="./books.html" class="active"><i
+                                    class="fas fa-book"></i> Books</a></li>
+                        <li><a href="./../../index.html#features"><i
+                                    class="fas fa-sign-out-alt"></i> Log
+                                Out</a></li>
+
+                        <li><a href="#contact"><i class="fas fa-envelope"></i>
+                                Contact</a></li>
+
+                    </ul>
+                </nav>
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu Side Panel -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav">
+                <li><a href="#hero"><i
+                            class="fas fa-home"></i> Home</a></li>
+                <li><a href="./books.html" class="active"><i
+                            class="fas fa-book"></i> Books</a></li>
+                <li><a href="./../../index.html#features"><i
+                            class="fas fa-sign-out-alt"></i> Log
+                        Out</a></li>
+
+                <li><a href="#contact"><i class="fas fa-envelope"></i>
+                        Contact</a></li>
+            </ul>
+        </div>
+
+        <main>
+            <section class="catalog-header" id="hero">
+                <h1>Explore Our Book Collection</h1>
+                <p>Discover thousands of books across various genres, authors,
+                    and formats</p>
+            </section>
+
+            <section class="search-container">
+                <form class="search-form">
+                    <input type="text" class="search-input"
+                        placeholder="Search by title, author, or ISBN...">
+                    <button type="submit"
+                        class="btn primary-btn">Search</button>
+
+                    <div class="filter-group">
+                        <select class="filter-select">
+                            <option value>All Genres</option>
+                            <option value="fiction">Fiction</option>
+                            <option value="non-fiction">Non-Fiction</option>
+                            <option value="mystery">Mystery</option>
+                            <option value="fantasy">Fantasy</option>
+                            <option value="sci-fi">Science Fiction</option>
+                            <option value="romance">Romance</option>
+                            <option value="biography">Biography</option>
+                            <option value="history">History</option>
+                            <option value="self-help">Self-Help</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>All Formats</option>
+                            <option value="hardcover">Hardcover</option>
+                            <option value="paperback">Paperback</option>
+                            <option value="ebook">E-Book</option>
+                            <option value="audiobook">Audiobook</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>Sort By</option>
+                            <option value="newest">Newest First</option>
+                            <option value="oldest">Oldest First</option>
+                            <option value="title-asc">Title (A-Z)</option>
+                            <option value="title-desc">Title (Z-A)</option>
+                            <option value="author-asc">Author (A-Z)</option>
+                            <option value="author-desc">Author (Z-A)</option>
+                            <option value="popular">Most Popular</option>
+                        </select>
+
+                        <select class="filter-select">
+                            <option value>Availability</option>
+                            <option value="available">Available</option>
+                            <option value="unavailable">Unavailable</option>
+                            <option value="all">All</option>
+                        </select>
                     </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html?title=A Song of Ice and Fire&author=R.R. Martin
+                </form>
+            </section>
+
+            <section class="featured-section">
+                <h2 class="featured-title">Featured Books</h2>
+                <div class="book-grid">
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <img src="./../CSS/assets/book_cover.jpg"
+                                alt="A Song of Ice and Fire book cover">
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">A Song of Ice and Fire</h3>
+                            <p class="book-author">By R.R. Martin</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Fantasy</span>
+                                <span class="meta-item">Hardcover</span>
+                                <span class="meta-item">2018</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a
+                                    href="./book_details.html?title=A Song of Ice and Fire&author=R.R. Martin
                         &about=A Song of Ice and Fire' is Martin's epic fantasy saga, spanning thousands of pages, which captured the imagination of millions and inspired the HBO hit show
                         &year=2018&status=Available&Genre=Fiction, Mystery&Pages=320&Language=English
-                        &imagePath=./../CSS/assets/book_cover.jpg" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
+                        &imagePath=./../CSS/assets/book_cover.jpg"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="book-item">
-                <div class="book-cover">
-                    <img src="./../CSS/assets/The_Great_Gatsby_Cover.jpg" alt="The_Great_Gatsby_Cover ">
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">The Great Gatsby</h3>
-                    <p class="book-author">By F. Scott Fitzgerald</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Classic</span>
-                        <span class="meta-item">Paperback</span>
-                        <span class="meta-item">1925</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge low-stock">Low Stock</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html?title=The Great Gatsby&author=By F. Scott Fitzgerald
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <img
+                                src="./../CSS/assets/The_Great_Gatsby_Cover.jpg"
+                                alt="The_Great_Gatsby_Cover ">
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">The Great Gatsby</h3>
+                            <p class="book-author">By F. Scott Fitzgerald</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Classic</span>
+                                <span class="meta-item">Paperback</span>
+                                <span class="meta-item">1925</span>
+                            </div>
+                            <div class="availability">
+                                <span class="availability-badge low-stock">Low
+                                    Stock</span>
+                            </div>
+                            <div class="book-actions">
+                                <a
+                                    href="./book_details.html?title=The Great Gatsby&author=By F. Scott Fitzgerald
                         &about=The novel was inspired by a youthful romance Fitzgerald had with socialite Ginevra King, and the riotous parties he attended on Long Island's North Shore in 1922.
                         &year=1925&status=Low Stock&Genre=Classic&Pages=320&Language=English
-                        &imagePath=./../CSS/assets/The_Great_Gatsby_Cover.jpg" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
+                        &imagePath=./../CSS/assets/The_Great_Gatsby_Cover.jpg"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
                     </div>
-                </div>
-            </div>
 
-            <div class="book-item">
-                <div class="book-cover">
-                    <img src="./../CSS/assets/cover3.jpg" alt="To Kill a Mockingbird ">
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">To Kill a Mockingbird</h3>
-                    <p class="book-author">By Harper Lee</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Fiction</span>
-                        <span class="meta-item">Hardcover</span>
-                        <span class="meta-item">1960</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge unavailable">Unavailable</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html?title=To Kill a Mockingbird&author=By Harper Lee
-                        &about= the story unfolds as her father, Atticus Finch, a principled lawyer, defends Tom Robinson, a Black man falsely accused of raping a white woman. 
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <img src="./../CSS/assets/cover3.jpg"
+                                alt="To Kill a Mockingbird ">
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">To Kill a Mockingbird</h3>
+                            <p class="book-author">By Harper Lee</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Fiction</span>
+                                <span class="meta-item">Hardcover</span>
+                                <span class="meta-item">1960</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge unavailable">Unavailable</span>
+                            </div>
+                            <div class="book-actions">
+                                <a
+                                    href="./book_details.html?title=To Kill a Mockingbird&author=By Harper Lee
+                        &about= the story unfolds as her father, Atticus Finch, a principled lawyer, defends Tom Robinson, a Black man falsely accused of raping a white woman.
                         &year=1960&status=Unavailable&Genre=Classic&Pages=320&Language=English
-                        &imagePath=./../CSS/assets/cover3.jpg" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
+                        &imagePath=./../CSS/assets/cover3.jpg"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
                     </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">1984</h3>
+                            <p class="book-author">By George Orwell</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Dystopian</span>
+                                <span class="meta-item">Paperback</span>
+                                <span class="meta-item">1949</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">Pride and Prejudice</h3>
+                            <p class="book-author">By Jane Austen</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Classic</span>
+                                <span class="meta-item">Paperback</span>
+                                <span class="meta-item">1813</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">The Hobbit</h3>
+                            <p class="book-author">By J.R.R. Tolkien</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Fantasy</span>
+                                <span class="meta-item">Hardcover</span>
+                                <span class="meta-item">1937</span>
+                            </div>
+                            <div class="availability">
+                                <span class="availability-badge low-stock">Low
+                                    Stock</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">Moby Dick</h3>
+                            <p class="book-author">By Herman Melville</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Adventure</span>
+                                <span class="meta-item">Paperback</span>
+                                <span class="meta-item">1851</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">The Catcher in the Rye</h3>
+                            <p class="book-author">By J.D. Salinger</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Fiction</span>
+                                <span class="meta-item">Hardcover</span>
+                                <span class="meta-item">1951</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge unavailable">Unavailable</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">Brave New World</h3>
+                            <p class="book-author">By Aldous Huxley</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Dystopian</span>
+                                <span class="meta-item">Paperback</span>
+                                <span class="meta-item">1932</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="book-item">
+                        <div class="book-cover">
+                            <i class="fas fa-book-open"></i>
+                        </div>
+                        <div class="book-details">
+                            <h3 class="book-title">The Lord of the Rings</h3>
+                            <p class="book-author">By J.R.R. Tolkien</p>
+                            <div class="book-meta">
+                                <span class="meta-item">Fantasy</span>
+                                <span class="meta-item">Hardcover</span>
+                                <span class="meta-item">1954</span>
+                            </div>
+                            <div class="availability">
+                                <span
+                                    class="availability-badge available">Available</span>
+                            </div>
+                            <div class="book-actions">
+                                <a href="./book_details.html"
+                                    class="book-btn details-btn">Details</a>
+                                <a href="#"
+                                    class="book-btn borrow-btn">Borrow</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <div class="pagination">
+                <a href="#" class="page-btn active">1</a>
+                <a href="#" class="page-btn">2</a>
+                <a href="#" class="page-btn"><i
+                        class="fas fa-chevron-right"></i></a>
+            </div>
+        </main>
+
+        <footer>
+            <div class="footer-content" id="contact">
+                <div class="footer-section">
+                    <h3>Online Library</h3>
+                    <p>Your gateway to knowledge and imagination.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="./../../index.html">Home</a></li>
+                        <li><a href="./books.html">Books</a></li>
+                        <li><a href="#features">Features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i>
+                        support@libraryonline.com</p>
+                    <p><i class="fas fa-phone"></i> +200000000000</p>
                 </div>
             </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">1984</h3>
-                    <p class="book-author">By George Orwell</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Dystopian</span>
-                        <span class="meta-item">Paperback</span>
-                        <span class="meta-item">1949</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Online Library. All rights reserved.</p>
             </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">Pride and Prejudice</h3>
-                    <p class="book-author">By Jane Austen</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Classic</span>
-                        <span class="meta-item">Paperback</span>
-                        <span class="meta-item">1813</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">The Hobbit</h3>
-                    <p class="book-author">By J.R.R. Tolkien</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Fantasy</span>
-                        <span class="meta-item">Hardcover</span>
-                        <span class="meta-item">1937</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge low-stock">Low Stock</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">Moby Dick</h3>
-                    <p class="book-author">By Herman Melville</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Adventure</span>
-                        <span class="meta-item">Paperback</span>
-                        <span class="meta-item">1851</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">The Catcher in the Rye</h3>
-                    <p class="book-author">By J.D. Salinger</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Fiction</span>
-                        <span class="meta-item">Hardcover</span>
-                        <span class="meta-item">1951</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge unavailable">Unavailable</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">Brave New World</h3>
-                    <p class="book-author">By Aldous Huxley</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Dystopian</span>
-                        <span class="meta-item">Paperback</span>
-                        <span class="meta-item">1932</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
-            </div>
-
-            <div class="book-item">
-                <div class="book-cover">
-                    <i class="fas fa-book-open"></i>
-                </div>
-                <div class="book-details">
-                    <h3 class="book-title">The Lord of the Rings</h3>
-                    <p class="book-author">By J.R.R. Tolkien</p>
-                    <div class="book-meta">
-                        <span class="meta-item">Fantasy</span>
-                        <span class="meta-item">Hardcover</span>
-                        <span class="meta-item">1954</span>
-                    </div>
-                    <div class="availability">
-                        <span class="availability-badge available">Available</span>
-                    </div>
-                    <div class="book-actions">
-                        <a href="./book_details.html" class="book-btn details-btn">Details</a>
-                        <a href="#" class="book-btn borrow-btn">Borrow</a>
-                    </div>
-                </div>
+        </footer>
+        <div id="book-modal" class="modal hidden">
+            <div class="modal-content">
+                <span class="close-btn">&times;</span>
+                <img id="modal-image" src alt="Book cover" />
+                <h2 id="modal-title"></h2>
+                <p id="modal-author"></p>
+                <p id="modal-description"></p>
+                <p><strong>Year:</strong> <span id="modal-year"></span></p>
+                <p><strong>Status:</strong> <span id="modal-status"></span></p>
+                <p><strong>Genre:</strong> <span id="modal-genre"></span></p>
+                <p><strong>Language:</strong> <span
+                        id="modal-language"></span></p>
+                <p><strong>Pages:</strong> <span id="modal-pages"></span></p>
             </div>
         </div>
-    </section>
-
-    <div class="pagination">
-        <a href="#" class="page-btn active">1</a>
-        <a href="#" class="page-btn">2</a>
-        <a href="#" class="page-btn"><i class="fas fa-chevron-right"></i></a>
-    </div>
-</main>
-
-<footer>
-    <div class="footer-content" id="contact">
-        <div class="footer-section">
-            <h3>Online Library</h3>
-            <p>Your gateway to knowledge and imagination.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
-            </div>
-        </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="./../../index.html">Home</a></li>
-                <li><a href="./books.html">Books</a></li>
-                <li><a href="#features">Features</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p><i class="fas fa-envelope"></i>  support@libraryonline.com</p>
-            <p><i class="fas fa-phone"></i>  +200000000000</p>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Online Library. All rights reserved.</p>
-    </div>
-</footer>
-<div id="book-modal" class="modal hidden">
-    <div class="modal-content">
-        <span class="close-btn">&times;</span>
-        <img id="modal-image" src="" alt="Book cover" />
-        <h2 id="modal-title"></h2>
-        <p id="modal-author"></p>
-        <p id="modal-description"></p>
-        <p><strong>Year:</strong> <span id="modal-year"></span></p>
-        <p><strong>Status:</strong> <span id="modal-status"></span></p>
-        <p><strong>Genre:</strong> <span id="modal-genre"></span></p>
-        <p><strong>Language:</strong> <span id="modal-language"></span></p>
-        <p><strong>Pages:</strong> <span id="modal-pages"></span></p>
-    </div>
-</div>
-<script src= "../Script/modal.js" > </script>
-</body>
+        <script src="./../Script/modal.js"> </script>
+        <script src="./../Script/header.js"></script>
+    </body>
 </html>
