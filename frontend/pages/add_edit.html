@@ -36,6 +36,11 @@
         </div>
     </header>
 
+    <div class="error hide">
+        <p>The file you uploaded is not a photo</p>
+        <img src="./../CSS/assets/alert.gif" alt="Error icon">
+    </div>
+
     <main class="all">
         <div class="inside">
             <div class="back-btn">
@@ -43,7 +48,12 @@
             </div>
             <div class="book-details">
                 <div class="img-holder">
-                    <img src="./../CSS/assets/enceladus.jpg" alt="Book Cover" class="book-cover">
+                    <img src="" alt="Book Cover" class="book-cover hide">
+                    <div class="upload">
+                        <i id="upload-icon" class="fa-solid fa-arrow-up-from-bracket"></i>
+                        <p id="msg">Click or Drag and Drop to upload book cover</p>
+                    </div>
+                    <input type="file" id="img-input" class="hide">
                 </div>
                 <div class="details-form">
                     <form action="admin_dashboard.html">

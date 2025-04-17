@@ -13,6 +13,45 @@ body {
     background-color: var(--bg-color);
 }
 
+.error {
+    background-color: #C2352A;
+    color: var(--text-color);
+    opacity: 0.9;
+    z-index: 200;
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 300px;
+    height: 60px;
+    left: 40%;
+    top: 15%;
+    border-radius: 15px;
+    box-shadow: 0px 0px 15px var(--shadow-color);
+    padding: 7px;
+}
+
+.error img {
+    width: 20%;
+    height: 100%;
+    margin-right: 5px;
+}
+
+.error p {
+    font-weight: bold;
+    font-size: 14px;
+    margin-left: 10px;
+}
+
+@keyframes notification {
+    25% {
+        translate: 0px 100px;
+    }
+    100% {
+        translate: 0px -300px;
+    }
+}
+
 .all {
     background-color: var(--bg-color);
     padding: 7vh 1vw;
@@ -76,28 +115,51 @@ body {
 
 .img-holder {
     display: flex;
+    position: relative;
     background-color: var(--bg-color);
     width: 35%;
     height: 100%;
+    min-height: 30vw;
     margin: 0% 2.5% 3%;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+    border: 3px dashed #9ea1a4;
     overflow: hidden;
 }
 
-.img-holder i {
-    transform: scale(5);
-    color: var(--form-bg-color);
+.upload {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+    position: absolute;
+    margin: 50% 0%;
+    z-index: 99;
     transition: all 0.3s ease;
+}
+
+.img-holder i {
+    display: block;
+    font-size: 6vw;
+    margin-bottom: 10%;
+    color: #9ea1a4;
+}
+
+.img-holder p {
+    display: block;
+    font-size: 1vw;
+    color: #9ea1a4;
 }
 
 .img-holder img {
     width: 100%;
     height: 100%;
+    min-height: 20vh;
     transition: all 0.3s ease;
 }
 
+.img-holder .upload:hover,
 .img-holder img:hover {
     transform: scale(1.05);
 }
@@ -215,9 +277,27 @@ select:focus {
     padding: 0px;
 }
 
+@media (max-width: 400px) {
+    .img-holder {
+        min-height: 100px;
+    }
+
+    .img-holder i {
+        font-size: 20px;
+    }
+    
+    .img-holder p {
+        font-size: 3px;
+    }
+}
+
 @media (max-width: 300px) {
     body {
         width: 300px;
         overflow: auto;
     }
+}
+
+.hide {
+    display: none;
 }
