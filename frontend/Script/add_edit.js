@@ -1,4 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
+    // Save book
     document.getElementById('back').addEventListener('click',() => {
         window.location.href = "./admin_dashboard.html";
         if(window.sessionStorage.getItem('edit') !== null)
@@ -26,9 +27,9 @@ document.addEventListener('DOMContentLoaded', function() {
         // Save book to database
 
     });
-
     document.getElementById('save').addEventListener('click',() => saveBook(book));
 
+    // Upload book cover
     let imgHolder = document.querySelector('.img-holder');
     let imgInput = document.getElementById('img-input');
     let img = document.querySelector('.book-cover');
@@ -43,7 +44,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 errorNotification.classList.add('hide');
                 errorNotification.style.animation = '';
             });
-            input.value = '';
+            imgInput.value = '';
             return;
         }
 
@@ -85,13 +86,13 @@ document.addEventListener('DOMContentLoaded', function() {
     function willUpdate() {
         document.querySelector('.upload').style.display = 'flex';
         imgHolder.style.border = '3px dashed #9ea1a4';
-        if(img.naturalWidth > 0 && img.style.display !== 'none') {
+        if(img.naturalWidth > 0 && !img.classList.contains('hide')) {
             img.style.opacity = 0.3;
         }
     }
 
     function notUpdated() {
-        if(img.naturalWidth > 0 && img.style.display !== 'none') {
+        if(img.naturalWidth > 0 && !img.classList.contains('hide')) {
             document.querySelector('.upload').style.display = 'none';
             imgHolder.style.border = 'none';
             img.style.opacity = 1;
@@ -103,6 +104,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
     imgHolder.addEventListener('mouseout',() => notUpdated());
     imgHolder.addEventListener('dragleave',() => notUpdated());
+
+    // Reset book cover
+    document.getElementById('reset').addEventListener('click',() => {
+        img.classList.add('hide');
+        document.querySelector('.upload').style.display = 'flex';
+        imgHolder.style.border = '3px dashed #9ea1a4';
+        imgInput.value = '';
+    });
 
     window.addEventListener('load',() => {
         if(window.sessionStorage.getItem('edit') === 'true') {

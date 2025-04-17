@@ -68,7 +68,7 @@ body {
     flex-direction: column;
     justify-content: center;
     height: 100%;
-    width: 80%;
+    width: 85%;
     border-radius: 20px;
     box-shadow: 0px 0px 15px var(--shadow-color);
 }
@@ -77,8 +77,8 @@ body {
     display: flex;
     flex-wrap: wrap;
     justify-content: center;
-    gap: 3vw;
-    width: 105%;
+    gap: 5vw;
+    width: 100%;
     overflow: hidden;
 }
 
@@ -87,7 +87,7 @@ body {
     display: flex;
     flex-direction: column;
     justify-content: space-evenly;
-    width: 50%;
+    width: 45%;
     border-radius: 10px;
     margin: 0px 10px 30px;
 }
@@ -117,7 +117,7 @@ body {
     display: flex;
     position: relative;
     background-color: var(--bg-color);
-    width: 35%;
+    width: 38%;
     height: 100%;
     min-height: 30vw;
     margin: 0% 2.5% 3%;
@@ -203,7 +203,7 @@ input,
 label,
 select {
     padding: 0.5vw;
-    width: 90%;
+    width: 95%;
 }
 
 input,

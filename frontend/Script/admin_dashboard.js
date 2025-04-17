@@ -1,11 +1,47 @@
 // All things
 document.addEventListener('DOMContentLoaded', function() {
     for(let i = 0; i < 6; ++i)
-        addBook(i);
+        addBook('_'+i);
 
     document.getElementById('add-book').addEventListener('click',() => {
         window.location.href = "./add_edit.html";
     })
+
+    // Search
+    let searchInput = document.querySelector('.search-input');
+    let availabilitySelector = document.querySelector('.availability-selector');
+    let genreSelector = document.querySelector('.genre-selector');
+    let formatSelector = document.querySelector('.format-selector');
+    let sortSelector = document.querySelector('.sort-selector');
+    let books = document.querySelectorAll('.book');
+
+    document.addEventListener('input', () => {
+        // Input by user
+        const searchTerm = searchInput.value.trim().toLowerCase();
+        const availabilityInput = availabilitySelector.value.toLowerCase();
+        const genreInput = genreSelector.value.toLowerCase();
+        const formatInput = formatSelector.value.toLowerCase();
+        const sortInput = sortSelector.value.toLowerCase();
+
+        books.forEach(book => {
+            // Book info
+            const title = document.querySelector(`#${book.id} .book-title`).textContent.trim().toLowerCase();
+            const author = document.querySelector(`#${book.id} .author`).textContent.trim().toLowerCase().slice(2);
+            const availability = document.querySelector(`#${book.id} .availability`);
+            const genre = document.querySelector(`#${book.id} .book-genre`);
+            const format = document.querySelector(`#${book.id} .book-format`);
+
+            if((title.includes(searchTerm) || author.includes(searchTerm) || searchTerm === '')
+                && (availability.classList.contains(availabilityInput) || availabilityInput === 'all' || availabilityInput === '')
+                && (genre.classList.contains(genreInput) || genreInput === 'all' || genreInput === '')
+                && (format.classList.contains(formatInput) || formatInput === 'all' || formatInput === '')) {
+                book.classList.remove('hide');
+            }
+            else {
+                book.classList.add('hide');
+            }
+        });
+    });
 
     window.addEventListener('load', () => {
         if (sessionStorage.getItem('showMessage') === 'true') {
@@ -106,13 +142,15 @@ function addBook(id,book) {
 
     let bookGenre = document.createElement('label');
     bookGenre.classList.add('book-genre');
+    bookGenre.classList.add(bookData.genre);
     bookGenre.htmlFor = "book";
-    bookGenre.textContent = bookData.genre;
+    bookGenre.textContent = bookData.genre[0].toUpperCase() + bookData.genre.slice(1);
 
     let bookFormat = document.createElement('label');
     bookFormat.classList.add('book-format');
+    bookFormat.classList.add(bookData.format);
     bookFormat.htmlFor = "book";
-    bookFormat.textContent = bookData.format;
+    bookFormat.textContent = bookData.format[0].toUpperCase() + bookData.format.slice(1);
 
     let bookYearPub = document.createElement('label');
     bookYearPub.classList.add('book-year-pub');
@@ -128,11 +166,9 @@ function addBook(id,book) {
 
     let availability = document.createElement('label');
     availability.htmlFor = "book";
-    availability.textContent = bookData.availability;
-    if(bookData.availability === 'Available')
-        availability.classList.add('available');
-    else
-        availability.classList.add('unavailable');
+    availability.textContent = bookData.availability[0].toUpperCase() + bookData.availability.slice(1);
+    availability.classList.add(bookData.availability);
+    availability.classList.add('availability');
 
     let borrowNum = document.createElement('label');
     borrowNum.htmlFor = "book";
