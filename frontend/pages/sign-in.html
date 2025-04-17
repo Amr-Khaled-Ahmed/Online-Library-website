@@ -1,64 +1,55 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
-        <link rel="stylesheet" href="./../CSS/forms-style.css">
-        <title>Online-library</title>
-    </head>
-    <body>
-        <section class="sign-in">
-            <form>
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span style="color: var(--text-color);">Online
-                        Library</span>
-                </div>
-                <h2>Sign-In</h2>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+    <link rel="stylesheet" href="./../CSS/forms-style.css">
+    <title>Online-library</title>
+</head>
+<body>
+    <section class="sign-in">
+        <form id="form">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span style="color: var(--text-color);">Online Library</span>
+            </div>
+            <h2>Sign-In</h2>
 
-                <div class="field">
-                    <div class="field-heading">
-                        <i class="fa-solid fa-user"></i>
-                        <label for="username">Username</label>
-                    </div>
-                    <input class="input" type="text" id="username"
-                        name="username" placeholder="Enter username" required>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-user"></i>
+                    <label for="username">Username</label>
                 </div>
-                <div class="field">
-                    <div class="field-heading">
-                        <i class="fa-solid fa-lock"></i>
-                        <label for="password">Password</label>
-                    </div>
-                    <div class="password-field">
-                        <input class="input" type="password" id="password"
-                            name="password" placeholder="Enter password"
-                            required>
-                        <button type="button" class="password-toggle">
-                            <i class="fa-solid fa-eye"></i>
-                        </button>
-                    </div>
+                <input class="input" type="text" id="username" name="username" placeholder="Enter username">
+                <span class="error-text" id="username-error"></span>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-lock"></i>
+                    <label for="password">password</label>
                 </div>
-                <div class="options">
-                    <div class="remember-me">
-                        <input id="remember" type="checkbox" name="remember">
-                        <label for="remember">Remember me</label>
-                    </div>
-                    <a href="#" class="forgot-password">Forgot password?</a>
-                </div>
+                <input class="input" type="password" id="password" name="password" placeholder="Enter password">
+                <span class="error-text" id="password-error"></span>
+            </div>
 
-                <button type="submit">Sign in</button>
-                <a class="cancel-button" href="./../../index.html">Cancel</a>
-                <div class="sign-up">
-                    <span>Don't have an account?</span>
-                    <a href="./sign-up.html">Sign up</a>
+            <div class="options">
+                <div class="remember-me" >
+                    <input id="remember" type="checkbox" name="remember">
+                    <label for="remember" >Remember me</label>
                 </div>
-            </form>
-            <img src="./../CSS/assets/man-reading-design.png"
-                alt="man reading a book">
-        </section>
+                <a href="#" class="forgot-password">Forgot password?</a>
+            </div>
 
-    </body>
-    <script src=""></script>
+            <button type="submit">Sign in</button>
+            <a class="cancel-button" href="./../../index.html">Cancel</a>
+            <div class="sign-up">
+                <span>Don't have an account?</span>
+                <a href="./sign-up.html">Sign up</a>
+            </div>
+        </form>
+        <img src="./../CSS/assets/man-reading-design.png" alt="man reading a book">
+    </section>
+    <script src="./../Script/Forms_validation.js"></script>
+</body>
 </html>
