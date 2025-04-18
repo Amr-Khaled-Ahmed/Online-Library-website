@@ -352,6 +352,10 @@ document.addEventListener("DOMContentLoaded", () => {
     const closeModal = document.getElementById("close-modal");
 
     document.querySelector("#books-container").addEventListener("click", (e) => {
+        
+        const bookElement = e.target.closest('.book');
+        if (!bookElement) return;
+
         const book = sampleBook; 
         document.getElementById("modal-book-cover").src = book.cover;
         document.getElementById("modal-book-title").textContent = book.title;
