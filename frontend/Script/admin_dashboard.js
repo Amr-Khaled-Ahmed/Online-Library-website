@@ -1,11 +1,50 @@
 // All things
 document.addEventListener('DOMContentLoaded', function() {
-    for(let i = 0; i < 6; ++i)
-        addBook('_'+i);
 
-    document.getElementById('add-book').addEventListener('click',() => {
-        window.location.href = "./add_edit.html";
-    })
+    // Example of book object
+    const book1 = {
+        title: 'Child of The Kindred',
+        author: 'Ahmed',
+        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
+        genre: 'fantasy',
+        format: 'paperback',
+        pubYear: '2010',
+        availability: 'unavailable',
+        borrowNum: '10',
+        maxDuration: '1',
+        lateFees: '10'
+    };
+
+    const book2 = {
+        title: 'ahild of The Kindred',
+        author: 'Basem',
+        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
+        genre: 'fantasy',
+        format: 'paperback',
+        pubYear: '2021',
+        availability: 'unavailable',
+        borrowNum: '100',
+        maxDuration: '1',
+        lateFees: '10'
+    };
+
+    // Will be retrieved from database
+    let books = [];
+    for(let i = 0; i < 6; ++i)
+        books.push(book1);
+    for(let i = 0; i < 6; ++i)
+        books.push(book2);
+
+    // Backup
+    let allBooks = [...books];
+
+    // View all books
+    allBooks.forEach((book,i) => {
+        addBook('_'+i,book);
+    });
+
+    // Will contains Books that the user searches for
+    let searchedBooks = [];
 
     // Search
     let searchInput = document.querySelector('.search-input');
@@ -13,7 +52,6 @@ document.addEventListener('DOMContentLoaded', function() {
     let genreSelector = document.querySelector('.genre-selector');
     let formatSelector = document.querySelector('.format-selector');
     let sortSelector = document.querySelector('.sort-selector');
-    let books = document.querySelectorAll('.book');
 
     document.addEventListener('input', () => {
         // Input by user
@@ -23,25 +61,49 @@ document.addEventListener('DOMContentLoaded', function() {
         const formatInput = formatSelector.value.toLowerCase();
         const sortInput = sortSelector.value.toLowerCase();
 
-        books.forEach(book => {
+        searchedBooks = allBooks.filter(book => {
             // Book info
-            const title = document.querySelector(`#${book.id} .book-title`).textContent.trim().toLowerCase();
-            const author = document.querySelector(`#${book.id} .author`).textContent.trim().toLowerCase().slice(2);
-            const availability = document.querySelector(`#${book.id} .availability`);
-            const genre = document.querySelector(`#${book.id} .book-genre`);
-            const format = document.querySelector(`#${book.id} .book-format`);
+            const title = book.title.trim().toLowerCase();
+            const author = book.author.trim().toLowerCase();
+            const availability = book.availability;
+            const genre = book.genre;
+            const format = book.format;
 
-            if((title.includes(searchTerm) || author.includes(searchTerm) || searchTerm === '')
-                && (availability.classList.contains(availabilityInput) || availabilityInput === 'all' || availabilityInput === '')
-                && (genre.classList.contains(genreInput) || genreInput === 'all' || genreInput === '')
-                && (format.classList.contains(formatInput) || formatInput === 'all' || formatInput === '')) {
-                book.classList.remove('hide');
-            }
-            else {
-                book.classList.add('hide');
-            }
+            return ((title.includes(searchTerm) || author.includes(searchTerm) || searchTerm === '')
+                && (availability === availabilityInput || availabilityInput === 'all' || availabilityInput === '')
+                && (genre === genreInput || genreInput === 'all' || genreInput === '')
+                && (format === formatInput || formatInput === 'all' || formatInput === ''));
+        });
+
+        // Sort the searchedBooks
+        if(sortInput === 'newest')
+            searchedBooks = sortByAttribute(searchedBooks, 'pubYear', 'desc');
+        else if(sortInput === 'oldest')
+            searchedBooks = sortByAttribute(searchedBooks, 'pubYear', 'asc');
+        else if(sortInput === 'title-asc')
+            searchedBooks = sortByAttribute(searchedBooks, 'title', 'asc');
+        else if(sortInput === 'title-desc')
+            searchedBooks = sortByAttribute(searchedBooks, 'title', 'desc');
+        else if(sortInput === 'author-asc')
+            searchedBooks = sortByAttribute(searchedBooks, 'author', 'asc');
+        else if(sortInput === 'author-desc')
+            searchedBooks = sortByAttribute(searchedBooks, 'author', 'desc');
+        else if(sortInput === 'popular')
+            searchedBooks = sortByAttribute(searchedBooks, 'borrowNum', 'desc');
+
+        // clear all books from page
+        unviewBooks();
+
+        // Add books that user wants
+        searchedBooks.forEach((book,i) => {
+            addBook('_'+i,book);
         });
     });
+
+
+    document.getElementById('add-book').addEventListener('click',() => {
+        window.location.href = "./add_edit.html";
+    })
 
     window.addEventListener('load', () => {
         if (sessionStorage.getItem('showMessage') === 'true') {
@@ -56,6 +118,23 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function sortByAttribute(books, attribute, order) {
+    return books.sort((a,b) => {
+        if(order === 'asc')
+            return a[attribute].toLowerCase() > b[attribute].toLowerCase() ? 1 : -1;
+        else
+            return a[attribute].toLowerCase() < b[attribute].toLowerCase() ? 1 : -1;
+    });
+}
+
+// view no books
+function unviewBooks() {
+    const container = document.getElementById('books-container');
+    while (container.firstChild) {
+        container.removeChild(container.firstChild);
+    }
+}
 
 // Confirm to delete book
 function deleteBook(book) {
@@ -106,80 +185,67 @@ function addBook(id,book) {
     bookContainer.classList.add('book');
     bookContainer.id = id;
 
-    const bookData = {
-        title: 'Child of The Kindred',
-        author: 'By M. T. Magee',
-        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
-        genre: 'fantasy',
-        format: 'paperback',
-        yearPub: '2020',
-        availability: 'unavailable',
-        borrowNum: '10',
-        maxDuration: '1',
-        lateFees: '10'
-    };
-
     let imgHolder = document.createElement('div');
     imgHolder.classList.add('img-holder');
 
     let img = document.createElement('img');
     img.classList.add('book-cover');
-    img.src = bookData.coverPath;
+    img.src = book.coverPath;
     img.alt = "Book Cover";
 
     imgHolder.appendChild(img);
 
     let title = document.createElement('p');
     title.classList.add('book-title');
-    title.textContent = bookData.title;
+    title.textContent = book.title;
 
     let author = document.createElement('p');
     author.classList.add('author');
-    author.textContent = bookData.author;
+    author.textContent = 'By ' + book.author;
 
     let bookInfo = document.createElement('div');
     bookInfo.classList.add('book-information');
 
     let bookGenre = document.createElement('label');
     bookGenre.classList.add('book-genre');
-    bookGenre.classList.add(bookData.genre);
+    bookGenre.classList.add(book.genre);
     bookGenre.htmlFor = "book";
-    bookGenre.textContent = bookData.genre[0].toUpperCase() + bookData.genre.slice(1);
+    bookGenre.textContent = book.genre[0].toUpperCase() + book.genre.slice(1);
 
     let bookFormat = document.createElement('label');
     bookFormat.classList.add('book-format');
-    bookFormat.classList.add(bookData.format);
+    bookFormat.classList.add(book.format);
     bookFormat.htmlFor = "book";
-    bookFormat.textContent = bookData.format[0].toUpperCase() + bookData.format.slice(1);
+    bookFormat.textContent = book.format[0].toUpperCase() + book.format.slice(1);
 
-    let bookYearPub = document.createElement('label');
-    bookYearPub.classList.add('book-year-pub');
-    bookYearPub.htmlFor = "book";
-    bookYearPub.textContent = bookData.yearPub;
+    let bookpubYear = document.createElement('label');
+    bookpubYear.classList.add('book-year-pub');
+    bookpubYear.htmlFor = "book";
+    bookpubYear.textContent = book.pubYear;
 
     bookInfo.appendChild(bookGenre);
     bookInfo.appendChild(bookFormat);
-    bookInfo.appendChild(bookYearPub);
+    bookInfo.appendChild(bookpubYear);
 
     let bookStatus = document.createElement('div');
     bookStatus.classList.add('book-status');
 
     let availability = document.createElement('label');
     availability.htmlFor = "book";
-    availability.textContent = bookData.availability[0].toUpperCase() + bookData.availability.slice(1);
-    availability.classList.add(bookData.availability);
+    availability.textContent = book.availability[0].toUpperCase() + book.availability.slice(1);
+    availability.classList.add(book.availability);
     availability.classList.add('availability');
 
     let borrowNum = document.createElement('label');
     borrowNum.htmlFor = "book";
-    borrowNum.textContent = bookData.borrowNum + ' Borrows';
-    if(bookData.borrowNum <= 5)
+    borrowNum.textContent = book.borrowNum + ' Borrows';
+    if(book.borrowNum <= 5)
         borrowNum.classList.add('lvl1-borrow');
-    else if(bookData.borrowNum <= 15)
+    else if(book.borrowNum <= 15)
         borrowNum.classList.add('lvl2-borrow');
-    else if(bookData.borrowNum <= 30)
+    else if(book.borrowNum <= 30)
         borrowNum.classList.add('lvl3-borrow');
-    else if(bookData.borrowNum <= 50)
+    else if(book.borrowNum <= 50)
         borrowNum.classList.add('lvl4-borrow');
     else
         borrowNum.classList.add('lvl5-borrow');
@@ -187,13 +253,13 @@ function addBook(id,book) {
     let lateFees = document.createElement('label');
     lateFees.classList.add('late-fees');
     lateFees.htmlFor = "book";
-    lateFees.textContent = 'Late Fee: ' + bookData.lateFees + '$';
+    lateFees.textContent = 'Late Fee: ' + book.lateFees + '$';
 
 
     let borrowDuration = document.createElement('label');
     borrowDuration.classList.add('borrow-duration');
     borrowDuration.htmlFor = "book";
-    borrowDuration.textContent = 'Max Borrow Duration: ' + bookData.maxDuration + ' month';
+    borrowDuration.textContent = 'Max Borrow Duration: ' + book.maxDuration + ' month';
 
     bookStatus.appendChild(availability);
     bookStatus.appendChild(borrowNum);
@@ -208,7 +274,7 @@ function addBook(id,book) {
     editBtn.textContent = 'Edit';
     editBtn.addEventListener('click', function() {
         const dataParams = new URLSearchParams();
-        for(const [key,value] of Object.entries(bookData)) {
+        for(const [key,value] of Object.entries(book)) {
             dataParams.append(key,value);
         }
         window.sessionStorage.setItem('edit','true');
@@ -222,9 +288,9 @@ function addBook(id,book) {
         let img = document.querySelector('.confirmation img');
         let title = document.querySelector('.confirmation .book-title');
         let author = document.querySelector('.confirmation .author');
-        img.src = bookData.coverPath;
-        title.textContent = bookData.title;
-        author.textContent = bookData.author;
+        img.src = book.coverPath;
+        title.textContent = book.title;
+        author.textContent = book.author;
     },{once: true});
     deleteBtn.addEventListener('click',() => handleDelete(book));
 
