@@ -334,3 +334,44 @@ function addBook(id,book) {
     let booksContainer = document.getElementById('books-container');
     booksContainer.appendChild(bookContainer);
 }
+
+ 
+const sampleBook = {
+    cover: "./../CSS/assets/ChildOfTheKindred_ebook1.jpg",
+    title: "Child Of The Kindred ",
+    author: "John Doe",
+    genre: "Sci-Fi",
+    isbn: "123456789",
+    format: "Paperback",
+    availability: "Available",
+    description: "A thrilling journey through Saturn's icy moon."
+};
+
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("book-modal");
+    const closeModal = document.getElementById("close-modal");
+
+    document.querySelector("#books-container").addEventListener("click", (e) => {
+        const book = sampleBook; 
+        document.getElementById("modal-book-cover").src = book.cover;
+        document.getElementById("modal-book-title").textContent = book.title;
+        document.getElementById("modal-book-author").textContent = book.author;
+        document.getElementById("modal-book-genre").textContent = book.genre;
+        document.getElementById("modal-book-isbn").textContent = book.isbn;
+        document.getElementById("modal-book-format").textContent = book.format;
+        document.getElementById("modal-book-availability").textContent = book.availability;
+        document.getElementById("modal-book-description").textContent = book.description;
+
+        modal.classList.remove("hidden");
+    });
+
+    closeModal.addEventListener("click", () => {
+        modal.classList.add("hidden");
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === modal) {
+            modal.classList.add("hidden");
+        }
+    });
+});

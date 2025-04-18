@@ -1,39 +1,75 @@
 <!DOCTYPE html>
 <html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="./../CSS/_variables.css">
-    <link rel="stylesheet" href="./../CSS/header.css">
-    <link rel="stylesheet" href="./../CSS/footer.css">
-    <link rel="stylesheet" href="./../CSS/index.css">
-    <link rel="stylesheet" href="./../CSS/borrowed.css">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
-    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-    <title>My Borrowed Books - Online Library</title>
-</head>
-<body>
-<header>
-    <div class="header-container">
-        <div class="logo">
-            <i class="fas fa-book-open"></i>
-            <span style="color: var(--text-color);">Online Library</span>
-        </div>
-        <nav>
-            <ul class="nav-bar">
-                <li><a href="../../index.html"><i class="fas fa-home"></i> Home</a></li>
-                <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
-                <li><a href="./borrowed.html" class="active"><i class="fas fa-bookmark"></i> My Books</a></li>
-                <li><a href="./user_dashboard.html"><i class="fas fa-user"></i> Account</a></li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
-                <li><a href="../../index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet" href="./../CSS/_variables.css">
+        <link rel="stylesheet" href="./../CSS/header.css">
+        <link rel="stylesheet" href="./../CSS/footer.css">
+        <link rel="stylesheet" href="./../CSS/index.css">
+        <link rel="stylesheet" href="./../CSS/borrowed.css">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link
+            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+            rel="stylesheet">
+        <link rel="icon"
+            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        <title>My Borrowed Books - Online Library</title>
+        <script src="./../Script/header.js"></script>
+        <script src="./../Script/footer.js"></script>
+    </head>
+    <body>
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span style="color: var(--text-color);">Online
+                        Library</span>
+                </div>
+                <nav>
+                    <ul class="nav-bar">
+                        <li><a href="../../index.html"><i
+                                    class="fas fa-home"></i> Home</a></li>
+                        <li><a href="./books.html"><i class="fas fa-book"></i>
+                                Books</a></li>
+                        <li><a href="./borrowed.html" class="active"><i
+                                    class="fas fa-bookmark"></i> My
+                                Borrows</a></li>
+                        <li><a href="./user_dashboard.html"><i
+                                    class="fas fa-user"></i> Account</a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope"></i>
+                                Contact</a></li>
+                        <li><a href="../../index.html"><i
+                                    class="fas fa-sign-out-alt"></i>
+                                Logout</a></li>
+                    </ul>
+                </nav>
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu Side Panel -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav">
+                <li><a href="../../index.html"><i class="fas fa-home"></i>
+                        Home</a></li>
+                <li><a href="./books.html"><i class="fas fa-book"></i>
+                        Books</a></li>
+                <li><a href="./borrowed.html" class="active"><i
+                            class="fas fa-bookmark"></i> My Borrows</a></li>
+                <li><a href="./user_dashboard.html"><i class="fas fa-user"></i>
+                        Account</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i>
+                        Contact</a></li>
+                <li><a href="../../index.html"><i
+                            class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
-        </nav>
-    </div>
-</header>
+        </div>
 
 <main>
     <section class="borrowed-header">
@@ -532,36 +568,41 @@
       </div>
 </main>
 
-<footer>
-    <div class="footer-content" id="contact">
-        <div class="footer-section">
-            <h3>Online Library</h3>
-            <p>Your gateway to knowledge and imagination.</p>
-            <div class="social-icons">
-                <a href="#"><i class="fab fa-facebook"></i></a>
-                <a href="#"><i class="fab fa-twitter"></i></a>
-                <a href="#"><i class="fab fa-instagram"></i></a>
+        <footer>
+            <div class="footer-content" id="contact">
+                <div class="footer-section">
+                    <h3>Online Library</h3>
+                    <p>Your gateway to knowledge and imagination.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="../../index.html">Home</a></li>
+                        <li><a href="./books.html">Books</a></li>
+                        <li><a href="./borrowed.html">My Borrows</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i>
+                        support@libraryonline.com</p>
+                    <p><i class="fas fa-phone"></i> +20100100100</p>
+                </div>
             </div>
-        </div>
-        <div class="footer-section">
-            <h3>Quick Links</h3>
-            <ul>
-                <li><a href="../../index.html">Home</a></li>
-                <li><a href="./books.html">Books</a></li>
-                <li><a href="./borrowed.html">My Borrows</a></li>
-            </ul>
-        </div>
-        <div class="footer-section">
-            <h3>Contact Us</h3>
-            <p><i class="fas fa-envelope"></i>  support@libraryonline.com</p>
-            <p><i class="fas fa-phone"></i>  +20100100100</p>
-        </div>
-    </div>
-    <div class="footer-bottom">
-        <p>&copy; 2025 Online Library. All rights reserved.</p>
-    </div>
-</footer>
-<script src = "../Script/borrowed.js"></script>
-</body>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Online Library. All rights reserved.</p>
+            </div>
+            <a href="#" class="scroll-top">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+        </footer>
+        <script src="../Script/footer.js"></script>
+        <script src="../Script/borrowed.js"></script>
+    </body>
 </html>
 
