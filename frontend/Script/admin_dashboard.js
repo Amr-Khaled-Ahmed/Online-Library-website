@@ -42,6 +42,8 @@ document.addEventListener('DOMContentLoaded', function() {
     allBooks.forEach((book,i) => {
         addBook('_'+i,book);
     });
+    if(allBooks.length == 0)
+        document.querySelector('.no-results').classList.remove('hide');
 
     // Will contains Books that the user searches for
     let searchedBooks = [];
@@ -54,6 +56,15 @@ document.addEventListener('DOMContentLoaded', function() {
     let sortSelector = document.querySelector('.sort-selector');
 
     document.addEventListener('input', () => {
+        // Loading
+        let overlayer = document.querySelector('.overlayer');
+        let loading = document.querySelector('.loading');
+        overlayer.classList.remove('hide');
+        loading.classList.remove('hide');
+        setTimeout(() => {
+            overlayer.classList.add('hide');
+            loading.classList.add('hide');
+        },300);
         // Input by user
         const searchTerm = searchInput.value.trim().toLowerCase();
         const availabilityInput = availabilitySelector.value.toLowerCase();
@@ -98,6 +109,10 @@ document.addEventListener('DOMContentLoaded', function() {
         searchedBooks.forEach((book,i) => {
             addBook('_'+i,book);
         });
+        if(searchedBooks.length == 0)
+            document.querySelector('.no-results').classList.remove('hide');
+        else
+            document.querySelector('.no-results').classList.add('hide');
     });
 
 
@@ -132,7 +147,7 @@ function sortByAttribute(books, attribute, order) {
 function unviewBooks() {
     const container = document.getElementById('books-container');
     while (container.firstChild) {
-        container.removeChild(container.firstChild);
+            container.removeChild(container.firstChild);
     }
 }
 
@@ -142,6 +157,7 @@ function deleteBook(book) {
     let confirmation = document.querySelector('.confirmation');
     let deleteNotification = document.querySelector('.deleted');
     overlayer.classList.remove('hide');
+    confirmation.classList.remove('hide');
 
     return new Promise((resolve) => {
         document.getElementById('confirm-delete').addEventListener('click',() => {
@@ -150,6 +166,7 @@ function deleteBook(book) {
             confirmation.addEventListener('animationend',() => {
                 confirmation.style.animation = '';
                 overlayer.classList.add('hide');
+                confirmation.classList.add('hide');
                 resolve(true);
                 deleteNotification.classList.remove('hide');
                 deleteNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
@@ -166,6 +183,7 @@ function deleteBook(book) {
             confirmation.addEventListener('animationend',() => {
                 confirmation.style.animation = '';
                 overlayer.classList.add('hide');
+                confirmation.classList.add('hide');
                 resolve(false);
             },{once: true});
         });
@@ -299,7 +317,7 @@ function addBook(id,book) {
     brListBtn.classList.add('borrowers-list');
     brListBtn.innerHTML = '<pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre>';
     brListBtn.addEventListener('click',() => {
-
+        
     });
 
     btns.appendChild(editBtn);

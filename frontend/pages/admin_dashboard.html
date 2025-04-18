@@ -55,7 +55,7 @@
     <button id="add-book"><i class="fa-solid fa-plus"></i></button>
 
     <div class="overlayer hide">
-        <div class="confirmation">
+        <div class="confirmation hide">
             <h4>Are you sure to delete this book?</h4>
             <div class="book-details">
                 <div class="img-holder">
@@ -70,6 +70,9 @@
                 <button id="confirm-delete">Delete</button>
                 <button id="cancel-delete">Cancel</button>
             </div>
+        </div>
+        <div class="loading hide">
+            <i class="fa-solid fa-spinner"></i>
         </div>
     </div>
 
@@ -93,7 +96,7 @@
             <form class="search-form">
                 <div class="search-box">
                     <input type="search" class="search-input" placeholder="Search by title, author, or ISBN...">
-                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                    <!-- <button type="submit" class="search-btn"><i class="fas fa-search"></i></button> -->
                 </div>
 
                 <div class="filter-group">
@@ -143,6 +146,11 @@
         </section>
 
         <h1 id="title">Books</h1>
+
+        <div class="no-results hide">
+            <h1>Oops!</h1>
+            <h3>No results found!</h3>
+        </div>
 
         <div class="books-container" id="books-container">
         </div>
