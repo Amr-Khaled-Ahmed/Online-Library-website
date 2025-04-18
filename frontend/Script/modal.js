@@ -12,7 +12,7 @@ document.querySelectorAll(".book-item").forEach(item => {
         const img = this.querySelector("img")?.src || '';
         const description = `This is a short description about the book "${title}".`;
 
-        // Fill modal content
+        
         document.getElementById("modal-title").textContent = title;
         document.getElementById("modal-author").textContent = author;
         document.getElementById("modal-year").textContent = year;
