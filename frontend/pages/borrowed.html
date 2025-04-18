@@ -1,565 +1,567 @@
 <!DOCTYPE html>
 <html lang="en">
-    <head>
-        <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./../CSS/_variables.css">
-        <link rel="stylesheet" href="./../CSS/header.css">
-        <link rel="stylesheet" href="./../CSS/footer.css">
-        <link rel="stylesheet" href="./../CSS/index.css">
-        <link rel="stylesheet" href="./../CSS/borrowed.css">
-        <link rel="stylesheet"
-            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-        <link rel="preconnect" href="https://fonts.googleapis.com">
-        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-        <link
-            href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
-            rel="stylesheet">
-        <link rel="icon"
-            href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-        <title>My Borrowed Books - Online Library</title>
-        <script src="./../Script/header.js"></script>
-        <script src="./../Script/footer.js"></script>
-    </head>
-    <body>
-        <header>
-            <div class="header-container">
-                <div class="logo">
-                    <i class="fas fa-book-open"></i>
-                    <span style="color: var(--text-color);">Online
-                        Library</span>
-                </div>
-                <nav>
-                    <ul class="nav-bar">
-                        <li><a href="../../index.html"><i
-                                    class="fas fa-home"></i> Home</a></li>
-                        <li><a href="./books.html"><i class="fas fa-book"></i>
-                                Books</a></li>
-                        <li><a href="./borrowed.html" class="active"><i
-                                    class="fas fa-bookmark"></i> My
-                                Borrows</a></li>
-                        <li><a href="./user_dashboard.html"><i
-                                    class="fas fa-user"></i> Account</a></li>
-                        <li><a href="#contact"><i class="fas fa-envelope"></i>
-                                Contact</a></li>
-                        <li><a href="../../index.html"><i
-                                    class="fas fa-sign-out-alt"></i>
-                                Logout</a></li>
-                    </ul>
-                </nav>
-                <button class="menu-toggle">
-                    <i class="fas fa-bars"></i>
-                </button>
-            </div>
-        </header>
-
-        <!-- Mobile Menu Side Panel -->
-        <div class="mobile-menu">
-            <ul class="mobile-nav">
-                <li><a href="../../index.html"><i class="fas fa-home"></i>
-                        Home</a></li>
-                <li><a href="./books.html"><i class="fas fa-book"></i>
-                        Books</a></li>
-                <li><a href="./borrowed.html" class="active"><i
-                            class="fas fa-bookmark"></i> My Borrows</a></li>
-                <li><a href="./user_dashboard.html"><i class="fas fa-user"></i>
-                        Account</a></li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i>
-                        Contact</a></li>
-                <li><a href="../../index.html"><i
-                            class="fas fa-sign-out-alt"></i> Logout</a></li>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./../CSS/_variables.css">
+    <link rel="stylesheet" href="./../CSS/header.css">
+    <link rel="stylesheet" href="./../CSS/footer.css">
+    <link rel="stylesheet" href="./../CSS/index.css">
+    <link rel="stylesheet" href="./../CSS/borrowed.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <title>My Borrowed Books - Online Library</title>
+</head>
+<body>
+<header>
+    <div class="header-container">
+        <div class="logo">
+            <i class="fas fa-book-open"></i>
+            <span style="color: var(--text-color);">Online Library</span>
+        </div>
+        <nav>
+            <ul class="nav-bar">
+                <li><a href="../../index.html"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
+                <li><a href="./borrowed.html" class="active"><i class="fas fa-bookmark"></i> My Books</a></li>
+                <li><a href="./user_dashboard.html"><i class="fas fa-user"></i> Account</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li><a href="../../index.html"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
+        </nav>
+    </div>
+</header>
+
+<main>
+    <section class="borrowed-header">
+        <h1>My Books</h1>
+        <p>Manage your current borrows, returns, favorites, and borrowing history</p>
+
+        <div class="borrowed-actions">
+            <a href="#" class="action-btn export-btn"><i class="fas fa-file-export"></i> Export History (PDF)</a>
+            <a href="#" class="action-btn export-btn"><i class="fas fa-file-csv"></i> Export History (CSV)</a>
+        </div>
+    </section>
+
+    <div class="tab-container">
+        <input type="radio" id="tab1" name="tabs" checked class="tab-input">
+        <input type="radio" id="tab2" name="tabs" class="tab-input">
+        <input type="radio" id="tab3" name="tabs" class="tab-input">
+
+
+        <div class="tabs">
+            <label for="tab1" class="tab">Current Borrows</label>
+            <label for="tab2" class="tab">Borrowing History</label>
+            <label for="tab3" class="tab">Favorites</label>
         </div>
 
-        <main>
-            <section class="borrowed-header">
-                <h1>My Borrowed Books</h1>
-                <p>Manage your current borrows, returns, and borrowing
-                    history</p>
+        <div class="tab-panels">
+            <!-- Current Borrows Tab Content -->
+            <div class="tab-panel borrowed-list" id="current-borrows">
+                <div class="fines-section">
+                    <h3><i class="fas fa-exclamation-circle"></i> Overdue Fines</h3>
+                    <hr class="fines-divider">
 
-                <div class="borrowed-actions">
-                    <a href="#" class="action-btn export-btn"><i
-                            class="fas fa-file-export"></i> Export History
-                        (PDF)</a>
-                    <a href="#" class="action-btn export-btn"><i
-                            class="fas fa-file-csv"></i> Export History
-                        (CSV)</a>
-                </div>
-            </section>
-
-            <div class="tab-container">
-                <input type="radio" id="tab1" name="tabs" checked
-                    class="tab-input">
-                <input type="radio" id="tab2" name="tabs" class="tab-input">
-
-                <div class="tabs">
-                    <label for="tab1" class="tab">Current Borrows</label>
-                    <label for="tab2" class="tab">Borrowing History</label>
-                </div>
-
-                <div class="tab-panels">
-                    <!-- Current Borrows Tab Content -->
-                    <div class="tab-panel borrowed-list" id="current-borrows">
-                        <div class="fines-section">
-                            <h3><i class="fas fa-exclamation-circle"></i>
-                                Overdue Fines</h3>
-                            <hr class="fines-divider">
-
-                            <div class="fine-item">
-                                <div class="fine-book">1984 (12 days
-                                    overdue)</div>
-                                <div class="fine-amount">$6.00</div>
-                            </div>
-
-                            <div class="fine-item">
-                                <div class="fine-book">A Song of Ice and Fire (7
-                                    days overdue)</div>
-                                <div class="fine-amount">$3.50</div>
-                            </div>
-
-                            <hr class="fines-divider">
-                            <div class="total-fine">
-                                <div>Total Due</div>
-                                <div class="fine-amount">$9.50</div>
-                            </div>
-                        </div>
-
-                        <!-- 1984 - Currently Borrowed - Overdue (12 days) -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">1984</h3>
-                                <p class="borrowed-author">By George Orwell</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">March 10,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">March 31,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewals
-                                            Left</span>
-                                        <span class="info-value">0/2</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Paperback</span>
-                                    </div>
-                                </div>
-
-                                <span
-                                    class="status-badge overdue">Overdue</span>
-
-                                <div class="action-buttons">
-                                    <button class="renew-btn"
-                                        disabled>Renew</button>
-                                    <button class="return-btn">Return</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- A Song of Ice and Fire - Currently Borrowed - Overdue (7 days) -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <img src="./../CSS/assets/book_cover.jpg"
-                                    alt="A Song of Ice and Fire book cover">
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">A Song of Ice and
-                                    Fire</h3>
-                                <p class="borrowed-author">By R.R. Martin</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">March 15,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">April 5,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewals
-                                            Left</span>
-                                        <span class="info-value">0/2</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Hardcover</span>
-                                    </div>
-                                </div>
-
-                                <span
-                                    class="status-badge overdue">Overdue</span>
-
-                                <div class="action-buttons">
-                                    <button class="renew-btn"
-                                        disabled>Renew</button>
-                                    <button class="return-btn">Return</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- Brave New World - Currently Borrowed - Due Tomorrow -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">Brave New World</h3>
-                                <p class="borrowed-author">By Aldous Huxley</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">April 5,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">April 26,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewals
-                                            Left</span>
-                                        <span class="info-value">1/2</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Paperback</span>
-                                    </div>
-                                </div>
-
-                                <span class="status-badge due-tomorrow">Due in 1
-                                    day</span>
-
-                                <div class="action-buttons">
-                                    <button class="renew-btn">Renew</button>
-                                    <button class="return-btn">Return</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- The Great Gatsby - Currently Borrowed - Due Soon -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">The Great Gatsby</h3>
-                                <p class="borrowed-author">By F. Scott
-                                    Fitzgerald</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">April 8,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">April 29,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewals
-                                            Left</span>
-                                        <span class="info-value">1/2</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Paperback</span>
-                                    </div>
-                                </div>
-
-                                <span class="status-badge due-soon">Due in 3
-                                    days</span>
-
-                                <div class="action-buttons">
-                                    <button class="renew-btn">Renew</button>
-                                    <button class="return-btn">Return</button>
-                                </div>
-                            </div>
-                        </div>
-
-                        <!-- The Hobbit - Currently Borrowed - On Time -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">The Hobbit</h3>
-                                <p class="borrowed-author">By J.R.R. Tolkien</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">April 12,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">May 3,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewals
-                                            Left</span>
-                                        <span class="info-value">2/2</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Hardcover</span>
-                                    </div>
-                                </div>
-
-                                <span class="status-badge on-time">Not due
-                                    soon</span>
-
-                                <div class="action-buttons">
-                                    <button class="renew-btn">Renew</button>
-                                    <button class="return-btn">Return</button>
-                                </div>
-                            </div>
-                        </div>
+                    <div class="fine-item">
+                        <div class="fine-book">1984 (12 days overdue)</div>
+                        <div class="fine-amount">$6.00</div>
                     </div>
 
-                    <!-- Borrowing History Tab Content -->
-                    <div class="tab-panel borrowed-list" id="borrowing-history">
-                        <!-- Pride and Prejudice - Previously Borrowed - Most Recent Return -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
+                    <div class="fine-item">
+                        <div class="fine-book">A Song of Ice and Fire (7 days overdue)</div>
+                        <div class="fine-amount">$3.50</div>
+                    </div>
+
+                    <hr class="fines-divider">
+                    <div class="total-fine">
+                        <div>Total Due</div>
+                        <div class="fine-amount">$9.50</div>
+                    </div>
+                </div>
+
+                <!-- 1984 - Currently Borrowed - Overdue (12 days) -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">1984</h3>
+                        <p class="borrowed-author">By George Orwell</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">March 10, 2025</span>
                             </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">Pride and
-                                    Prejudice</h3>
-                                <p class="borrowed-author">By Jane Austen</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">January 5,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">January 26,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Returned
-                                            On</span>
-                                        <span class="info-value">January 22,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Paperback</span>
-                                    </div>
-                                </div>
-
-                                <span
-                                    class="status-badge returned">Returned</span>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">March 31, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewals Left</span>
+                                <span class="info-value">0/2</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Paperback</span>
                             </div>
                         </div>
 
-                        <!-- The Lord of the Rings - Previously Borrowed -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
+                        <span class="status-badge overdue">Overdue</span>
+
+                        <div class="action-buttons">
+                            <button class="renew-btn" disabled>Renew</button>
+                            <button class="return-btn">Return</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- A Song of Ice and Fire - Currently Borrowed - Overdue (7 days) -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <img src="./../CSS/assets/book_cover.jpg" alt="A Song of Ice and Fire book cover">
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">A Song of Ice and Fire</h3>
+                        <p class="borrowed-author">By R.R. Martin</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">March 15, 2025</span>
                             </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">The Lord of the
-                                    Rings</h3>
-                                <p class="borrowed-author">By J.R.R. Tolkien</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">December 12,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">January 2,
-                                            2025</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Returned
-                                            On</span>
-                                        <span class="info-value">December 30,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Hardcover</span>
-                                    </div>
-                                </div>
-
-                                <span
-                                    class="status-badge returned">Returned</span>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">April 5, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewals Left</span>
+                                <span class="info-value">0/2</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
                             </div>
                         </div>
 
-                        <!-- To Kill a Mockingbird - Previously Borrowed, Late Return -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
+                        <span class="status-badge overdue">Overdue</span>
+
+                        <div class="action-buttons">
+                            <button class="renew-btn" disabled>Renew</button>
+                            <button class="return-btn">Return</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Brave New World - Currently Borrowed - Due Tomorrow -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">Brave New World</h3>
+                        <p class="borrowed-author">By Aldous Huxley</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">April 5, 2025</span>
                             </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">To Kill a
-                                    Mockingbird</h3>
-                                <p class="borrowed-author">By Harper Lee</p>
-
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">November 10,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">December 1,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Returned
-                                            On</span>
-                                        <span class="info-value">December 10,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Hardcover</span>
-                                    </div>
-                                </div>
-
-                                <span class="status-badge late-return">Returned
-                                    Late</span>
-                                <div class="fine-paid">
-                                    <i class="fas fa-receipt"></i> Fine Paid:
-                                    $4.50
-                                </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">April 26, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewals Left</span>
+                                <span class="info-value">1/2</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Paperback</span>
                             </div>
                         </div>
 
-                        <!-- The Catcher in the Rye - Previously Borrowed, Renewed -->
-                        <div class="borrowed-item">
-                            <div class="borrowed-cover">
-                                <i class="fas fa-book-open"></i>
-                            </div>
-                            <div class="borrowed-details">
-                                <h3 class="borrowed-title">The Catcher in the
-                                    Rye</h3>
-                                <p class="borrowed-author">By J.D. Salinger</p>
+                        <span class="status-badge due-tomorrow">Due in 1 day</span>
 
-                                <div class="borrowed-info">
-                                    <div class="info-item">
-                                        <span class="info-label">Borrowed
-                                            On</span>
-                                        <span class="info-value">October 15,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Due Date</span>
-                                        <span class="info-value">November 5,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Renewed
-                                            On</span>
-                                        <span class="info-value">November 3,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Extended Due
-                                            Date</span>
-                                        <span class="info-value">November 26,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Returned
-                                            On</span>
-                                        <span class="info-value">November 20,
-                                            2024</span>
-                                    </div>
-                                    <div class="info-item">
-                                        <span class="info-label">Format</span>
-                                        <span
-                                            class="info-value">Hardcover</span>
-                                    </div>
-                                </div>
+                        <div class="action-buttons">
+                            <button class="renew-btn">Renew</button>
+                            <button class="return-btn">Return</button>
+                        </div>
+                    </div>
+                </div>
 
-                                <span
-                                    class="status-badge returned">Returned</span>
+                <!-- The Great Gatsby - Currently Borrowed - Due Soon -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">The Great Gatsby</h3>
+                        <p class="borrowed-author">By F. Scott Fitzgerald</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">April 8, 2025</span>
                             </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">April 29, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewals Left</span>
+                                <span class="info-value">1/2</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Paperback</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge due-soon">Due in 3 days</span>
+
+                        <div class="action-buttons">
+                            <button class="renew-btn">Renew</button>
+                            <button class="return-btn">Return</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- The Hobbit - Currently Borrowed - On Time -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">The Hobbit</h3>
+                        <p class="borrowed-author">By J.R.R. Tolkien</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">April 12, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">May 3, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewals Left</span>
+                                <span class="info-value">2/2</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge on-time">Not due soon</span>
+
+                        <div class="action-buttons">
+                            <button class="renew-btn">Renew</button>
+                            <button class="return-btn">Return</button>
                         </div>
                     </div>
                 </div>
             </div>
-        </main>
 
-        <footer>
-            <div class="footer-content" id="contact">
-                <div class="footer-section">
-                    <h3>Online Library</h3>
-                    <p>Your gateway to knowledge and imagination.</p>
-                    <div class="social-icons">
-                        <a href="#"><i class="fab fa-facebook"></i></a>
-                        <a href="#"><i class="fab fa-twitter"></i></a>
-                        <a href="#"><i class="fab fa-instagram"></i></a>
+            <!-- Borrowing History Tab Content -->
+            <div class="tab-panel borrowed-list" id="borrowing-history">
+                <!-- Pride and Prejudice - Previously Borrowed - Most Recent Return -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">Pride and Prejudice</h3>
+                        <p class="borrowed-author">By Jane Austen</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">January 5, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">January 26, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Returned On</span>
+                                <span class="info-value">January 22, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Paperback</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge returned">Returned</span>
                     </div>
                 </div>
-                <div class="footer-section">
-                    <h3>Quick Links</h3>
-                    <ul>
-                        <li><a href="../../index.html">Home</a></li>
-                        <li><a href="./books.html">Books</a></li>
-                        <li><a href="./borrowed.html">My Borrows</a></li>
-                    </ul>
+
+                <!-- The Lord of the Rings - Previously Borrowed -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">The Lord of the Rings</h3>
+                        <p class="borrowed-author">By J.R.R. Tolkien</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">December 12, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">January 2, 2025</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Returned On</span>
+                                <span class="info-value">December 30, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge returned">Returned</span>
+                    </div>
                 </div>
-                <div class="footer-section">
-                    <h3>Contact Us</h3>
-                    <p><i class="fas fa-envelope"></i>
-                        support@libraryonline.com</p>
-                    <p><i class="fas fa-phone"></i> +20100100100</p>
+
+                <!-- To Kill a Mockingbird - Previously Borrowed, Late Return -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">To Kill a Mockingbird</h3>
+                        <p class="borrowed-author">By Harper Lee</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">November 10, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">December 1, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Returned On</span>
+                                <span class="info-value">December 10, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge late-return">Returned Late</span>
+                    </div>
+                </div>
+
+                <!-- The Catcher in the Rye - Previously Borrowed, Renewed -->
+                <div class="borrowed-item">
+                    <div class="borrowed-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="borrowed-details">
+                        <h3 class="borrowed-title">The Catcher in the Rye</h3>
+                        <p class="borrowed-author">By J.D. Salinger</p>
+
+                        <div class="borrowed-info">
+                            <div class="info-item">
+                                <span class="info-label">Borrowed On</span>
+                                <span class="info-value">October 15, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Due Date</span>
+                                <span class="info-value">November 5, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Renewed On</span>
+                                <span class="info-value">November 3, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Extended Due Date</span>
+                                <span class="info-value">November 26, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Returned On</span>
+                                <span class="info-value">November 20, 2024</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                        </div>
+
+                        <span class="status-badge returned">Returned</span>
+                    </div>
                 </div>
             </div>
-            <div class="footer-bottom">
-                <p>&copy; 2025 Online Library. All rights reserved.</p>
+
+            <div class="tab-panel favorites-list" id="favorites">
+                <!-- Pride and Prejudice - Previously Borrowed - Most Recent Return -->
+                 <div class="add_book_button">
+                    <button id="add_book" type="submit">add Book</button>
+                 </div>
+                <div class="favorite-item">
+                    <div class="favorite-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="favorite-details">
+                        <h3 class="favorite-title">Pride and Prejudice</h3>
+                        <p class="favorite-author">By Jane Austen</p>
+
+                        <div class="favorite-info">
+                            <div class="info-item">
+                                <span class="info-label">Genre</span>
+                                <span class="info-value">Fantasy</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Published</span>
+                                <span class="info-value">2018</span>
+                            </div>
+                        </div>
+                        <button class ="delete_book" type="submit">delete book</button>
+                    </div>
+                </div>
+
+                <!-- The Lord of the Rings - Previously Borrowed -->
+                <div class="favorite-item">
+                    <div class="favorite-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="favorite-details">
+                        <h3 class="favorite-title">The Lord of the Rings</h3>
+                        <p class="favorite-author">By J.R.R. Tolkien</p>
+
+                        <div class="favorite-info">
+                            <div class="info-item">
+                                <span class="info-label">Genre</span>
+                                <span class="info-value">Fantasy</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Published</span>
+                                <span class="info-value">2018</span>
+                            </div>
+                        </div>
+                        <button class="delete_book" type="submit">delete book</button>
+                    </div>
+                </div>
+
+                <!-- To Kill a Mockingbird - Previously Borrowed, Late Return -->
+                <div class="favorite-item">
+                    <div class="favorite-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="favorite-details">
+                        <h3 class="favorite-title">To Kill a Mockingbird</h3>
+                        <p class="favorite-author">By Harper Lee</p>
+
+                        <div class="favorite-info">
+                            <div class="info-item">
+                                <span class="info-label">Genre</span>
+                                <span class="info-value">Fantasy</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Published</span>
+                                <span class="info-value">2018</span>
+                            </div>
+                        </div>
+                        <button class="delete_book" type="submit">delete book</button>
+                    </div>
+                </div>
+
+                <!-- The Catcher in the Rye - Previously Borrowed, Renewed -->
+                <div class="favorite-item">
+                    <div class="favorite-cover">
+                        <i class="fas fa-book-open"></i>
+                    </div>
+                    <div class="favorite-details">
+                        <h3 class="favorite-title">The Catcher in the Rye</h3>
+                        <p class="favorite-author">By J.D. Salinger</p>
+
+                        <div class="favorite-info">
+                            <div class="info-item">
+                                <span class="info-label">Genre</span>
+                                <span class="info-value">Fantasy</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Format</span>
+                                <span class="info-value">Hardcover</span>
+                            </div>
+                            <div class="info-item">
+                                <span class="info-label">Published</span>
+                                <span class="info-value">2018</span>
+                            </div>
+                        </div>                        
+                        <button class="delete_book" type="submit">delete book</button>
+                    </div>
+                </div>
             </div>
-            <a href="#" class="scroll-top">
-                <i class="fas fa-arrow-up"></i>
-            </a>
-        </footer>
-        <script src="./../Script/footer.js"></script>
-    </body>
+        </div>
+    </div>
+    <div id="confirm-modal" class="confirm-modal hidden">
+        <div class="modal-content">
+          <p>Are you sure you want to delete this book?</p>
+          <div class="modal-buttons">
+            <button id="confirm-yes">Yes</button>
+            <button id="confirm-no">No</button>
+          </div>
+        </div>
+      </div>
+</main>
+
+<footer>
+    <div class="footer-content" id="contact">
+        <div class="footer-section">
+            <h3>Online Library</h3>
+            <p>Your gateway to knowledge and imagination.</p>
+            <div class="social-icons">
+                <a href="#"><i class="fab fa-facebook"></i></a>
+                <a href="#"><i class="fab fa-twitter"></i></a>
+                <a href="#"><i class="fab fa-instagram"></i></a>
+            </div>
+        </div>
+        <div class="footer-section">
+            <h3>Quick Links</h3>
+            <ul>
+                <li><a href="../../index.html">Home</a></li>
+                <li><a href="./books.html">Books</a></li>
+                <li><a href="./borrowed.html">My Borrows</a></li>
+            </ul>
+        </div>
+        <div class="footer-section">
+            <h3>Contact Us</h3>
+            <p><i class="fas fa-envelope"></i>  support@libraryonline.com</p>
+            <p><i class="fas fa-phone"></i>  +20100100100</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        <p>&copy; 2025 Online Library. All rights reserved.</p>
+    </div>
+</footer>
+<script src = "../Script/borrowed.js"></script>
+</body>
 </html>
+
