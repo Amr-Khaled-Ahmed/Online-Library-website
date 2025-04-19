@@ -2,6 +2,10 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
         window.location.href = "./admin_dashboard.html";
+        if(window.sessionStorage.getItem('edit') !== null) {
+            window.sessionStorage.removeItem('edit','true');
+            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
+        }
     })
 
     document.querySelector('form').addEventListener('submit',(e) => {
@@ -11,7 +15,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bookData = {
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
-            coverPath: document.querySelector('.book-cover').src,
+            // coverPath: document.querySelector('.book-cover').src,
             genre: document.getElementById('genre').value,
             format: document.getElementById('format').value,
             pubYear: document.getElementById('pub-time').value,
@@ -27,6 +31,8 @@ document.addEventListener('DOMContentLoaded', function() {
             dataParams.append(key,value);
         }
         window.sessionStorage.setItem('save','true');
+        // The link is too long
+        window.sessionStorage.setItem('coverPath',document.querySelector('.book-cover').src);
 
         // Save book to database
 

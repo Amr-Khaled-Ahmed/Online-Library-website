@@ -140,7 +140,7 @@ document.addEventListener('DOMContentLoaded', function() {
             const bookData = {
                 title: bookParams.get('title'),
                 author: bookParams.get('author'),
-                coverPath: bookParams.get('coverPath'),
+                coverPath: window.sessionStorage.getItem('coverPath'),
                 genre: bookParams.get('genre'),
                 format: bookParams.get('format'),
                 pubYear: bookParams.get('pubYear'),
@@ -149,6 +149,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 maxDuration: bookParams.get('maxDuration'),
                 lateFees: bookParams.get('lateFees')
             };
+            window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
 
             if(window.sessionStorage.getItem('edit') === 'true') {
                 let book = document.querySelector(`#${window.sessionStorage.getItem('editedBook')}`);
