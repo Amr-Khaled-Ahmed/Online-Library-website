@@ -1,0 +1,205 @@
+@import url('_variables.css');
+@import url('header.css');
+@import url('footer.css');
+body {
+    margin: 0;
+    font-family: var(--font-primary);
+    background-color: var(--bg-color);
+    color: var(--text-color);
+  }
+
+.profile-container {
+  max-width: 800px;
+  margin: 100px auto;
+  padding: 30px;
+  background-color: var(--form-bg-color);
+  border: 1px solid var(--border-color);
+  border-radius: 10px;
+  box-shadow: 0 0 10px var(--shadow-color);
+}
+
+.profile-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.profile-header h1 {
+  color: var(--primary-color);
+}
+
+.img-holder {
+  position: relative;
+  text-align: center;
+  margin-bottom: 25px;
+}
+
+.profile-picture {
+  width: 150px;
+  height: 150px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 3px solid var(--primary-color);
+  display: block;
+  margin: 0 auto 15px;
+  cursor: pointer;
+}
+
+.upload {
+  border: 2px dashed var(--border-color);
+  padding: 20px;
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  margin: 0 auto 15px;
+  cursor: pointer;
+  background-color: var(--bg-color);
+  transition: background-color 0.3s;
+}
+
+.upload:hover {
+  background-color: #2d2f34;
+}
+
+.upload i {
+  font-size: 24px;
+  color: var(--primary-color);
+  margin-bottom: 10px;
+}
+
+.upload p {
+  margin: 0;
+  color: var(--text-secondary);
+}
+
+.hide {
+  display: none;
+} 
+
+.modal {
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 999;
+}
+
+.modal img {
+  max-width: 80%;
+  max-height: 80%;
+  border-radius: 10px;
+  box-shadow: 0 0 15px var(--shadow-color);
+  object-fit: contain;
+}
+
+.modal.hide {
+  display: none;
+}
+
+.password-modal{
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  position: fixed;
+  top: 0; left: 0;
+  width: 100vw; height: 100vh;
+  background: rgba(0, 0, 0, 0.8);
+  z-index: 999;
+  box-shadow: 0 0 15px var(--shadow-color);
+  text-align: left;
+}
+.modal-container{
+  padding: 50px;
+  background-color: var(--form-bg-color);
+  border-radius: 12px;
+}
+.password-modal h2 {
+  margin-top: 0;
+  color: var(--primary-color);
+  text-align: center;
+  margin-bottom: 20px;
+}
+
+.password-modal .modal-buttons {
+  display: flex;
+  justify-content: space-between;
+  margin-top: 20px;
+}
+
+.password-modal .modal-buttons .secondary {
+  background-color: transparent;
+  border: 1px solid var(--primary-color);
+  color: var(--primary-color);
+}
+
+.password-modal .modal-buttons .secondary:hover {
+  background-color: var(--primary-color);
+  color: white;
+}
+
+  
+
+form.profile-form {
+  display: flex;
+  flex-direction: column;
+  gap: 20px;
+}
+
+.form-group {
+  display: flex;
+  flex-direction: column;
+}
+
+.form-group label {
+  margin: 6px;
+  color: var(--text-secondary);
+  font-weight: bold;
+}
+
+.form-group input {
+  padding: 10px;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  font-size: 1rem;
+}
+
+.form-group input[readonly] {
+  background-color: #2a2b2e;
+  cursor: not-allowed;
+}
+
+.save-btn {
+  background-color: var(--primary-color);
+  color: white;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  font-size: 1rem;
+  cursor: pointer;
+  align-self: flex-end;
+  transition: background-color 0.3s;
+}
+
+.save-btn:hover {
+  background-color: var(--primary-hover);
+}
+.changePass{
+  align-self: flex-start;
+  background-color: rgb(146, 6, 6);
+}
+.changePass:hover{
+  background-color: rgb(96, 4, 4);
+}
+
+
+@media (max-width: 600px) {
+  .profile-container {
+    margin: 60px 15px;
+    padding: 20px;
+  }
+}
