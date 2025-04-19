@@ -2,13 +2,11 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
         window.location.href = "./admin_dashboard.html";
-        if(window.sessionStorage.getItem('edit') !== null)
-            window.sessionStorage.removeItem('edit');
     })
 
-    document.querySelector('form').addEventListener('submit', () => {
-        sessionStorage.setItem('showMessage', 'true');
-
+    document.querySelector('form').addEventListener('submit',(e) => {
+        e.preventDefault();
+        const bookParams = new URLSearchParams(window.location.search);
         // Save book info
         const bookData = {
             title: document.getElementById('title').value,
@@ -16,18 +14,24 @@ document.addEventListener('DOMContentLoaded', function() {
             coverPath: document.querySelector('.book-cover').src,
             genre: document.getElementById('genre').value,
             format: document.getElementById('format').value,
-            yearPub: document.getElementById('pub-time').value,
+            pubYear: document.getElementById('pub-time').value,
             availability: document.getElementById('availability').value,
             borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
             maxDuration: document.getElementById('mx-brw-dur').value,
             lateFees: document.getElementById('late-fee').value
         };
 
+        // Send book info to admin dashboard and save there (temporary), no need with database
+        const dataParams = new URLSearchParams();
+        for(const [key,value] of Object.entries(bookData)) {
+            dataParams.append(key,value);
+        }
+        window.sessionStorage.setItem('save','true');
 
         // Save book to database
 
+        window.location.href = `./admin_dashboard.html?${dataParams.toString()}`;
     });
-    document.getElementById('save').addEventListener('click',() => saveBook(book));
 
     // Upload book cover
     let imgHolder = document.querySelector('.img-holder');
@@ -126,7 +130,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('genre').value = bookParams.get('genre');
             document.getElementById('format').value = bookParams.get('format');
             document.getElementById('availability').value = bookParams.get('availability');
-            document.getElementById('pub-time').value = bookParams.get('yearPub');
+            document.getElementById('pub-time').value = bookParams.get('pubYear');
             document.getElementById('late-fee').value = bookParams.get('lateFees');
             document.getElementById('mx-brw-dur').value = bookParams.get('maxDuration');
         }
