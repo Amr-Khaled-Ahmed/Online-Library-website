@@ -1,3 +1,7 @@
+
+let books = [];
+let allBooks = [];
+
 // All things
 document.addEventListener('DOMContentLoaded', function() {
 
@@ -29,14 +33,13 @@ document.addEventListener('DOMContentLoaded', function() {
     };
 
     // Will be retrieved from database
-    let books = [];
     for(let i = 0; i < 6; ++i)
         books.push(book1);
     for(let i = 0; i < 6; ++i)
         books.push(book2);
 
     // Backup
-    let allBooks = [...books];
+    allBooks = [...books];
 
     // View all books
     allBooks.forEach((book,i) => {
@@ -121,7 +124,9 @@ document.addEventListener('DOMContentLoaded', function() {
     })
 
     window.addEventListener('load', () => {
-        if (sessionStorage.getItem('showMessage') === 'true') {
+        if (window.sessionStorage.getItem('save') === 'true') {
+            window.sessionStorage.removeItem('save','true');
+            // Display Notification
             let savedNotification = document.querySelector('.saved');
             savedNotification.classList.remove('hide');
             savedNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
@@ -129,7 +134,45 @@ document.addEventListener('DOMContentLoaded', function() {
                 savedNotification.classList.add('hide');
                 savedNotification.style.animation = '';
             },{once: true});
-            sessionStorage.removeItem('showMessage');
+
+            // Add Book to page (temporary), no need with database
+            const bookParams = new URLSearchParams(window.location.search);
+            const bookData = {
+                title: bookParams.get('title'),
+                author: bookParams.get('author'),
+                coverPath: window.sessionStorage.getItem('coverPath'),
+                genre: bookParams.get('genre'),
+                format: bookParams.get('format'),
+                pubYear: bookParams.get('pubYear'),
+                availability: bookParams.get('availability'),
+                borrowNum: bookParams.get('borrowNum'),
+                maxDuration: bookParams.get('maxDuration'),
+                lateFees: bookParams.get('lateFees')
+            };
+            window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
+
+            if(window.sessionStorage.getItem('edit') === 'true') {
+                let book = document.querySelector(`#${window.sessionStorage.getItem('editedBook')}`);
+                let oldData = JSON.parse(book.dataset.info);
+                book.dataset.info = JSON.stringify(bookData);
+
+                editBook(book.id,bookData,oldData);
+
+                books.splice(books.indexOf(oldData),1);
+
+                window.sessionStorage.removeItem('edit','true');
+                window.sessionStorage.removeItem('editedBook',book.id);
+            }
+            else {
+                addBook(books.length,bookData);
+            }
+            books.push(bookData);
+
+            // Add book to database
+
+            // Reload
+            // location.reload(true);
+            
         }
     });
 });
@@ -145,10 +188,10 @@ function sortByAttribute(books, attribute, order) {
 
 // view no books
 function unviewBooks() {
-    const container = document.getElementById('books-container');
-    while (container.firstChild) {
-            container.removeChild(container.firstChild);
-    }
+    const books = Array.from(document.getElementById('books-container').children);
+    books.forEach((book) => {
+        document.getElementById('books-container').removeChild(book);
+    });
 }
 
 // Confirm to delete book
@@ -190,10 +233,23 @@ function deleteBook(book) {
     });
 }
 
-async function handleDelete(book) {
+async function handleDelete(id,book) {
     const willDelete = await deleteBook(book);
-    if(willDelete)
-        console.log('Deleted');
+    if(willDelete) {
+        // Delete book from page (temporary), no need with database
+        let container = Array.from(document.getElementById('books-container').children);
+        container.forEach(book => {
+            if(book.id == id)
+                document.getElementById('books-container').removeChild(book);
+        });
+        books.remove(book);
+
+        // Delete from database
+
+
+        // Reload when deleted from database
+        //location.reload(true);
+    }
 }
 
 // Add book
@@ -202,6 +258,11 @@ function addBook(id,book) {
     let bookContainer = document.createElement('div');
     bookContainer.classList.add('book');
     bookContainer.id = id;
+
+
+    let bookJSON = JSON.stringify(book);
+    bookContainer.dataset.info = bookJSON;
+
 
     let imgHolder = document.createElement('div');
     imgHolder.classList.add('img-holder');
@@ -257,16 +318,7 @@ function addBook(id,book) {
     let borrowNum = document.createElement('label');
     borrowNum.htmlFor = "book";
     borrowNum.textContent = book.borrowNum + ' Borrows';
-    if(book.borrowNum <= 5)
-        borrowNum.classList.add('lvl1-borrow');
-    else if(book.borrowNum <= 15)
-        borrowNum.classList.add('lvl2-borrow');
-    else if(book.borrowNum <= 30)
-        borrowNum.classList.add('lvl3-borrow');
-    else if(book.borrowNum <= 50)
-        borrowNum.classList.add('lvl4-borrow');
-    else
-        borrowNum.classList.add('lvl5-borrow');
+    borrowNum.classList.add(borrowLevel(Number(book.borrowNum)));
 
     let lateFees = document.createElement('label');
     lateFees.classList.add('late-fees');
@@ -292,10 +344,11 @@ function addBook(id,book) {
     editBtn.textContent = 'Edit';
     editBtn.addEventListener('click', function() {
         const dataParams = new URLSearchParams();
-        for(const [key,value] of Object.entries(book)) {
+        for(const [key,value] of Object.entries(JSON.parse(bookContainer.dataset.info))) {
             dataParams.append(key,value);
         }
         window.sessionStorage.setItem('edit','true');
+        window.sessionStorage.setItem('editedBook',id);
         window.location.href = `./add_edit.html?${dataParams.toString()}`;
     });
 
@@ -310,7 +363,7 @@ function addBook(id,book) {
         title.textContent = book.title;
         author.textContent = book.author;
     },{once: true});
-    deleteBtn.addEventListener('click',() => handleDelete(book));
+    deleteBtn.addEventListener('click',() => handleDelete(id,book));
 
 
     let brListBtn = document.createElement('button');
@@ -335,5 +388,52 @@ function addBook(id,book) {
     booksContainer.appendChild(bookContainer);
 }
 
- 
- 
+function editBook(id,newData,oldData) {
+    let title = document.querySelector(`#${id} .book-title`);
+    title.textContent = newData.title;
+
+    let author = document.querySelector(`#${id} .author`);
+    author.textContent = 'By ' + newData.author;
+
+    let img = document.querySelector(`#${id} .book-cover`);
+    img.src = newData.coverPath;
+
+    let genre = document.querySelector(`#${id} .book-genre`);
+    genre.textContent = newData.genre[0].toUpperCase() + newData.genre.slice(1);
+    genre.classList.remove(oldData.genre);
+    genre.classList.add(newData.genre);
+
+    let format = document.querySelector(`#${id} .book-format`);
+    format.textContent = newData.format[0].toUpperCase() + newData.format.slice(1);
+    format.classList.remove(oldData.format);
+    format.classList.add(newData.format);
+
+    let availability = document.querySelector(`#${id} .availability`);
+    availability.textContent = newData.availability[0].toUpperCase() + newData.availability.slice(1);
+    availability.classList.remove(oldData.availability);
+    availability.classList.add(newData.availability);
+
+    let borrowNum = document.querySelector(`#${id} .${borrowLevel(Number(oldData.borrowNum))}`);
+    borrowNum.textContent = newData.borrowNum + ' Borrows';
+    borrowNum.classList.remove(oldData.borrowNum);
+    borrowNum.classList.add(newData.borrowNum);
+
+    let lateFees = document.querySelector(`#${id} .late-fees`);
+    lateFees.textContent = 'Late Fee: ' + newData.lateFees + '$';
+
+    let borrowDuration = document.querySelector(`#${id} .borrow-duration`);
+    borrowDuration.textContent = 'Max Borrow Duration: ' + newData.maxDuration + ' month';
+}
+
+function borrowLevel(borrowNum) {
+    if(borrowNum <= 5)
+        return 'lvl1-borrow';
+    else if(borrowNum <= 15)
+        return 'lvl2-borrow';
+    else if(borrowNum <= 30)
+        return 'lvl3-borrow';
+    else if(borrowNum <= 50)
+        return 'lvl4-borrow';
+    else
+        return 'lvl5-borrow';
+}
