@@ -73,14 +73,13 @@ RenewButtons.forEach((btn) => {
 
 
 document.addEventListener('DOMContentLoaded', function() {
-    console.log('DOM loaded'); // Debug log
+    
     
     const modal = document.getElementById('borrowed-modal');
     const closeBtn = document.querySelector('.close-btn');
     const borrowedItems = document.querySelectorAll('.borrowed-item');
 
-    console.log('Modal element:', modal); // Debug log
-    console.log('Number of borrowed items:', borrowedItems.length); // Debug log
+     
 
     // Add click event to each borrowed item
     borrowedItems.forEach(item => {
@@ -90,7 +89,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 return; // Exit the function if a button was clicked
             }
             
-            console.log('Item clicked'); // Debug log
+            
             
             const title = this.querySelector('.borrowed-title').textContent;
             const author = this.querySelector('.borrowed-author').textContent;
@@ -101,9 +100,9 @@ document.addEventListener('DOMContentLoaded', function() {
             const format = this.querySelector('.info-item:nth-child(4) .info-value').textContent;
             const renewals = this.querySelector('.info-item:nth-child(3) .info-value').textContent;
 
-            console.log('Modal data:', { title, author, cover }); // Debug log
+            
 
-            // Update modal content
+             
             document.getElementById('modal-title').textContent = title;
             document.getElementById('modal-author').textContent = author;
             document.getElementById('modal-image').src = cover;
@@ -113,9 +112,9 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('modal-format').textContent = format;
             document.getElementById('modal-renewals').textContent = renewals;
 
-            // Show modal
-            modal.style.display = 'block'; // Changed from classList.remove('hidden')
-            console.log('Modal should be visible now'); // Debug log
+            
+            modal.style.display = 'block';  
+            
         });
     });
 
