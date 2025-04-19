@@ -85,13 +85,56 @@
                         </li>
                         <li>
                             <img src="../CSS/assets/friend4.jpeg" alt="User 3">
-                            <span>Mike Johnson - Finished
-                                "To Kill a Mockingbird"</span>
+                            <span>Mike Johnson - Finished "To Kill a Mockingbird"</span>
                         </li>
                     </ul>
-                    <button type="submit">Add friends</button>
+                    <div id="confirm-modal" class="confirm-modal hidden">
+                        <div class="modal-content">
+                            <p id="confirm-text">Are you sure you want to delete this friend?</p>
+                            <div class="modal-buttons">
+                                <button id="confirm-yes">Yes</button>
+                                <button id="confirm-no">No</button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="community-wrapper">
+                        <div id="left-panel">
+                            <div id="add-friend">
+                                <button type="submit" onclick="showPopup()">Add friends</button>
+                            </div>
+                        </div>
+                        <div id = "right">
+                            <h3>Friend List</h3>
+                            <ul>
+                                <div id="friend-list">
+                                    <p>No friends added yet.</p>
+                                </div>
+                            </ul>
+                        </div>
+                    <div id="overlay" onclick="hidePopup()"></div>
+                        <div id="popup">
+                            <h3>Add a Friend</h3>
+                            <form onsubmit="submitForm(); return false;">
+                                <label for="entry-type">Choose Input Type:</label>
+                                <select id="entry-type" onchange="toggleInputField()">
+                                    <option value="name">Name</option>
+                                    <option value="email">Email</option>
+                                </select>
+                                <div id="name-field">
+                                    <label for="friend-name">Name:</label>
+                                    <input type="text" id="friend-name">
+                                </div>
+                                <div id="email-field" style="display: none;">
+                                    <label for="friend-email">Email:</label>
+                                    <input type="email" id="friend-email">
+                                </div>
+                                <button type="submit">Add</button>
+                                <button type="button" onclick="hidePopup()">Cancel</button>
+                            </form>
+                        </div>
+                    </div>
                 </section>
-
                 <div class="favorites">
                     <div class="section-header">
                         <h2>❤️ Favorites</h2>
