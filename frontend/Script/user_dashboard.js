@@ -1,16 +1,3 @@
-const addFriendsBtn = document.querySelector('button[type="submit"]');
-if (addFriendsBtn) {
-    addFriendsBtn.addEventListener('click', () => {
-        const notif = document.createElement('div');
-        notif.className = 'custom-notification';
-        notif.textContent = '🚧 Friend adding feature coming on next Phase!';
-        document.body.appendChild(notif);
-        setTimeout(() => {
-            notif.remove();
-        }, 30000);
-    });
-}
-
 const smallPage = document.getElementById("smallPage");
 const closePage = document.getElementById("closePage");
 const pageContent = document.getElementById("page_content");
@@ -66,4 +53,85 @@ window.addEventListener("click", (e) => {
     if (e.target === modal) {
         modal.classList.add("hidden");
     }
+});
+// Add friend function
+const friends = [];
+function showPopup() {
+    document.getElementById('popup').style.display = 'block';
+    document.getElementById('overlay').style.display = 'block';
+}
+
+function hidePopup() {
+    document.getElementById('popup').style.display = 'none';
+    document.getElementById('overlay').style.display = 'none';
+    document.getElementById('friend-name').value = '';
+    document.getElementById('friend-email').value = '';
+}
+
+function toggleInputField() {
+    const type = document.getElementById('entry-type').value;
+    document.getElementById('name-field').style.display = type === 'name' ? 'block' : 'none';
+    document.getElementById('email-field').style.display = type === 'email' ? 'block' : 'none';
+}
+function submitForm() {
+    const type = document.getElementById('entry-type').value;
+    const name = document.getElementById('friend-name').value.trim();
+    const email = document.getElementById('friend-email').value.trim().toLowerCase();
+    if (type === 'name') {
+        if (name.length < 2) {
+            showAlert("Please enter a valid name.");
+            return;
+        }
+        friends.push({ name, email: '' });
+        updateFriendList();
+    } else if (type === 'email') {
+        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+        if (!emailRegex.test(email)) {
+            showAlert("Please enter a valid email.");
+            return;
+        }
+        friends.push({ name: '', email });
+        updateFriendList();
+    }
+    hidePopup();
+}
+let friendIndexToDelete = null;
+function updateFriendList() {
+    const listDiv = document.getElementById('friend-list');
+    listDiv.innerHTML = '';
+
+    if (friends.length === 0) {
+        listDiv.innerHTML = '<p>No friends added yet.</p>';
+        return;
+    }
+    friends.forEach((friend, index) => {
+        const container = document.createElement('div');
+        container.classList.add('friend-entry');
+        const span = document.createElement('span');
+        span.textContent = friend.name ? friend.name : friend.email;
+        const deleteBtn = document.createElement('button');
+        deleteBtn.textContent = 'Delete';
+        deleteBtn.id = `confirm-no-${index}`;
+        deleteBtn.classList.add('delete-friend');
+        deleteBtn.addEventListener('click', () => {
+            friendIndexToDelete = index;
+            document.getElementById('confirm-text').textContent = `Are you sure you want to delete "${span.textContent}"?`;
+            document.getElementById('confirm-modal').classList.remove('hidden');
+        });
+        container.appendChild(span);
+        container.appendChild(deleteBtn);
+        listDiv.appendChild(container);
+    });
+}
+document.getElementById('confirm-yes').addEventListener('click', () => {
+    if (friendIndexToDelete !== null) {
+        friends.splice(friendIndexToDelete, 1);
+        updateFriendList();
+        friendIndexToDelete = null;
+    }
+    document.getElementById('confirm-modal').classList.add('hidden');
+});
+document.getElementById('confirm-no').addEventListener('click', () => {
+    friendIndexToDelete = null;
+    document.getElementById('confirm-modal').classList.add('hidden');
 });
