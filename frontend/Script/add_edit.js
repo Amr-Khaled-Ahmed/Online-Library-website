@@ -130,7 +130,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.querySelector('.upload').style.display = 'none';
             let img = document.querySelector('.book-cover');
             img.classList.remove('hide');
-            img.src = bookParams.get('coverPath');
+            img.src = window.sessionStorage.getItem('coverPath');
+            window.sessionStorage.removeItem('coverPath',img.src)
             document.getElementById('title').value = bookParams.get('title');
             document.getElementById('author').value = bookParams.get('author');
             document.getElementById('genre').value = bookParams.get('genre');

@@ -345,8 +345,10 @@ function addBook(id,book) {
     editBtn.addEventListener('click', function() {
         const dataParams = new URLSearchParams();
         for(const [key,value] of Object.entries(JSON.parse(bookContainer.dataset.info))) {
-            dataParams.append(key,value);
+            if(key !== 'coverPath') // Link is too long
+                dataParams.append(key,value);
         }
+        window.sessionStorage.setItem('coverPath',JSON.parse(bookContainer.dataset.info).coverPath);
         window.sessionStorage.setItem('edit','true');
         window.sessionStorage.setItem('editedBook',id);
         window.location.href = `./add_edit.html?${dataParams.toString()}`;
@@ -361,7 +363,7 @@ function addBook(id,book) {
         let author = document.querySelector('.confirmation .author');
         img.src = JSON.parse(bookContainer.dataset.info).coverPath;
         title.textContent = JSON.parse(bookContainer.dataset.info).title;
-        author.textContent = JSON.parse(bookContainer.dataset.info).author;
+        author.textContent = 'By ' + JSON.parse(bookContainer.dataset.info).author;
     },{once: true});
     deleteBtn.addEventListener('click',() => handleDelete(id,JSON.parse(bookContainer.dataset.info)));
 
