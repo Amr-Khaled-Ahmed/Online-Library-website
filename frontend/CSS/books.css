@@ -78,6 +78,7 @@
 }
 
 .book-item {
+    position: relative;
     background-color: var(--form-bg-color);
     border-radius: 10px;
     overflow: hidden;
