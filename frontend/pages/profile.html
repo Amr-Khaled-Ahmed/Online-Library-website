@@ -13,31 +13,39 @@
 <body>
     <header>
         <div class="header-container">
-            <div class="logo">
-                <i class="fas fa-book-open"></i>
-                <span style="color: var(--text-color);">Online
-                    Library</span>
-            </div>
-            <nav>
-                <ul class="nav-bar">
-                    <li><a href="../../index.html"><i
-                                class="fas fa-home"></i> Home</a></li>
-                    <li><a href="./books.html" class="active"><i
-                                class="fas fa-book"></i> Books</a></li>
-                    <li><a href="../../index.html"><i
-                                class="fas fa-sign-out-alt"></i> Log
-                            Out</a></li>
-
-                    <li><a href="#contact"><i class="fas fa-envelope"></i>
-                            Contact</a></li>
-
-                </ul>
-            </nav>
-            <button class="menu-toggle">
-                <i class="fas fa-bars"></i>
-            </button>
+          <div class="logo">
+            <i class="fas fa-book-open"></i>
+            <span style="color: var(--text-color);">Online Library</span>
+          </div>
+          <nav>
+            <ul class="nav-bar">
+              <li><a href="./../pages/user_dashboard.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+              <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
+              <li><a href="./../../index.html"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+              <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+            </ul>
+          </nav>
+          <!-- Add the menu toggle button -->
+          <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
         </div>
-    </header>
+      </header>
+      
+      <!-- Mobile Menu Side Panel -->
+      <div class="mobile-menu">
+
+        <ul class="mobile-nav">
+          <li><a href="./../pages/user_dashboard.html" class="active"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
+          <li><a href="./../../index.html"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+          <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+        </ul>
+      </div>
+      
+      <!-- Overlay for Mobile Menu -->
+      <div class="overlay"></div>
+      
     <main class="profile-container">
         <div class="profile-header">
             <h1>User Profile</h1>
@@ -136,5 +144,6 @@
     </footer>
     <script src="../Script/footer.js"></script>
     <script src="../Script/profile.js"></script>
+    <script src="./../Script/header.js"></script>
 </body>
 </html>
