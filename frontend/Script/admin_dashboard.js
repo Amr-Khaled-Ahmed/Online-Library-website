@@ -1,3 +1,29 @@
+// Example of book object
+const book1 = {
+    title: 'Child of The Kindred',
+    author: 'Ahmed',
+    coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
+    genre: 'fantasy',
+    format: 'paperback',
+    pubYear: '2010',
+    availability: 'unavailable',
+    borrowNum: '10',
+    maxDuration: '1',
+    lateFees: '10'
+};
+
+const book2 = {
+    title: 'ahild of The Kindred',
+    author: 'Basem',
+    coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
+    genre: 'fantasy',
+    format: 'paperback',
+    pubYear: '2021',
+    availability: 'unavailable',
+    borrowNum: '100',
+    maxDuration: '1',
+    lateFees: '10'
+};
 
 let books = [];
 let allBooks = [];
@@ -5,32 +31,7 @@ let allBooks = [];
 // All things
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Example of book object
-    const book1 = {
-        title: 'Child of The Kindred',
-        author: 'Ahmed',
-        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
-        genre: 'fantasy',
-        format: 'paperback',
-        pubYear: '2010',
-        availability: 'unavailable',
-        borrowNum: '10',
-        maxDuration: '1',
-        lateFees: '10'
-    };
-
-    const book2 = {
-        title: 'ahild of The Kindred',
-        author: 'Basem',
-        coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
-        genre: 'fantasy',
-        format: 'paperback',
-        pubYear: '2021',
-        availability: 'unavailable',
-        borrowNum: '100',
-        maxDuration: '1',
-        lateFees: '10'
-    };
+    
 
     // Will be retrieved from database
     for(let i = 0; i < 6; ++i)
@@ -159,6 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 editBook(book.id,bookData,oldData);
 
                 books.splice(books.indexOf(oldData),1);
+                allBooks.splice(books.indexOf(oldData),1);
 
                 window.sessionStorage.removeItem('edit','true');
                 window.sessionStorage.removeItem('editedBook',book.id);
@@ -167,6 +169,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 addBook(books.length,bookData);
             }
             books.push(bookData);
+            allBooks.push(bookData);
 
             // Add book to database
 
@@ -242,7 +245,8 @@ async function handleDelete(id,book) {
             if(book.id == id)
                 document.getElementById('books-container').removeChild(book);
         });
-        books.remove(book);
+        books.splice(books.indexOf(book),1);
+        allBooks.splice(books.indexOf(book),1);
 
         // Delete from database
 
