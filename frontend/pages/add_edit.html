@@ -94,6 +94,16 @@
                         <form>
                             <div class="field">
                                 <div class="input-header">
+                                    <i class="fa-solid fa-id-badge"></i>
+                                    <label for="book-id">Book ID</label>
+                                </div>
+                                <input type="text" id="id" name="id"
+                                    placeholder="Enter Book ID"
+                                    autocomplete="off"
+                                    required>
+                            </div>
+                            <div class="field">
+                                <div class="input-header">
                                     <i class="fa-solid fa-book"></i>
                                     <label for="title">Book Title</label>
                                 </div>
@@ -168,23 +178,13 @@
                             </div>
                             <div class="field">
                                 <div class="input-header">
-                                    <i class="fa-regular fa-calendar-days"></i>
-                                    <label for="mx-brw-dur">Max Borrow Duration
-                                        <pre> <span style="font-size: small;"> by month</span></pre>
-                                    </label>
+                                    <i class="fa-solid fa-file-prescription"></i>
+                                    <label for="description">Book Description</label>
                                 </div>
-                                <input type="text" id="mx-brw-dur"
-                                    placeholder="Enter Max Borrow Duration"
-                                    name="mx-brw-dur"
+                                <input type="text" id="description" name="description"
+                                    placeholder="Enter Book Description"
                                     autocomplete="off"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');">
-                            </div>
-                            <div class="field">
-                                <div class="input-header">
-                                    <i class="fa-solid fa-file"></i>
-                                    <label for="file">Book</label>
-                                </div>
-                                <input type="file" id="file" name="file">
+                                    required>
                             </div>
 
                             <input type="reset" id="reset" name="reset"

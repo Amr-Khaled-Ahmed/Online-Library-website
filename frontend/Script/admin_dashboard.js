@@ -1,5 +1,6 @@
 // Example of book object
 const book1 = {
+    id: '1',
     title: 'Child of The Kindred',
     author: 'Ahmed',
     coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
@@ -8,11 +9,11 @@ const book1 = {
     pubYear: '2010',
     availability: 'unavailable',
     borrowNum: '10',
-    maxDuration: '1',
     lateFees: '10'
 };
 
 const book2 = {
+    id: '2',
     title: 'ahild of The Kindred',
     author: 'Basem',
     coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
@@ -21,7 +22,6 @@ const book2 = {
     pubYear: '2021',
     availability: 'unavailable',
     borrowNum: '100',
-    maxDuration: '1',
     lateFees: '10'
 };
 
@@ -31,24 +31,17 @@ let allBooks = [];
 // All things
 document.addEventListener('DOMContentLoaded', function() {
 
-    
-
     // Will be retrieved from database
-    for(let i = 0; i < 6; ++i)
-        books.push(book1);
-    for(let i = 0; i < 6; ++i)
-        books.push(book2);
+    books.push(book1), books.push(book2);
 
     // Backup
     allBooks = [...books];
 
     // View all books
-    allBooks.forEach((book,i) => {
-        addBook('_'+i,book);
+    allBooks.forEach((book) => {
+        addBook(book);
     });
-    if(allBooks.length == 0)
-        document.querySelector('.no-results').classList.remove('hide');
-
+    checkNoBooks();
     // Will contains Books that the user searches for
     let searchedBooks = [];
 
@@ -110,13 +103,10 @@ document.addEventListener('DOMContentLoaded', function() {
         unviewBooks();
 
         // Add books that user wants
-        searchedBooks.forEach((book,i) => {
-            addBook('_'+i,book);
+        searchedBooks.forEach((book) => {
+            addBook(book);
         });
-        if(searchedBooks.length == 0)
-            document.querySelector('.no-results').classList.remove('hide');
-        else
-            document.querySelector('.no-results').classList.add('hide');
+        checkNoBooks();
     });
 
 
@@ -139,6 +129,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // Add Book to page (temporary), no need with database
             const bookParams = new URLSearchParams(window.location.search);
             const bookData = {
+                id: bookParams.get('id'),
                 title: bookParams.get('title'),
                 author: bookParams.get('author'),
                 coverPath: window.sessionStorage.getItem('coverPath'),
@@ -147,10 +138,11 @@ document.addEventListener('DOMContentLoaded', function() {
                 pubYear: bookParams.get('pubYear'),
                 availability: bookParams.get('availability'),
                 borrowNum: bookParams.get('borrowNum'),
-                maxDuration: bookParams.get('maxDuration'),
-                lateFees: bookParams.get('lateFees')
+                lateFees: bookParams.get('lateFees'),
+                description: window.sessionStorage.getItem('description')
             };
             window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
+            window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
 
             if(window.sessionStorage.getItem('edit') === 'true') {
                 let book = document.querySelector(`#${window.sessionStorage.getItem('editedBook')}`);
@@ -166,7 +158,7 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.sessionStorage.removeItem('editedBook',book.id);
             }
             else {
-                addBook(books.length,bookData);
+                addBook(bookData);
             }
             books.push(bookData);
             allBooks.push(bookData);
@@ -179,6 +171,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function checkNoBooks() {
+    if(Array.from(document.getElementById('books-container').children).length == 0)
+        document.querySelector('.no-results').classList.remove('hide');
+    else
+        document.querySelector('.no-results').classList.add('hide');
+}
 
 function sortByAttribute(books, attribute, order) {
     return books.sort((a,b) => {
@@ -246,7 +245,8 @@ async function handleDelete(id,book) {
                 document.getElementById('books-container').removeChild(book);
         });
         books.splice(books.indexOf(book),1);
-        allBooks.splice(books.indexOf(book),1);
+        allBooks.splice(allBooks.indexOf(book),1);
+        checkNoBooks();
 
         // Delete from database
 
@@ -258,10 +258,10 @@ async function handleDelete(id,book) {
 
 // Add book
 // Book Data will be dynamic in backend phase
-function addBook(id,book) {
+function addBook(book) {
     let bookContainer = document.createElement('div');
     bookContainer.classList.add('book');
-    bookContainer.id = id;
+    bookContainer.id = '_' + book.id;
 
 
     let bookJSON = JSON.stringify(book);
@@ -289,6 +289,12 @@ function addBook(id,book) {
     let bookInfo = document.createElement('div');
     bookInfo.classList.add('book-information');
 
+    let bookID = document.createElement('label');
+    bookID.classList.add('id');
+    bookID.htmlFor = "book";
+    bookID.textContent = 'ID: ' + book.id;
+
+
     let bookGenre = document.createElement('label');
     bookGenre.classList.add('book-genre');
     bookGenre.classList.add(book.genre);
@@ -306,6 +312,7 @@ function addBook(id,book) {
     bookpubYear.htmlFor = "book";
     bookpubYear.textContent = book.pubYear;
 
+    bookInfo.appendChild(bookID);
     bookInfo.appendChild(bookGenre);
     bookInfo.appendChild(bookFormat);
     bookInfo.appendChild(bookpubYear);
@@ -329,16 +336,9 @@ function addBook(id,book) {
     lateFees.htmlFor = "book";
     lateFees.textContent = 'Late Fee: ' + book.lateFees + '$';
 
-
-    let borrowDuration = document.createElement('label');
-    borrowDuration.classList.add('borrow-duration');
-    borrowDuration.htmlFor = "book";
-    borrowDuration.textContent = 'Max Borrow Duration: ' + book.maxDuration + ' month';
-
     bookStatus.appendChild(availability);
     bookStatus.appendChild(borrowNum);
     bookStatus.appendChild(lateFees);
-    bookStatus.appendChild(borrowDuration);
 
     let btns = document.createElement('div');
     btns.classList.add('buttons');
@@ -349,12 +349,13 @@ function addBook(id,book) {
     editBtn.addEventListener('click', function() {
         const dataParams = new URLSearchParams();
         for(const [key,value] of Object.entries(JSON.parse(bookContainer.dataset.info))) {
-            if(key !== 'coverPath') // Link is too long
+            if(key !== 'coverPath' && key !== 'description') // Link is too long
                 dataParams.append(key,value);
         }
         window.sessionStorage.setItem('coverPath',JSON.parse(bookContainer.dataset.info).coverPath);
+        window.sessionStorage.setItem('description',JSON.parse(bookContainer.dataset.info).description);
         window.sessionStorage.setItem('edit','true');
-        window.sessionStorage.setItem('editedBook',id);
+        window.sessionStorage.setItem('editedBook',JSON.parse(bookContainer.dataset.info).id);
         window.location.href = `./add_edit.html?${dataParams.toString()}`;
     });
 
@@ -363,13 +364,15 @@ function addBook(id,book) {
     deleteBtn.textContent = 'Delete';
     deleteBtn.addEventListener('click',() => {
         let img = document.querySelector('.confirmation img');
+        let id = document.querySelector('.confirmation .id');
         let title = document.querySelector('.confirmation .book-title');
         let author = document.querySelector('.confirmation .author');
+        id.textContent = 'ID: ' + JSON.parse(bookContainer.dataset.info).id;
         img.src = JSON.parse(bookContainer.dataset.info).coverPath;
         title.textContent = JSON.parse(bookContainer.dataset.info).title;
         author.textContent = 'By ' + JSON.parse(bookContainer.dataset.info).author;
     },{once: true});
-    deleteBtn.addEventListener('click',() => handleDelete(id,JSON.parse(bookContainer.dataset.info)));
+    deleteBtn.addEventListener('click',() => handleDelete('_' + JSON.parse(bookContainer.dataset.info).id,JSON.parse(bookContainer.dataset.info)));
 
 
     let brListBtn = document.createElement('button');

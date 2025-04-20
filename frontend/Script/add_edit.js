@@ -9,6 +9,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const bookParams = new URLSearchParams(window.location.search);
         // Save book info
         const bookData = {
+            id: document.getElementById('id').value,
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
             // coverPath: document.querySelector('.book-cover').src,
@@ -17,7 +18,6 @@ document.addEventListener('DOMContentLoaded', function() {
             pubYear: document.getElementById('pub-time').value,
             availability: document.getElementById('availability').value,
             borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
-            maxDuration: document.getElementById('mx-brw-dur').value,
             lateFees: document.getElementById('late-fee').value
         };
 
@@ -29,6 +29,7 @@ document.addEventListener('DOMContentLoaded', function() {
         window.sessionStorage.setItem('save','true');
         // The link is too long
         window.sessionStorage.setItem('coverPath',document.querySelector('.book-cover').src);
+        window.sessionStorage.setItem('description',document.getElementById('description').value);
 
         // Save book to database
 
@@ -93,7 +94,6 @@ document.addEventListener('DOMContentLoaded', function() {
         document.querySelector('.upload').style.display = 'flex';
         imgHolder.style.border = '2px dashed #9ea1a4';
         if(img.naturalWidth > 0 && !img.classList.contains('hide')) {
-            
             img.style.opacity = 0.3;
         }
     }
@@ -128,7 +128,8 @@ document.addEventListener('DOMContentLoaded', function() {
             let img = document.querySelector('.book-cover');
             img.classList.remove('hide');
             img.src = window.sessionStorage.getItem('coverPath');
-            window.sessionStorage.removeItem('coverPath',img.src)
+            window.sessionStorage.removeItem('coverPath',img.src);
+            document.getElementById('id').value = bookParams.get('id');
             document.getElementById('title').value = bookParams.get('title');
             document.getElementById('author').value = bookParams.get('author');
             document.getElementById('genre').value = bookParams.get('genre');
@@ -136,7 +137,8 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('availability').value = bookParams.get('availability');
             document.getElementById('pub-time').value = bookParams.get('pubYear');
             document.getElementById('late-fee').value = bookParams.get('lateFees');
-            document.getElementById('mx-brw-dur').value = bookParams.get('maxDuration');
+            document.getElementById('description').value = window.sessionStorage.getItem('description');
+            window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
         }
         else {
             document.querySelector('.upload').style.display = 'flex';

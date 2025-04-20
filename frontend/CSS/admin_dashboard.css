@@ -99,6 +99,10 @@ body {
     margin-bottom: 10px;
 }
 
+.id {
+    font-weight: bold;
+}
+
 .info {
     display: flex;
     flex-direction: column;
@@ -346,7 +350,7 @@ body {
     flex-direction: column;
     position: relative;
     width: 250px;
-    height: 553px;
+    height: 530px;
     background-color: var(--form-bg-color);
     margin: 1.5vw;
     border-radius: 10px;
@@ -504,7 +508,7 @@ a {
 .borrowers-list {
     display: flex;
     align-items: center;
-    background-color: var(--primary-active);
+    background-color: var(--primary-color);
     color: var(--font-primary);
     border: none;
     position: absolute;
