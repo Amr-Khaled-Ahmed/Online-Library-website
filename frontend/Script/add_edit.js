@@ -2,10 +2,6 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
         window.location.href = "./admin_dashboard.html";
-        if(window.sessionStorage.getItem('edit') !== null) {
-            window.sessionStorage.removeItem('edit','true');
-            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
-        }
     })
 
     document.querySelector('form').addEventListener('submit',(e) => {
@@ -95,8 +91,9 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function willUpdate() {
         document.querySelector('.upload').style.display = 'flex';
-        imgHolder.style.border = '3px dashed #9ea1a4';
+        imgHolder.style.border = '2px dashed #9ea1a4';
         if(img.naturalWidth > 0 && !img.classList.contains('hide')) {
+            
             img.style.opacity = 0.3;
         }
     }
@@ -119,7 +116,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('reset').addEventListener('click',() => {
         img.classList.add('hide');
         document.querySelector('.upload').style.display = 'flex';
-        imgHolder.style.border = '3px dashed #9ea1a4';
+        imgHolder.style.border = '2px dashed #9ea1a4';
         imgInput.value = '';
     });
 
@@ -143,6 +140,13 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else {
             document.querySelector('.upload').style.display = 'flex';
+        }
+    });
+
+    window.addEventListener('unload',() => {
+        if(window.sessionStorage.getItem('edit') !== null) {
+            window.sessionStorage.removeItem('edit','true');
+            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
         }
     });
 });

@@ -212,6 +212,9 @@ header.scrolled {
     visibility: visible;
 }
 
+
+
+
 /* Media Queries */
 @media (max-width: 900px) {
     .nav-bar {
