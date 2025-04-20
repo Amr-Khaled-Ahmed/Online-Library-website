@@ -20,7 +20,14 @@ window.addEventListener("click", function(event) {
   
 });
 
+document.querySelectorAll('.star-button').forEach(button => {
+    button.addEventListener('click', (event) => {
+        event.stopPropagation();
+        button.classList.toggle('active');
+    });
+});
 
+// Handle book card clicks to open modal
 const modal = document.getElementById("book-modal");
 const closeModal = document.querySelector(".close-btn");
 
@@ -45,6 +52,7 @@ document.querySelectorAll(".book-card").forEach(card => {
     });
 });
 
+
 closeModal.addEventListener("click", () => {
     modal.classList.add("hidden");
 });
@@ -54,8 +62,8 @@ window.addEventListener("click", (e) => {
         modal.classList.add("hidden");
     }
 });
-// Add friend function
 const friends = [];
+
 function showPopup() {
     document.getElementById('popup').style.display = 'block';
     document.getElementById('overlay').style.display = 'block';
@@ -73,17 +81,22 @@ function toggleInputField() {
     document.getElementById('name-field').style.display = type === 'name' ? 'block' : 'none';
     document.getElementById('email-field').style.display = type === 'email' ? 'block' : 'none';
 }
+
+function showAlert(message) {
+    alert(message);
+}
+
 function submitForm() {
     const type = document.getElementById('entry-type').value;
     const name = document.getElementById('friend-name').value.trim();
     const email = document.getElementById('friend-email').value.trim().toLowerCase();
+
     if (type === 'name') {
         if (name.length < 2) {
             showAlert("Please enter a valid name.");
             return;
         }
         friends.push({ name, email: '' });
-        updateFriendList();
     } else if (type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
@@ -91,38 +104,71 @@ function submitForm() {
             return;
         }
         friends.push({ name: '', email });
-        updateFriendList();
     }
+
+    updateFriendList();
     hidePopup();
 }
+
 let friendIndexToDelete = null;
 function updateFriendList() {
-    const listDiv = document.getElementById('friend-list');
+    const listDiv = document.querySelector('.friend-list');
     listDiv.innerHTML = '';
-
-    if (friends.length === 0) {
-        listDiv.innerHTML = '<p>No friends added yet.</p>';
+    if (!Array.isArray(friends) || friends.length === 0) {
+        listDiv.innerHTML = 'No friends available';
+        listDiv.style.color = 'red';
+        listDiv.style.fontSize = '24px';
         return;
     }
+    let x = 0;
     friends.forEach((friend, index) => {
         const container = document.createElement('div');
         container.classList.add('friend-entry');
+        container.style.display = 'flex';
+        container.style.alignItems = 'center';
+        container.style.marginBottom = '2%';
+
+        const img = document.createElement('img');
+        img.src = "../CSS/assets/blue.avif";
+        img.alt = "Friend Avatar";
+
         const span = document.createElement('span');
         span.textContent = friend.name ? friend.name : friend.email;
+        
+        const statusSpan = document.createElement('span');
+        if (x % 2 === 0) {
+            statusSpan.textContent = 'Finished';
+            statusSpan.style.color = 'green';
+        } else {
+            statusSpan.textContent = 'On Reading';
+            statusSpan.style.color = 'red';
+        }
+        x++;
+        statusSpan.style.marginLeft = '10px';
+        
+        container.appendChild(img);
+        container.appendChild(span);
+        container.appendChild(statusSpan);
+
         const deleteBtn = document.createElement('button');
         deleteBtn.textContent = 'Delete';
-        deleteBtn.id = `confirm-no-${index}`;
         deleteBtn.classList.add('delete-friend');
+        deleteBtn.style.marginLeft = 'auto';
         deleteBtn.addEventListener('click', () => {
+            const friendName = span.textContent;
             friendIndexToDelete = index;
-            document.getElementById('confirm-text').textContent = `Are you sure you want to delete "${span.textContent}"?`;
+            document.getElementById('confirm-text').textContent =
+                `Are you sure you want to delete "${friendName}"?`;
             document.getElementById('confirm-modal').classList.remove('hidden');
+            document.getElementById('overlay').classList.remove('hidden');
         });
-        container.appendChild(span);
         container.appendChild(deleteBtn);
         listDiv.appendChild(container);
     });
 }
+updateFriendList();
+
+
 document.getElementById('confirm-yes').addEventListener('click', () => {
     if (friendIndexToDelete !== null) {
         friends.splice(friendIndexToDelete, 1);
@@ -130,8 +176,5 @@ document.getElementById('confirm-yes').addEventListener('click', () => {
         friendIndexToDelete = null;
     }
     document.getElementById('confirm-modal').classList.add('hidden');
-});
-document.getElementById('confirm-no').addEventListener('click', () => {
-    friendIndexToDelete = null;
-    document.getElementById('confirm-modal').classList.add('hidden');
+    document.getElementById('overlay').classList.add('hidden');
 });
