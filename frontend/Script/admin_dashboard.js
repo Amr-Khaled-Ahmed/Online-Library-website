@@ -359,11 +359,11 @@ function addBook(id,book) {
         let img = document.querySelector('.confirmation img');
         let title = document.querySelector('.confirmation .book-title');
         let author = document.querySelector('.confirmation .author');
-        img.src = book.coverPath;
-        title.textContent = book.title;
-        author.textContent = book.author;
+        img.src = JSON.parse(bookContainer.dataset.info).coverPath;
+        title.textContent = JSON.parse(bookContainer.dataset.info).title;
+        author.textContent = JSON.parse(bookContainer.dataset.info).author;
     },{once: true});
-    deleteBtn.addEventListener('click',() => handleDelete(id,book));
+    deleteBtn.addEventListener('click',() => handleDelete(id,JSON.parse(bookContainer.dataset.info)));
 
 
     let brListBtn = document.createElement('button');
