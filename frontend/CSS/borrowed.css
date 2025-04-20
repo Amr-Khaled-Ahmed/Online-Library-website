@@ -175,7 +175,7 @@
 .borrowed-author,
 .favorite-author {
     font-size: 0.9rem;
-    color: rgba(255, 255, 255, 0.8);
+    color: var(--text-color);
     margin-bottom: 1rem;
 }
 
@@ -195,7 +195,7 @@
 
 .info-label {
     font-size: 0.8rem;
-    color: rgba(255, 255, 255, 0.6);
+    color: var(--text-color);
     margin-bottom: 0.3rem;
 }
 

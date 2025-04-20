@@ -65,7 +65,7 @@
 
 .notification-list li {
     background: var(--form-bg-color);
-    color: white;
+    color: var(--text-color);
     margin: 5px 0;
     padding: 10px;
     border-radius: 5px;
