@@ -19,6 +19,11 @@ D:.
 |   LICENSE
 |   README.md
 |
++---.vscode
+|       c_cpp_properties.json
+|       launch.json
+|       settings.json
+|
 \---frontend
     +---CSS
     |   |   add_edit.css
@@ -30,10 +35,19 @@ D:.
     |   |   forms-style.css
     |   |   header.css
     |   |   index.css
+    |   |   loader.css
+    |   |   profile.css
+    |   |   theme.css
     |   |   user_dashboard.css
     |   |   _variables.css
     |   |
     |   \---assets
+    |           add.gif
+    |           alert.gif
+    |           background1.png
+    |           background2.png
+    |           background3.png
+    |           blue.avif
     |           book1.jpeg
     |           book2.jpeg
     |           book3.jpeg
@@ -42,7 +56,9 @@ D:.
     |           book_cover.jpg
     |           ChildOfTheKindred_ebook1.jpg
     |           ChildOfTheKindred_ebook1.png
+    |           cover3.jpg
     |           crime-and-mystery-cover-scaled-1.jpeg
+    |           delete.gif
     |           enceladus.jpg
     |           friend1.jpeg
     |           friend2.jpeg
@@ -50,31 +66,37 @@ D:.
     |           friend4.jpeg
     |           man-reading-design.png
     |           online-education.gif
+    |           The_Great_Gatsby_Cover.jpg
     |           woman-reading-chair.png
     |
-    \---pages
-        |   add_edit.html
-        |   admin_dashboard.html
-        |   books.html
-        |   book_details.html
-        |   borrowed.html
-        |   footer.html
-        |   header.html
-        |   sign-in.html
-        |   sign-up.html
-        |   user_dashboard.html
-    |
+    +---pages
+    |   |   add_edit.html
+    |   |   admin_dashboard.html
+    |   |   books.html
+    |   |   book_details.html
+    |   |   borrowed.html
+    |   |   footer.html
+    |   |   header.html
+    |   |   profile.html
+    |   |   sign-in.html
+    |   |   sign-up.html
+    |   |   user_dashboard.html
+    |   |
+    |   \---build
+    |       \---Debug
     \---Script
-        |   add_edit.js
-        |   admin_dashboard.js
-        |   books.js
-        |   book_details.js
-        |   borrowed.js
-        |   footer.js
-        |   header.js
-        |   sign-in.js
-        |   sign-up.js
-        |   user_dashboard.js
+            add_edit.js
+            admin_dashboard.js
+            await.js
+            books.js
+            borrowed.js
+            footer.js
+            Forms_validation.js
+            getEnter.js
+            header.js
+            profile.js
+            theme.js
+            user_dashboard.js
 ```
 
 ---
