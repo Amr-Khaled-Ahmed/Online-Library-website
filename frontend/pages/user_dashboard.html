@@ -246,15 +246,38 @@
         <div id="book-modal" class="modal hidden">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
-                <img id="modal-image" src="" alt="Book Cover" />
-                <h2 id="modal-title"></h2>
-                <p id="modal-author"></p>
-                <p id="modal-description"></p>
-                <p><strong>Year:</strong> <span id="modal-year"></span></p>
-                <p><strong>Status:</strong> <span id="modal-status"></span></p>
-                <p><strong>Genre:</strong> <span id="modal-genre"></span></p>
-                <p><strong>Language:</strong> <span id="modal-language"></span></p>
-                <p><strong>Pages:</strong> <span id="modal-pages"></span></p>
+                <div class="modal-grid">
+                    <div class="modal-image-section">
+                        <img id="modal-image" src="" alt="Book Cover" />
+                    </div>
+                    <div class="modal-info-section">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-author"></p>
+                        <p id="modal-description"></p>
+                        <div class="modal-details-grid">
+                            <div class="detail-item">
+                                <strong>Year:</strong>
+                                <span id="modal-year"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Status:</strong>
+                                <span id="modal-status"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Genre:</strong>
+                                <span id="modal-genre"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Language:</strong>
+                                <span id="modal-language"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Pages:</strong>
+                                <span id="modal-pages"></span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
         <script src="./../Script/footer.js"></script>

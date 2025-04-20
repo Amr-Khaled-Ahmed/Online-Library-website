@@ -34,6 +34,7 @@
     --header-bg-color: var(--bg-color);
     --accent-color: var(--primary-color);
     --scrolled-header-color: #122c12f6;
+    --modal-crd:  rgba(0, 0, 0, 0.7);
     
     /* Borrow levels (same for both modes) */
     --lvl1-borrow: #A7D0E1; /*1-5*/
@@ -70,6 +71,7 @@
     --header-bg-color: #ffffff;
     --accent-color: #1a7d3a;
     --scrolled-header-color: #e8f5e9;
+    --modal-crd: rgb(207, 201, 201);
 }
 
 /* System preference detection */

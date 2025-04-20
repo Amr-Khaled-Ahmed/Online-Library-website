@@ -610,18 +610,36 @@
         <div id="borrowed-modal" class="modal hidden">
             <div class="modal-content">
                 <span class="close-btn">&times;</span>
-                <div class="modal-cover">
-                    <img id="modal-image" src="" alt="Book cover" />
-                </div>
-                <div class="modal-details">
-                    <h2 id="modal-title"></h2>
-                    <p id="modal-author"></p>
-                    <div class="modal-info">
-                        <p><strong>Borrowed On:</strong> <span id="modal-borrowed-date"></span></p>
-                        <p><strong>Due Date:</strong> <span id="modal-due-date"></span></p>
-                        <p><strong>Status:</strong> <span id="modal-status"></span></p>
-                        <p><strong>Format:</strong> <span id="modal-format"></span></p>
-                        <p><strong>Renewals Left:</strong> <span id="modal-renewals"></span></p>
+                <div class="modal-grid">
+                    <div class="modal-image-section">
+                        <img id="modal-image" src="" alt="Book Cover" />
+                    </div>
+                    <div class="modal-info-section">
+                        <h2 id="modal-title"></h2>
+                        <p id="modal-author"></p>
+                        <p id="modal-description">This book is currently borrowed from the library.</p>
+                        <div class="modal-details-grid">
+                            <div class="detail-item">
+                                <strong>Borrowed Date:</strong>
+                                <span id="modal-borrowed-date"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Due Date:</strong>
+                                <span id="modal-due-date"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Status:</strong>
+                                <span id="modal-status"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Format:</strong>
+                                <span id="modal-format"></span>
+                            </div>
+                            <div class="detail-item">
+                                <strong>Renewals:</strong>
+                                <span id="modal-renewals"></span>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
