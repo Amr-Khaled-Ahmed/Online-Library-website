@@ -1,49 +1,82 @@
-// Example of book object
-const book1 = {
-    id: '1',
-    title: 'Child of The Kindred',
-    author: 'Ahmed',
-    coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
-    genre: 'fantasy',
-    format: 'paperback',
-    pubYear: '2010',
-    availability: 'unavailable',
-    borrowNum: '10',
-    lateFees: '10'
-};
 
-const book2 = {
-    id: '2',
-    title: 'ahild of The Kindred',
-    author: 'Basem',
-    coverPath: './../CSS/assets/ChildOfTheKindred_ebook1.jpg',
-    genre: 'fantasy',
-    format: 'paperback',
-    pubYear: '2021',
-    availability: 'unavailable',
-    borrowNum: '100',
-    lateFees: '10'
-};
+// Check if books item is not exist
+if(localStorage.getItem('books') == null) {
+    let Array = [];
+    localStorage.setItem('books',JSON.stringify(Array));
+}
 
-let books = [];
-let allBooks = [];
+// Will be retrieved from database
+let books = localStorage.getItem('books') ? JSON.parse(localStorage.getItem('books')) : [];
 
-// All things
+window.addEventListener('load', () => {
+    if (window.sessionStorage.getItem('save') === 'true') {
+        window.sessionStorage.removeItem('save','true');
+        // Display Notification
+        let savedNotification = document.querySelector('.saved');
+        savedNotification.classList.remove('hide');
+        savedNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
+        savedNotification.addEventListener('animationend', () => {
+            savedNotification.classList.add('hide');
+            savedNotification.style.animation = '';
+        },{once: true});
+
+        // Add Book to local storage and page (temporary), no need with database
+        const bookParams = new URLSearchParams(window.location.search);
+        const bookData = {
+            id: bookParams.get('id'),
+            title: bookParams.get('title'),
+            author: bookParams.get('author'),
+            coverPath: window.sessionStorage.getItem('coverPath'),
+            genre: bookParams.get('genre'),
+            format: bookParams.get('format'),
+            pubYear: bookParams.get('pubYear'),
+            availability: bookParams.get('availability'),
+            borrowNum: bookParams.get('borrowNum'),
+            lateFees: bookParams.get('lateFees'),
+            description: window.sessionStorage.getItem('description')
+        };
+        window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
+        window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
+
+        if(window.sessionStorage.getItem('edit') === 'true') {
+            let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
+            let oldData = JSON.parse(book.dataset.info);
+            book.dataset.info = JSON.stringify(bookData);
+
+            editBook(book.id,bookData,oldData);
+
+            books.splice(books.indexOf(oldData),1);
+
+            window.sessionStorage.removeItem('edit','true');
+            window.sessionStorage.removeItem('editedBook',book.id);
+        }
+        else {
+            addBook(bookData);
+        }
+        books.push(bookData);
+        localStorage.setItem('books',JSON.stringify(books));
+        checkNoBooks();
+
+        // Add book to database
+
+        // Reload
+        // location.reload(true);
+        
+    }
+});
+
+
 document.addEventListener('DOMContentLoaded', function() {
 
-    // Will be retrieved from database
-    books.push(book1), books.push(book2);
-
-    // Backup
-    allBooks = [...books];
-
     // View all books
-    allBooks.forEach((book) => {
+    books.forEach((book) => {
         addBook(book);
     });
     checkNoBooks();
-    // Will contains Books that the user searches for
-    let searchedBooks = [];
+    
+    document.getElementById('add-book').addEventListener('click',() => {
+        window.location.href = "./add_edit.html";
+    });
 
     // Search
     let searchInput = document.querySelector('.search-input');
@@ -51,6 +84,9 @@ document.addEventListener('DOMContentLoaded', function() {
     let genreSelector = document.querySelector('.genre-selector');
     let formatSelector = document.querySelector('.format-selector');
     let sortSelector = document.querySelector('.sort-selector');
+
+    // Will contains Books that the user searches for
+    let searchedBooks = [];
 
     document.addEventListener('input', () => {
         // Loading
@@ -69,7 +105,7 @@ document.addEventListener('DOMContentLoaded', function() {
         const formatInput = formatSelector.value.toLowerCase();
         const sortInput = sortSelector.value.toLowerCase();
 
-        searchedBooks = allBooks.filter(book => {
+        searchedBooks = books.filter(book => {
             // Book info
             const title = book.title.trim().toLowerCase();
             const author = book.author.trim().toLowerCase();
@@ -109,67 +145,6 @@ document.addEventListener('DOMContentLoaded', function() {
         checkNoBooks();
     });
 
-
-    document.getElementById('add-book').addEventListener('click',() => {
-        window.location.href = "./add_edit.html";
-    })
-
-    window.addEventListener('load', () => {
-        if (window.sessionStorage.getItem('save') === 'true') {
-            window.sessionStorage.removeItem('save','true');
-            // Display Notification
-            let savedNotification = document.querySelector('.saved');
-            savedNotification.classList.remove('hide');
-            savedNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
-            savedNotification.addEventListener('animationend', () => {
-                savedNotification.classList.add('hide');
-                savedNotification.style.animation = '';
-            },{once: true});
-
-            // Add Book to page (temporary), no need with database
-            const bookParams = new URLSearchParams(window.location.search);
-            const bookData = {
-                id: bookParams.get('id'),
-                title: bookParams.get('title'),
-                author: bookParams.get('author'),
-                coverPath: window.sessionStorage.getItem('coverPath'),
-                genre: bookParams.get('genre'),
-                format: bookParams.get('format'),
-                pubYear: bookParams.get('pubYear'),
-                availability: bookParams.get('availability'),
-                borrowNum: bookParams.get('borrowNum'),
-                lateFees: bookParams.get('lateFees'),
-                description: window.sessionStorage.getItem('description')
-            };
-            window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
-            window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
-
-            if(window.sessionStorage.getItem('edit') === 'true') {
-                let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
-                let oldData = JSON.parse(book.dataset.info);
-                book.dataset.info = JSON.stringify(bookData);
-
-                editBook(book.id,bookData,oldData);
-
-                books.splice(books.indexOf(oldData),1);
-                allBooks.splice(allBooks.indexOf(oldData),1);
-
-                window.sessionStorage.removeItem('edit','true');
-                window.sessionStorage.removeItem('editedBook',book.id);
-            }
-            else {
-                addBook(bookData);
-            }
-            books.push(bookData);
-            allBooks.push(bookData);
-
-            // Add book to database
-
-            // Reload
-            // location.reload(true);
-            
-        }
-    });
 });
 
 function checkNoBooks() {
@@ -241,17 +216,18 @@ async function handleDelete(id,book) {
         // Delete book from page (temporary), no need with database
         let container = Array.from(document.getElementById('books-container').children);
         container.forEach(book => {
-            if(book.id == id)
+            if(book.id == id) {
                 document.getElementById('books-container').removeChild(book);
+            }
         });
         books.splice(books.indexOf(book),1);
-        allBooks.splice(allBooks.indexOf(book),1);
+        localStorage.setItem('books',JSON.stringify(books));
         checkNoBooks();
 
         // Delete from database
 
 
-        // Reload when deleted from database
+        // Reload after delete from database
         //location.reload(true);
     }
 }
