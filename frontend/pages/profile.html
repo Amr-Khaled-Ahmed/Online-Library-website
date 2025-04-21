@@ -141,12 +141,20 @@
                   <label for="email">Email</label>
                   <input id="email" type="email" value="mostafa@example.com" readonly />
                 </div>
+                
                 <div class="form-group">
                   <label for="bio">Bio</label>
                   <textarea id="bio" rows="3" placeholder="Tell us about yourself and your reading preferences..."></textarea>
                 </div>
               </div>
-
+              <div class="form-section">
+                <h3><i class="fas fa-user-edit"></i> Personal Information</h3>
+                <div class="form-group">
+                  <label for="userType">Account Type</label>
+                  <input id="userType" type="text" value="Admin" readonly />
+                </div>
+                <!-- <p> can hold personal info</p>                  -->
+              </div>
               <div class="form-section">
                 <h3><i class="fas fa-lock"></i> Security</h3>
                 <div class="form-group">
@@ -207,14 +215,21 @@
                   <label for="currentPassword">Current Password</label>
                   <div class="password-input">
                     <input id="currentPassword" type="password" placeholder="Enter current password" />
-                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('currentPassword')"></i>
+                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('currentPassword', this)"></i>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <div class="password-input">
+                    <input id="currentPassword" type="password" placeholder="Enter current password" />
+                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('currentPassword', this)"></i>
                   </div>
                 </div>
                 <div class="form-group">
                   <label for="newPassword">New Password</label>
                   <div class="password-input">
                     <input id="newPassword" type="password" placeholder="Enter new password" />
-                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('newPassword')"></i>
+                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('currentPassword', this)"></i>
                   </div>
                   <div class="password-strength">
                     <span class="strength-bar"></span>
@@ -224,10 +239,9 @@
                   </div>
                 </div>
                 <div class="form-group">
-                  <label for="confirmPassword">Confirm New Password</label>
+                  <label for="confirmPassword">Confirms New Password</label>
                   <div class="password-input">
                     <input id="confirmPassword" type="password" placeholder="Confirm new password" />
-                    <i class="fas fa-eye toggle-password" onclick="togglePasswordVisibility('confirmPassword')"></i>
                   </div>
                 </div>
                 <div class="modal-buttons">
