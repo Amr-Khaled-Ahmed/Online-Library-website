@@ -1,15 +1,36 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
+        window.sessionStorage.removeItem('editedBook');
         window.location.href = "./admin_dashboard.html";
-    })
+    });
+
+    document.getElementById('id').addEventListener('input',() => {
+        if(takenID())
+            document.getElementById('id-validation').classList.remove('hide');
+        else
+            document.getElementById('id-validation').classList.add('hide');
+    });
 
     document.querySelector('form').addEventListener('submit',(e) => {
         e.preventDefault();
+
+        if(takenID()) {
+            document.getElementById('id-validation').classList.remove('hide');
+            return;
+        }
+
+        // Check not empty book cover
+        let img = document.querySelector('.book-cover');
+        if(img.classList.contains('hide') || img.naturalWidth == 0) {
+            document.getElementById('book-cover-validation').classList.remove('hide');
+            return;
+        }
+
         const bookParams = new URLSearchParams(window.location.search);
         // Save book info
         const bookData = {
-            id: document.getElementById('id').value,
+            id: id.value,
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
             // coverPath: document.querySelector('.book-cover').src,
@@ -62,6 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
             img.src = e.target.result;
             document.querySelector('.upload').style.display = 'none';
             img.classList.remove('hide');
+            document.getElementById('book-cover-validation').classList.add('hide');
         }
     }
     imgHolder.addEventListener('click',() => imgInput.click());
@@ -123,10 +145,13 @@ document.addEventListener('DOMContentLoaded', function() {
     window.addEventListener('load',() => {
         if(window.sessionStorage.getItem('edit') === 'true') {
             const bookParams = new URLSearchParams(window.location.search);
+            if(bookParams.size == 0) {
+                window.sessionStorage.removeItem('edit')
+                return;
+            }
             
             document.querySelector('.upload').style.display = 'none';
             let img = document.querySelector('.book-cover');
-            img.classList.remove('hide');
             img.src = window.sessionStorage.getItem('coverPath');
             window.sessionStorage.removeItem('coverPath',img.src);
             document.getElementById('id').value = bookParams.get('id');
@@ -137,18 +162,30 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('availability').value = bookParams.get('availability');
             document.getElementById('pub-time').value = bookParams.get('pubYear');
             document.getElementById('late-fee').value = bookParams.get('lateFees');
+
+            img.classList.remove('hide');
+
             document.getElementById('description').value = window.sessionStorage.getItem('description');
             window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
-
-            window.sessionStorage.removeItem('edit','true');
-            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
         }
         else {
             document.querySelector('.upload').style.display = 'flex';
         }
-        if(!img.classList.contains('hide') && img.naturalWidth == 0) {
-            img.classList.add('hide');
-            document.querySelector('.upload').style.display = 'flex';
-        }
+        // if(!img.classList.contains('hide') && img.naturalWidth == 0) {
+        //     img.classList.add('hide');
+        //     document.querySelector('.upload').style.display = 'flex';
+        // }
     });
 });
+
+// Check not taken id
+function takenID() {
+    let books = JSON.parse(window.localStorage.getItem('books'));
+    let id = document.getElementById('id').value;
+    let taken = false;
+    books.forEach(book => {
+        if(book.id == id && window.sessionStorage.getItem('editedBook') !== id)
+            taken = true;
+    });
+    return taken;
+}

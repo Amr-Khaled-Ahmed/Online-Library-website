@@ -113,17 +113,23 @@ body {
     cursor: pointer;
 }
 
+.all-cover-upload {
+    display: flex;
+    flex-direction: column;
+    width: 38%;
+    height: 100%;
+    margin: 2.5%;
+}
+
 .img-holder {
     display: flex;
     position: relative;
     background-color: var(--bg-color);
-    width: 38%;
-    height: 100%;
     min-height: 30vw;
-    margin: 2.5%;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
+    margin: 0% 0% 2.5%;
     border: 2px dashed #9ea1a4;
     overflow: hidden;
     transition: all 0.3s ease;
@@ -167,6 +173,15 @@ body {
 
 .upload:hover {
     transform: scale(1.02);
+}
+
+#id-validation,
+#book-cover-validation {
+    margin: 1%;
+    padding-left: 10px;
+    color: #C2352A;
+    font-weight: bold;
+    font-size: 12px;
 }
 
 .field,

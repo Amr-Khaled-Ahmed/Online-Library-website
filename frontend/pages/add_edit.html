@@ -63,16 +63,22 @@
                             aria-hidden="true"></i> Back</button>
                 </div>
                 <div class="book-details">
-                    <div class="img-holder">
-                        <img src alt="Book Cover" class="book-cover hide">
-                        <div class="upload">
-                            <i id="upload-icon"
-                                class="fa-solid fa-arrow-up-from-bracket"></i>
-                            <p id="msg">Click or Drag and Drop to upload book
-                                cover</p>
+                    <div class="all-cover-upload">
+                        <div class="img-holder">
+                            <img src alt="Book Cover" class="book-cover hide">
+                            <div class="upload">
+                                <i id="upload-icon"
+                                    class="fa-solid fa-arrow-up-from-bracket"></i>
+                                <p id="msg">Click or Drag and Drop to upload book
+                                    cover</p>
+                            </div>
+                            <input type="file" id="img-input" class="hide">
                         </div>
-                        <input type="file" id="img-input" class="hide">
+                        <div>
+                            <p id="book-cover-validation" class="hide">You must upload book cover</p>
+                        </div>
                     </div>
+                    
                     <div class="details-form">
                         <form>
                             <div class="field">
@@ -84,6 +90,7 @@
                                     placeholder="Enter Book ID"
                                     autocomplete="off"
                                     required>
+                                    <p id="id-validation" class="hide">This ID is already Taken</p>
                             </div>
                             <div class="field">
                                 <div class="input-header">
