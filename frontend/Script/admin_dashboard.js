@@ -145,14 +145,14 @@ document.addEventListener('DOMContentLoaded', function() {
             window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
 
             if(window.sessionStorage.getItem('edit') === 'true') {
-                let book = document.querySelector(`#${window.sessionStorage.getItem('editedBook')}`);
+                let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
                 let oldData = JSON.parse(book.dataset.info);
                 book.dataset.info = JSON.stringify(bookData);
 
                 editBook(book.id,bookData,oldData);
 
                 books.splice(books.indexOf(oldData),1);
-                allBooks.splice(books.indexOf(oldData),1);
+                allBooks.splice(allBooks.indexOf(oldData),1);
 
                 window.sessionStorage.removeItem('edit','true');
                 window.sessionStorage.removeItem('editedBook',book.id);
@@ -398,6 +398,9 @@ function addBook(book) {
 }
 
 function editBook(id,newData,oldData) {
+    let ID = document.querySelector(`#${id} .id`);
+    ID.textContent = 'ID: ' + newData.id;
+
     let title = document.querySelector(`#${id} .book-title`);
     title.textContent = newData.title;
 
@@ -430,8 +433,7 @@ function editBook(id,newData,oldData) {
     let lateFees = document.querySelector(`#${id} .late-fees`);
     lateFees.textContent = 'Late Fee: ' + newData.lateFees + '$';
 
-    let borrowDuration = document.querySelector(`#${id} .borrow-duration`);
-    borrowDuration.textContent = 'Max Borrow Duration: ' + newData.maxDuration + ' month';
+    document.querySelector(`#${id}`).id = `_${newData.id}`;
 }
 
 function borrowLevel(borrowNum) {

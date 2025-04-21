@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
             pubYear: document.getElementById('pub-time').value,
             availability: document.getElementById('availability').value,
             borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
-            lateFees: document.getElementById('late-fee').value
+            lateFees: document.getElementById('late-fee').value,
         };
 
         // Send book info to admin dashboard and save there (temporary), no need with database
@@ -145,10 +145,10 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-    window.addEventListener('unload',() => {
-        if(window.sessionStorage.getItem('edit') !== null) {
-            window.sessionStorage.removeItem('edit','true');
-            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
-        }
-    });
+    // window.addEventListener('unload',() => {
+    //     if(window.sessionStorage.getItem('edit') !== null) {
+    //         window.sessionStorage.removeItem('edit','true');
+    //         window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
+    //     }
+    // });
 });
