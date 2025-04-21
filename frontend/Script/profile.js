@@ -6,6 +6,15 @@ const profileActions = document.getElementById('profileActions');
 const modal = document.getElementById('modal');
 const modalImg = document.getElementById('modalImage');
 
+const loggedInUser = JSON.parse(window.localStorage.getItem('loggedIn_user'));
+const username = document.getElementById('username');
+const fullName = document.getElementById('fullName');
+const email = document.getElementById('email');
+
+username.value = loggedInUser.username;
+fullName.value = loggedInUser.fullName;
+email.value = loggedInUser.email;
+
 // Profile picture upload functionality
 imgInput.addEventListener('change', function () {
   const file = this.files[0];
@@ -44,6 +53,23 @@ function removeProfilePicture() {
 // Password modal functions
 function openPasswordModal() {
   document.getElementById('passwordModal').classList.remove('hide');
+}
+
+function updatePassword() {
+  const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+
+
+  const updatedUsers = usersData.map(user => {
+    if (user.username === loggedInUser.username) {
+      user.password = document.getElementById('newPassword').value;
+      localStorage.setItem('loggedIn_user', JSON.stringify(user)); // update local session
+    }
+    return user;
+  });
+
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+  closePasswordModal();
 }
 
 function closePasswordModal() {

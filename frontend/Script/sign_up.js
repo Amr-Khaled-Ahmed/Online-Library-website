@@ -1,19 +1,21 @@
 const signupForm = document.getElementById('form');
 const usernameInput = document.getElementById('username');
+const nameInput = document.getElementById('fullName');
 const emailInput = document.getElementById('email');
 const passwordInput = document.getElementById('password');
 const confirmPasswordInput = document.getElementById('pass-confirm');
 
 const usernameError = document.getElementById('username-error');
+const nameError = document.getElementById('name-error');
 const emailError = document.getElementById('email-error');
 const passwordError = document.getElementById('password-error');
 const confirmPasswordError = document.getElementById('pass-confirm-error');
-
 signupForm.addEventListener('submit', (e) => {
   clearAllErrors();
   let hasError = false;
 
   const newUsername = usernameInput.value;
+  const newName = nameInput.value;
   const newEmail = emailInput.value;
   const newPassword = passwordInput.value;
   const confirmPassword = confirmPasswordInput.value;
@@ -32,6 +34,11 @@ signupForm.addEventListener('submit', (e) => {
     setError(usernameInput, usernameError, 'Username is already taken');
     hasError = true;
   }
+
+  if (newName === '') {
+    setError(nameInput, nameError, 'name is required');
+    hasError = true;
+  } 
 
   if (newEmail === '') {
     setError(emailInput, emailError, 'Email is required');
@@ -77,15 +84,18 @@ signupForm.addEventListener('submit', (e) => {
   e.preventDefault();
   const newUser = {
     username: newUsername,
+    fullName: newName,
     password: newPassword,
     email: newEmail,
+    favorite_books : [],
+    borrowed_books : []
   };
 
   existingUsers.push(newUser);
   localStorage.setItem('users_data', JSON.stringify(existingUsers));
 
-  console.log('All users:', existingUsers);
-  signupForm.reset();
+  // console.log('All users:', existingUsers);
+  // signupForm.reset();
 });
 
 function setError(input, errorElement, message) {
@@ -96,9 +106,10 @@ function setError(input, errorElement, message) {
 function clearAllErrors() {
   const inputErrorPairs = [
     [usernameInput, usernameError],
+    [nameInput, nameError],
     [emailInput, emailError],
     [passwordInput, passwordError],
-    [confirmPasswordInput, confirmPasswordError],
+    [confirmPasswordInput, confirmPasswordError]
   ];
 
   inputErrorPairs.forEach(([input, error]) => {
@@ -107,8 +118,8 @@ function clearAllErrors() {
   });
 }
 
-const allInputs = [usernameInput, emailInput, passwordInput, confirmPasswordInput].filter(Boolean);
-const allErrors = [usernameError, emailError, passwordError, confirmPasswordError];
+const allInputs = [usernameInput, nameInput, emailInput, passwordInput, confirmPasswordInput].filter(Boolean);
+const allErrors = [usernameError, nameError, emailError, passwordError, confirmPasswordError];
 
 allInputs.forEach((input, index) => {
   input.addEventListener('input', () => {
