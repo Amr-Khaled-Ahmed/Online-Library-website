@@ -1,3 +1,6 @@
+const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+const userIndex = usersData.findIndex(u => u.username === loggedInUser.username);
 document.addEventListener('DOMContentLoaded', () => {
     // Ensure to trigger hash checking once DOM is ready
     if (window.location.hash === "#favorites") {
@@ -35,7 +38,9 @@ document.addEventListener('DOMContentLoaded', () => {
         const title = details.querySelector('.borrowed-title')?.textContent.trim();
         const author = details.querySelector('.borrowed-author')?.textContent.trim().replace(/^By\s*/, '');
 
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        
+
+        const favorites = loggedInUser.favorite_books || [];
         const isFavorite = favorites.some(b => b.title === title && b.author === author);
 
         if (isFavorite) {
@@ -51,18 +56,18 @@ document.addEventListener('DOMContentLoaded', () => {
             )?.querySelector('.info-value')?.textContent.trim();
 
             const book = { title, author, format };
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
-
             const exists = favorites.some(b => b.title === title && b.author === author);
 
             if (button.classList.contains('active')) {
                 if (!exists) {
                     favorites.push(book);
-                    localStorage.setItem('favorites', JSON.stringify(favorites));
+                    usersData[userIndex].favorite_books = favorites;
+                    localStorage.setItem('users_data',JSON.stringify(usersData))
                 }
             } else {
                 favorites = favorites.filter(b => !(b.title === title && b.author === author));
-                localStorage.setItem('favorites', JSON.stringify(favorites));
+                usersData[userIndex].favorite_books = favorites;
+                localStorage.setItem('users_data',JSON.stringify(usersData))
             }
 
             renderFavorites();
@@ -104,7 +109,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function renderFavorites() {
         const container = document.getElementById('favorites');
         container.innerHTML = '';
-        const favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+        const favorites = loggedInUser.favorite_books || [];
 
         favorites.forEach(book => {
             const item = document.createElement('div');
