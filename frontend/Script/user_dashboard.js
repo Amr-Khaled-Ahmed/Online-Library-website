@@ -85,6 +85,16 @@ function toggleInputField() {
 function showAlert(message) {
     alert(message);
 }
+function showMessagePopup(message) {
+    const popup = document.getElementById('message-popup');
+    popup.textContent = message;
+    popup.style.display = 'block';
+    setTimeout(() => {
+        popup.style.display = 'none';
+        popup.textContent = '';
+    }, 3000);
+}
+
 
 function submitForm() {
     const type = document.getElementById('entry-type').value;
@@ -93,22 +103,38 @@ function submitForm() {
 
     if (type === 'name') {
         if (name.length < 2) {
-            showAlert("Please enter a valid name.");
+            showMessagePopup("Please enter a valid name.");
             return;
         }
+
+        const exists = friends.some(friend => friend.name.toLowerCase() === name.toLowerCase());
+        if (exists) {
+            showMessagePopup(`"${name}" is already in your friend list.`);
+            return;
+        }
+
         friends.push({ name, email: '' });
+
     } else if (type === 'email') {
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
         if (!emailRegex.test(email)) {
-            showAlert("Please enter a valid email.");
+            showMessagePopup("Please enter a valid email.");
             return;
         }
-        friends.push({ name: '', email });
+    
+        const exists = friends.some(friend => friend.email === email);
+        if (exists) {
+            showMessagePopup("This email is already associated with a friend.");
+            return;
+        }
+    
+        friends.push({ name, email });
     }
-
     updateFriendList();
     hidePopup();
 }
+
+
 
 let friendIndexToDelete = null;
 function updateFriendList() {
@@ -133,7 +159,8 @@ function updateFriendList() {
         img.alt = "Friend Avatar";
 
         const span = document.createElement('span');
-        span.textContent = friend.name ? friend.name : friend.email;
+        span.textContent = friend.email ? `${friend.name} (${friend.email})` : friend.name;
+
         
         const statusSpan = document.createElement('span');
         if (x % 2 === 0) {
