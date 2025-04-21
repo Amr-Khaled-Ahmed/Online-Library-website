@@ -162,6 +162,17 @@
 .friend-list .delete-friend:hover {
     background-color: #c82333;
 }
+#message-popup{
+    display: none;
+    margin-top: 8px;
+    font-size: 14px;
+    color: var(--text-color);
+    background-color: var(--modal-crd);
+    padding: 6px 10px;
+    border-left: 4px solid #ff4d4d;
+    border-radius: 6px;
+    width: fit-content;
+}
 
 .favorites,
 .borrowed-books {
