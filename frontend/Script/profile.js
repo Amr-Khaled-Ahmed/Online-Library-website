@@ -133,3 +133,26 @@ document.querySelector('.profile-form').addEventListener('submit', function(e) {
   e.preventDefault();
   alert('Profile changes saved successfully!');
 });
+
+
+
+//  to detect the user's role and set the appropriate home link:
+document.addEventListener('DOMContentLoaded', function(){
+  const isAdmin = document.referrer.includes('admin_dashboard.html');
+
+
+  const homeLink = document.getElementById('homeLink');
+  const mobileHomeLink = document.getElementById('mobileHomeLink');
+
+
+  if(isAdmin){
+    homeLink.href = './admin_dashboard.html';
+    mobileHomeLink.href = './admin_dashboard.html';
+
+    document.getElementById('userType').value = 'Admin';
+  } else {
+    homeLink.href = './user_dashboard.html';
+    mobileHomeLink.href = './user_dashboard.html';
+    document.getElementById('userType').value = 'User';
+  }
+})

@@ -350,7 +350,7 @@ body {
     flex-direction: column;
     position: relative;
     width: 250px;
-    height: 530px;
+    height: 540px;
     background-color: var(--form-bg-color);
     margin: 1.5vw;
     border-radius: 10px;
