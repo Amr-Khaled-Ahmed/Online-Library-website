@@ -205,3 +205,9 @@ document.getElementById('confirm-yes').addEventListener('click', () => {
     document.getElementById('confirm-modal').classList.add('hidden');
     document.getElementById('overlay').classList.add('hidden');
 });
+
+document.getElementById('confirm-no').addEventListener('click', () => {
+    friendIndexToDelete = null;
+    document.getElementById('confirm-modal').classList.add('hidden');
+    document.getElementById('overlay').classList.add('hidden');
+});
