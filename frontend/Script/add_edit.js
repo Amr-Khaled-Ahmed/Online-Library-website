@@ -139,16 +139,16 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('late-fee').value = bookParams.get('lateFees');
             document.getElementById('description').value = window.sessionStorage.getItem('description');
             window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
+
+            window.sessionStorage.removeItem('edit','true');
+            window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
         }
         else {
             document.querySelector('.upload').style.display = 'flex';
         }
+        if(!img.classList.contains('hide') && img.naturalWidth == 0) {
+            img.classList.add('hide');
+            document.querySelector('.upload').style.display = 'flex';
+        }
     });
-
-    // window.addEventListener('unload',() => {
-    //     if(window.sessionStorage.getItem('edit') !== null) {
-    //         window.sessionStorage.removeItem('edit','true');
-    //         window.sessionStorage.removeItem('editedBook',window.sessionStorage.getItem('editedBook'));
-    //     }
-    // });
 });
