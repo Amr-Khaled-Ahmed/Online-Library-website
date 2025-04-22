@@ -107,13 +107,14 @@ document.addEventListener('DOMContentLoaded', function() {
 
         searchedBooks = books.filter(book => {
             // Book info
+            const ID = book.id;
             const title = book.title.trim().toLowerCase();
             const author = book.author.trim().toLowerCase();
             const availability = book.availability;
             const genre = book.genre;
             const format = book.format;
 
-            return ((title.includes(searchTerm) || author.includes(searchTerm) || searchTerm === '')
+            return ((title.includes(searchTerm) || author.includes(searchTerm) || ID == searchTerm || searchTerm === '')
                 && (availability === availabilityInput || availabilityInput === 'all' || availabilityInput === '')
                 && (genre === genreInput || genreInput === 'all' || genreInput === '')
                 && (format === formatInput || formatInput === 'all' || formatInput === ''));
