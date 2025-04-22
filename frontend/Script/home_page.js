@@ -37,3 +37,5 @@ if (loggedInUser && navBar) {
 // Delete edit
 window.sessionStorage.removeItem('edit');
 window.sessionStorage.removeItem('editedBook');
+window.sessionStorage.removeItem('coverPath');
+window.sessionStorage.removeItem('description');

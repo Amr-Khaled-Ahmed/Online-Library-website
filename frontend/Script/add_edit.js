@@ -146,14 +146,13 @@ document.addEventListener('DOMContentLoaded', function() {
         if(window.sessionStorage.getItem('edit') === 'true') {
             const bookParams = new URLSearchParams(window.location.search);
             if(bookParams.size == 0) {
-                window.sessionStorage.removeItem('edit')
+                window.sessionStorage.removeItem('edit');
                 return;
             }
             
             document.querySelector('.upload').style.display = 'none';
             let img = document.querySelector('.book-cover');
             img.src = window.sessionStorage.getItem('coverPath');
-            window.sessionStorage.removeItem('coverPath',img.src);
             document.getElementById('id').value = bookParams.get('id');
             document.getElementById('title').value = bookParams.get('title');
             document.getElementById('author').value = bookParams.get('author');
@@ -166,7 +165,8 @@ document.addEventListener('DOMContentLoaded', function() {
             img.classList.remove('hide');
 
             document.getElementById('description').value = window.sessionStorage.getItem('description');
-            window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
+            window.sessionStorage.removeItem('description');
+            window.sessionStorage.removeItem('coverPath');
         }
         else {
             document.querySelector('.upload').style.display = 'flex';

@@ -35,8 +35,8 @@ window.addEventListener('load', () => {
             lateFees: bookParams.get('lateFees'),
             description: window.sessionStorage.getItem('description')
         };
-        window.sessionStorage.removeItem('coverPath',window.sessionStorage.getItem('coverPath'));
-        window.sessionStorage.removeItem('description',window.sessionStorage.getItem('description'));
+        window.sessionStorage.removeItem('coverPath');
+        window.sessionStorage.removeItem('description');
 
         if(window.sessionStorage.getItem('edit') === 'true') {
             let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
@@ -223,8 +223,8 @@ function deleteBook(book) {
     });
 }
 
-async function handleDelete(id,book) {
-    const willDelete = await deleteBook(book);
+async function handleDelete(id,wantedBook) {
+    const willDelete = await deleteBook(wantedBook);
     if(willDelete) {
         // Delete book from page (temporary), no need with database
         let container = Array.from(document.getElementById('books-container').children);
@@ -233,8 +233,10 @@ async function handleDelete(id,book) {
                 document.getElementById('books-container').removeChild(book);
             }
         });
-        books.splice(books.indexOf(book),1);
-        localStorage.setItem('books',JSON.stringify(books));
+        books = books.filter(book => {
+            return book.id !== wantedBook.id;
+        });
+        window.localStorage.setItem('books',JSON.stringify(books));
         checkNoBooks();
 
         // Delete from database

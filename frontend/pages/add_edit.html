@@ -86,7 +86,7 @@
                                     <i class="fa-solid fa-id-badge"></i>
                                     <label for="book-id">Book ID</label>
                                 </div>
-                                <input type="number" id="id" name="id"
+                                <input type="text" id="id" name="id"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                                     placeholder="Enter Book ID"
                                     autocomplete="off"
@@ -152,6 +152,7 @@
                                         Publication</label>
                                 </div>
                                 <input type="number" id="pub-year"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
                                     placeholder="2025"
                                     name="year-of-publication" min="1900"
                                     max="2025" required>
