@@ -8,6 +8,14 @@ if(localStorage.getItem('books') == null) {
 // Will be retrieved from database
 let books = localStorage.getItem('books') ? JSON.parse(localStorage.getItem('books')) : [];
 
+
+// Reset Books borrowers list
+// books.forEach(book => {
+//     book.borrowersList = [];
+//     book.borrowNum = '0';
+// });
+// localStorage.setItem('books',JSON.stringify(books));
+
 window.addEventListener('load', () => {
     if (window.sessionStorage.getItem('save') === 'true') {
         window.sessionStorage.removeItem('save','true');
@@ -33,7 +41,8 @@ window.addEventListener('load', () => {
             availability: bookParams.get('availability'),
             borrowNum: bookParams.get('borrowNum'),
             lateFees: bookParams.get('lateFees'),
-            description: window.sessionStorage.getItem('description')
+            description: window.sessionStorage.getItem('description'),
+            borrowersList: []
         };
         window.sessionStorage.removeItem('coverPath');
         window.sessionStorage.removeItem('description');
@@ -41,20 +50,23 @@ window.addEventListener('load', () => {
         if(window.sessionStorage.getItem('edit') === 'true') {
             let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
             let oldData = JSON.parse(book.dataset.info);
+            bookData.borrowersList = oldData.borrowersList ? oldData.borrowersList : [];
             book.dataset.info = JSON.stringify(bookData);
 
             editBook(book.id,bookData,oldData);
 
-            books.splice(books.indexOf(oldData),1);
+            books = books.filter(book => {
+                return book.id !== oldData.id;
+            });
 
-            window.sessionStorage.removeItem('edit','true');
-            window.sessionStorage.removeItem('editedBook',book.id);
+            window.sessionStorage.removeItem('edit');
+            window.sessionStorage.removeItem('editedBook');
         }
         else {
             addBook(bookData);
         }
         books.push(bookData);
-        localStorage.setItem('books',JSON.stringify(books));
+        window.localStorage.setItem('books',JSON.stringify(books));
         checkNoBooks();
 
         // Add book to database
@@ -149,12 +161,14 @@ document.addEventListener('DOMContentLoaded', function() {
     document.querySelector('.close-btn').addEventListener('click',() => {
         document.querySelector('.overlayer').classList.add('hide');
         document.querySelector('.borrowers-list').classList.add('hide');
+        document.querySelector('.no-users').classList.add('hide');
     });
 
     window.addEventListener("click", (e) => {
         if (e.target === document.querySelector('.overlayer')) {
             document.querySelector('.overlayer').classList.add('hide');
             document.querySelector('.borrowers-list').classList.add('hide');
+            document.querySelector('.no-users').classList.add('hide');
         }
     });
 
@@ -378,6 +392,53 @@ function addBook(book) {
         img.src = JSON.parse(bookContainer.dataset.info).coverPath;
         title.textContent = JSON.parse(bookContainer.dataset.info).title;
         author.textContent = 'By ' + JSON.parse(bookContainer.dataset.info).author;
+
+        // Reset Borrowers list
+        Array.from(document.querySelector('.users').children).forEach(user => {
+            if(user.tagName.toLowerCase() !== 'h4' && !user.classList.contains('no-users'))
+                document.querySelector('.users').removeChild(user);
+        });
+
+        let borrowersList = JSON.parse(bookContainer.dataset.info).borrowersList;
+        if(borrowersList.length == 0)
+            document.querySelector('.no-users').classList.remove('hide');
+        let usersList = document.querySelector('.users');
+        borrowersList.forEach(user => {
+            let userDiv = document.createElement('div');
+            userDiv.classList.add('user');
+    
+            let profilePicHolder = document.createElement('div');
+            profilePicHolder.classList.add('profile-pic-holder');
+    
+            let profilePic = document.createElement('img');
+            profilePic.src = user.profilePic ? user.profilePic : './../CSS/assets/blue.avif';
+            profilePic.alt = 'Profile Picture';
+            profilePic.classList.add('profile-pic');
+    
+            let info = document.createElement('div');
+            info.classList.add('info');
+    
+            let username = document.createElement('p');
+            username.textContent = 'Username: ' + user.username;
+
+            let borrowDate = document.createElement('p');
+            borrowDate.textContent = 'Borrow Date: ' + new Date(user.borrowDate).toLocaleString('en-US', { month: 'long' })
+                                    + ' ' + new Date(user.borrowDate).getDate()
+                                    + ', ' + new Date(user.borrowDate).getFullYear();
+            
+            info.appendChild(username);
+            info.appendChild(borrowDate);
+
+            profilePicHolder.appendChild(profilePic);
+
+            userDiv.appendChild(profilePicHolder);
+            userDiv.appendChild(info);
+
+            usersList.appendChild(userDiv);
+        });
+    
+        
+
 
         document.querySelector('.overlayer').classList.remove('hide');
         document.querySelector('.borrowers-list').classList.remove('hide');

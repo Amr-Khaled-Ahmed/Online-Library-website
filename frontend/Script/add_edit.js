@@ -40,6 +40,8 @@ document.addEventListener('DOMContentLoaded', function() {
             availability: document.getElementById('availability').value,
             borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
             lateFees: document.getElementById('late-fee').value,
+            // description: document.getElementById('description').value,
+            // borrowersList: []
         };
 
         // Send book info to admin dashboard and save there (temporary), no need with database

@@ -1,3 +1,13 @@
+const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+const userIndex = usersData.findIndex(u => u.username === loggedInUser.username);
+
+// Reset user borrowed books
+// loggedInUser.borrowed_books = [];
+// localStorage.setItem('loggedIn_user',JSON.stringify(loggedInUser));
+// usersData[userIndex] = loggedInUser;
+// localStorage.setItem('users_data',JSON.stringify(usersData));
+
 document.querySelectorAll('.star-button').forEach(button => {
     button.addEventListener('click', (event) => {
         event.stopPropagation();
@@ -52,6 +62,7 @@ const sampleBooks = [
 function addBookToDisplay(book) {
     const bookItem = document.createElement('div');
     bookItem.className = 'book-item';
+    bookItem.id = `_${book.id}`;
     bookItem.dataset.info = JSON.stringify(book);
 
     bookItem.innerHTML = `
@@ -101,6 +112,50 @@ document.addEventListener('DOMContentLoaded', function() {
     books.forEach(book => {
         const bookItem = addBookToDisplay(book);
         bookGrid.appendChild(bookItem);
+
+        document.querySelector(`#_${book.id} .borrow-btn`).addEventListener('click',() => {
+            let borrowed_book = {
+                id: book.id,
+                borrowDate: new Date()
+            };
+
+            let borrowedAlready = false;
+            loggedInUser.borrowed_books.forEach(ubb => {
+                if(ubb.id == book.id)
+                    borrowedAlready = true;
+            });
+            if(borrowedAlready) {
+                // Display Notification
+                let alertNotification = document.querySelector('.alert');
+                alertNotification.classList.remove('hide');
+                alertNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
+                alertNotification.addEventListener('animationend', () => {
+                    alertNotification.classList.add('hide');
+                    alertNotification.style.animation = '';
+                },{once: true});
+                return;
+            }
+
+            loggedInUser.borrowed_books.push(borrowed_book);
+            localStorage.setItem('loggedIn_user',JSON.stringify(loggedInUser));
+
+            usersData[userIndex] = loggedInUser;
+            localStorage.setItem('users_data',JSON.stringify(usersData));
+
+            let user = {
+                username: loggedInUser.username,
+                profilePic: loggedInUser.profilePic,
+                borrowDate: new Date()
+            };
+
+            books.forEach(bookel => {
+                if(bookel.id == book.id) {
+                    bookel.borrowersList.push(user);
+                    bookel.borrowNum = String(parseInt(bookel.borrowNum) + 1);
+                }
+            });
+            localStorage.setItem('books',JSON.stringify(books));
+        });
         
         // Add event listeners to star buttons
         const starButton = bookItem.querySelector('.star-button');
