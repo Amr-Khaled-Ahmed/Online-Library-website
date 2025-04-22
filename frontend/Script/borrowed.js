@@ -32,66 +32,79 @@ document.addEventListener('DOMContentLoaded', () => {
     // Render favorites on page load
     renderFavorites();
 
-    // Handle click on star button to add/remove books from favorites
+    
     document.querySelectorAll('.star-button').forEach(button => {
         const details = button.closest('.borrowed-details');
         const title = details.querySelector('.borrowed-title')?.textContent.trim();
         const author = details.querySelector('.borrowed-author')?.textContent.trim().replace(/^By\s*/, '');
-
-        
-
-        const favorites = loggedInUser.favorite_books || [];
+    
+        let favorites = loggedInUser.favorite_books || [];
         const isFavorite = favorites.some(b => b.title === title && b.author === author);
-
+    
         if (isFavorite) {
             button.classList.add('active');
         }
-
+    
         button.addEventListener('click', event => {
             event.stopPropagation();
             button.classList.toggle('active');
-
+    
             const format = [...details.querySelectorAll('.info-item')].find(el =>
                 el.querySelector('.info-label')?.textContent === 'Format'
             )?.querySelector('.info-value')?.textContent.trim();
-
+    
+            let updatedFavorites = [...(loggedInUser.favorite_books || [])];
             const book = { title, author, format };
-            const exists = favorites.some(b => b.title === title && b.author === author);
-
+    
             if (button.classList.contains('active')) {
-                if (!exists) {
-                    favorites.push(book);
-                    usersData[userIndex].favorite_books = favorites;
-                    localStorage.setItem('users_data',JSON.stringify(usersData))
+                // Add book to favorites if not already there
+                if (!updatedFavorites.some(b => b.title === title && b.author === author)) {
+                    updatedFavorites.push(book);
                 }
-            } else {
-                favorites = favorites.filter(b => !(b.title === title && b.author === author));
-                usersData[userIndex].favorite_books = favorites;
-                localStorage.setItem('users_data',JSON.stringify(usersData))
+            } 
+            else {
+                // Remove book from favorites if star isn't active
+                updatedFavorites = updatedFavorites.filter(b => !(b.title === title && b.author === author));
+                loggedInUser.favorite_books = updatedFavorites;
+                localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+                usersData[userIndex].favorite_books = updatedFavorites;
+                localStorage.setItem('users_data', JSON.stringify(usersData));
             }
-
+    
+            // Update user data and localStorage
+            loggedInUser.favorite_books = updatedFavorites;
+            usersData[userIndex].favorite_books = updatedFavorites;
+            localStorage.setItem('users_data', JSON.stringify(usersData));
+    
             renderFavorites();
         });
     });
+    
 
     // Handle the modal confirmation actions for deleting a book from favorites
     confirmYes.addEventListener('click', () => {
         if (bookToDelete && bookToDeleteData) {
-            let favorites = JSON.parse(localStorage.getItem('favorites')) || [];
+            // Use user-based favorites (matching the star button logic)
+            let favorites = loggedInUser.favorite_books || [];
             favorites = favorites.filter(b => !(b.title === bookToDeleteData.title && b.author === bookToDeleteData.author));
-            localStorage.setItem('favorites', JSON.stringify(favorites));
-
+    
+            // Update user data and localStorage
+            loggedInUser.favorite_books = favorites;
+            localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+            usersData[userIndex].favorite_books = favorites;
+            localStorage.setItem('users_data', JSON.stringify(usersData));
+    
             // Update matching star button
             document.querySelectorAll('.star-button').forEach(button => {
                 const details = button.closest('.borrowed-details');
                 const title = details.querySelector('.borrowed-title')?.textContent.trim();
                 const author = details.querySelector('.borrowed-author')?.textContent.trim().replace(/^By\s*/, '');
-
+    
                 if (title === bookToDeleteData.title && author === bookToDeleteData.author) {
                     button.classList.remove('active');
                 }
             });
-
+    
             renderFavorites();
             bookToDelete = null;
             bookToDeleteData = null;
@@ -140,7 +153,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // Handle borrowed item click events for modal display
     const closeBtn = document.querySelector('.close-btn');
     const borrowedItems = document.querySelectorAll('.borrowed-item');
 
