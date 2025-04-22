@@ -87,10 +87,13 @@ body {
 }
 
 .users {
+    background-color: var(--bg-color);
+    border-radius: 10px;
     width: 50%;
     display: flex;
     flex-direction: column;
     margin-top: 7%;
+    padding-top: 10px;
     overflow-y: auto;
     max-height: 400px;
 }
@@ -100,8 +103,6 @@ body {
     display: flex;
     width: 100%;
     height: 80%;
-    background-color: var(--bg-color);
-    border-radius: 10px;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -110,7 +111,7 @@ body {
 .user {
     display: flex;
     align-items: center;
-    border-top: 1.5px solid var(--bg-color);
+    border-top: 1.5px solid var(--form-bg-color);
 }
 
 .profile-pic-holder {
