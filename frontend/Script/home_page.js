@@ -33,3 +33,7 @@ if (loggedInUser && navBar) {
   navBar.appendChild(dashboardLi);
   navBar.appendChild(logoutLi);
 }
+
+// Delete edit
+window.sessionStorage.removeItem('edit');
+window.sessionStorage.removeItem('editedBook');

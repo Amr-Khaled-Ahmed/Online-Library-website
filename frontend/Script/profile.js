@@ -181,4 +181,8 @@ document.addEventListener('DOMContentLoaded', function(){
     mobileHomeLink.href = './user_dashboard.html';
     document.getElementById('userType').value = 'User';
   }
-})
+});
+
+// Delete edit
+window.sessionStorage.removeItem('edit');
+window.sessionStorage.removeItem('editedBook');

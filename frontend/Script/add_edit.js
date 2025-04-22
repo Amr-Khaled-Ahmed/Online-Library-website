@@ -36,7 +36,7 @@ document.addEventListener('DOMContentLoaded', function() {
             // coverPath: document.querySelector('.book-cover').src,
             genre: document.getElementById('genre').value,
             format: document.getElementById('format').value,
-            pubYear: document.getElementById('pub-time').value,
+            pubYear: document.getElementById('pub-year').value,
             availability: document.getElementById('availability').value,
             borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
             lateFees: document.getElementById('late-fee').value,
@@ -160,7 +160,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('genre').value = bookParams.get('genre');
             document.getElementById('format').value = bookParams.get('format');
             document.getElementById('availability').value = bookParams.get('availability');
-            document.getElementById('pub-time').value = bookParams.get('pubYear');
+            document.getElementById('pub-year').value = bookParams.get('pubYear');
             document.getElementById('late-fee').value = bookParams.get('lateFees');
 
             img.classList.remove('hide');
@@ -170,11 +170,15 @@ document.addEventListener('DOMContentLoaded', function() {
         }
         else {
             document.querySelector('.upload').style.display = 'flex';
+            document.getElementById('genre').value = '';
+            document.getElementById('format').value = '';
+            document.getElementById('availability').value = '';
+            document.getElementById('pub-year').value = '';
         }
-        // if(!img.classList.contains('hide') && img.naturalWidth == 0) {
-        //     img.classList.add('hide');
-        //     document.querySelector('.upload').style.display = 'flex';
-        // }
+        if(!img.classList.contains('hide') && img.naturalWidth == 0) {
+            img.classList.add('hide');
+            document.querySelector('.upload').style.display = 'flex';
+        }
     });
 });
 
