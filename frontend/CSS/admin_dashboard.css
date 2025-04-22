@@ -95,10 +95,10 @@ body {
     max-height: 400px;
 }
 
-
 .user {
     display: flex;
-    margin: 2% 0%;
+    align-items: center;
+    border-top: 1.5px solid var(--bg-color);
 }
 
 .profile-pic-holder {
