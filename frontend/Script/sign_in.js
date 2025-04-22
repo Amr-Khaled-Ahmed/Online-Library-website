@@ -22,9 +22,29 @@ signinForm.addEventListener('submit', (e) => {
     setError(passwordInput, passwordError, 'Password is required');
     hasError = true;
   }
-  const users = JSON.parse(localStorage.getItem('users_data') || '[]');
 
+  // Default admin credentials
+  const defaultAdmin = {
+    username: 'admin',
+    password: 'Admin@123456789',
+    role: 'admin',
+    fullName: 'Admin User',
+    email: 'admin@library.com',
+    favorite_books: [],
+    borrowed_books: []
+  };
+
+  const users = JSON.parse(localStorage.getItem('users_data') || '[]');
   const matchedUser = users.find(u => u.username === username);
+
+  if (!matchedUser && username === defaultAdmin.username && password === defaultAdmin.password) {
+    // Allow direct access for the default admin
+    window.localStorage.setItem('loggedIn_user', JSON.stringify(defaultAdmin));
+    console.log('Logged in as default admin:', defaultAdmin);
+    e.preventDefault();
+    window.location.href = '/frontend/pages/admin_dashboard.html';
+    return;
+  }
 
   if (!matchedUser) {
     setError(usernameInput, usernameError, 'Username does not exist');
@@ -32,19 +52,23 @@ signinForm.addEventListener('submit', (e) => {
   } else if (matchedUser.password !== password) {
     setError(passwordInput, passwordError, 'Incorrect password');
     hasError = true;
-  } else{
-    window.localStorage.setItem('loggedIn_user' ,JSON.stringify(matchedUser));
-    console.log(window.localStorage.getItem('loggedIn_user'))
+  } else {
+    window.localStorage.setItem('loggedIn_user', JSON.stringify(matchedUser));
+    console.log('Logged in user:', matchedUser);
   }
+
   if (hasError) {
     e.preventDefault();
     return;
+  } else {
+    e.preventDefault();
+    // Navigate based on role
+    if (matchedUser.role === 'admin') {
+      window.location.href = '/frontend/pages/admin_dashboard.html';
+    } else {
+      window.location.href = '/frontend/pages/user_dashboard.html';
+    }
   }
-  else{
-      e.preventDefault();
-      window.location.href = '/index.html';
-  }
-
 });
 
 function setError(input, errorElement, message) {

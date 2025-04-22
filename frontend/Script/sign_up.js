@@ -10,23 +10,23 @@ const nameError = document.getElementById('name-error');
 const emailError = document.getElementById('email-error');
 const passwordError = document.getElementById('password-error');
 const confirmPasswordError = document.getElementById('pass-confirm-error');
+
 signupForm.addEventListener('submit', (e) => {
+  e.preventDefault();
   clearAllErrors();
   let hasError = false;
 
-  const newUsername = usernameInput.value;
-  const newName = nameInput.value;
-  const newEmail = emailInput.value;
+  const newUsername = usernameInput.value.trim();
+  const newName = nameInput.value.trim();
+  const newEmail = emailInput.value.trim();
   const newPassword = passwordInput.value;
   const confirmPassword = confirmPasswordInput.value;
 
-  let existingUsers = [];
-  const saved = localStorage.getItem('users_data');
-  existingUsers = saved ? JSON.parse(saved) : [];
-
+  const existingUsers = JSON.parse(localStorage.getItem('users_data') || '[]');
   const usernameTaken = existingUsers.some(user => user.username === newUsername);
   const emailTaken = existingUsers.some(user => user.email === newEmail);
 
+  // Validate username
   if (newUsername === '') {
     setError(usernameInput, usernameError, 'Username is required');
     hasError = true;
@@ -35,11 +35,13 @@ signupForm.addEventListener('submit', (e) => {
     hasError = true;
   }
 
+  // Validate full name
   if (newName === '') {
-    setError(nameInput, nameError, 'name is required');
+    setError(nameInput, nameError, 'Full name is required');
     hasError = true;
-  } 
+  }
 
+  // Validate email
   if (newEmail === '') {
     setError(emailInput, emailError, 'Email is required');
     hasError = true;
@@ -48,6 +50,7 @@ signupForm.addEventListener('submit', (e) => {
     hasError = true;
   }
 
+  // Validate password
   if (newPassword === '') {
     setError(passwordInput, passwordError, 'Password is required');
     hasError = true;
@@ -66,38 +69,35 @@ signupForm.addEventListener('submit', (e) => {
     }
   }
 
+  // Validate confirm password
   if (newPassword !== confirmPassword) {
-    setError(confirmPasswordInput, confirmPasswordError, 'Password does not match');
+    setError(confirmPasswordInput, confirmPasswordError, 'Passwords do not match');
     hasError = true;
   }
 
   if (hasError) {
-    e.preventDefault();
     return;
   }
-  else{
-      e.preventDefault();
-      window.location.href = 'sign-in.html';
-  }
 
-
-  e.preventDefault();
+  // Add new user to localStorage
   const newUser = {
     username: newUsername,
     fullName: newName,
     password: newPassword,
     email: newEmail,
-    favorite_books : [],
-    borrowed_books : []
+    role: 'user', // Default role for new users
+    favorite_books: [],
+    borrowed_books: []
   };
 
   existingUsers.push(newUser);
   localStorage.setItem('users_data', JSON.stringify(existingUsers));
 
-  // console.log('All users:', existingUsers);
-  // signupForm.reset();
+  // Redirect to sign-in page
+  window.location.href = 'sign-in.html';
 });
 
+// Helper functions
 function setError(input, errorElement, message) {
   input.parentElement.classList.add('incorrect');
   errorElement.innerText = message;
@@ -117,13 +117,3 @@ function clearAllErrors() {
     if (error) error.innerText = '';
   });
 }
-
-const allInputs = [usernameInput, nameInput, emailInput, passwordInput, confirmPasswordInput].filter(Boolean);
-const allErrors = [usernameError, nameError, emailError, passwordError, confirmPasswordError];
-
-allInputs.forEach((input, index) => {
-  input.addEventListener('input', () => {
-    input.parentElement.classList.remove('incorrect');
-    if (allErrors[index]) allErrors[index].innerText = '';
-  });
-});

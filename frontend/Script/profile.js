@@ -160,26 +160,36 @@ document.querySelector('.profile-form').addEventListener('submit', function(e) {
   alert('Profile changes saved successfully!');
 });
 
+// Redirect "Home" link based on user role
+document.addEventListener('DOMContentLoaded', function () {
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+
+  if (loggedInUser) {
+    const homeLink = document.getElementById('homeLink');
+    const mobileHomeLink = document.getElementById('mobileHomeLink');
+
+    if (loggedInUser.role === 'admin') {
+      homeLink.href = './admin_dashboard.html';
+      mobileHomeLink.href = './admin_dashboard.html';
+    } else {
+      homeLink.href = './user_dashboard.html';
+      mobileHomeLink.href = './user_dashboard.html';
+    }
+  }
+});
 
 
-//  to detect the user's role and set the appropriate home link:
-document.addEventListener('DOMContentLoaded', function(){
-  const isAdmin = document.referrer.includes('admin_dashboard.html');
+document.addEventListener('DOMContentLoaded', function () {
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
 
+  if (loggedInUser) {
+    const bookLink = document.getElementById('bookLink');
 
-  const homeLink = document.getElementById('homeLink');
-  const mobileHomeLink = document.getElementById('mobileHomeLink');
-
-
-  if(isAdmin){
-    homeLink.href = './admin_dashboard.html';
-    mobileHomeLink.href = './admin_dashboard.html';
-
-    document.getElementById('userType').value = 'Admin';
-  } else {
-    homeLink.href = './user_dashboard.html';
-    mobileHomeLink.href = './user_dashboard.html';
-    document.getElementById('userType').value = 'User';
+    if (loggedInUser.role === 'admin') {
+      bookLink.href = './admin_dashboard.html#books-container';
+    } else {
+      bookLink.href = './user_dashboard.html';
+    }
   }
 });
 
