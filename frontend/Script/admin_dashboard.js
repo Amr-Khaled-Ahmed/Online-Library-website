@@ -379,7 +379,7 @@ function addBook(book) {
 
         document.querySelector('.overlayer').classList.remove('hide');
         document.querySelector('.borrowers-list').classList.remove('hide');
-    },{once: true});
+    });
 
     btns.appendChild(editBtn);
     btns.appendChild(deleteBtn);
