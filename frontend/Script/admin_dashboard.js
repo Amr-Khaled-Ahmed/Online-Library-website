@@ -146,6 +146,18 @@ document.addEventListener('DOMContentLoaded', function() {
         checkNoBooks();
     });
 
+    document.querySelector('.close-btn').addEventListener('click',() => {
+        document.querySelector('.overlayer').classList.add('hide');
+        document.querySelector('.borrowers-list').classList.add('hide');
+    });
+
+    window.addEventListener("click", (e) => {
+        if (e.target === document.querySelector('.overlayer')) {
+            document.querySelector('.overlayer').classList.add('hide');
+            document.querySelector('.borrowers-list').classList.add('hide');
+        }
+    });
+
 });
 
 function checkNoBooks() {
@@ -353,11 +365,21 @@ function addBook(book) {
 
 
     let brListBtn = document.createElement('button');
-    brListBtn.classList.add('borrowers-list');
+    brListBtn.classList.add('borrowers-list-btn');
     brListBtn.innerHTML = '<pre> Borrowers List <i class="fa fa-angle-right" aria-hidden="true"></i> </pre>';
     brListBtn.addEventListener('click',() => {
-        
-    });
+        let img = document.querySelector('.borrowers-list img');
+        let id = document.querySelector('.borrowers-list .id');
+        let title = document.querySelector('.borrowers-list .book-title');
+        let author = document.querySelector('.borrowers-list .author');
+        id.textContent = 'ID: ' + JSON.parse(bookContainer.dataset.info).id;
+        img.src = JSON.parse(bookContainer.dataset.info).coverPath;
+        title.textContent = JSON.parse(bookContainer.dataset.info).title;
+        author.textContent = 'By ' + JSON.parse(bookContainer.dataset.info).author;
+
+        document.querySelector('.overlayer').classList.remove('hide');
+        document.querySelector('.borrowers-list').classList.remove('hide');
+    },{once: true});
 
     btns.appendChild(editBtn);
     btns.appendChild(deleteBtn);

@@ -14,25 +14,54 @@ body {
 }
 
 .overlayer {
-    background-color: rgb(0, 0, 0,0.2);
+    background-color: rgb(0, 0, 0,0.4);
     position: fixed;
     height: 100%;
     width: 100%;
-    z-index: 200;
+    top: 0;
+    left: 0;
+    z-index: 999;
     display: flex;
     justify-content: center;
     transition: all 0.3s ease;
 }
 
-.confirmation {
+.confirmation,
+.borrowers-list {
     background-color: var(--form-bg-color);
     color: var(--text-color);
     position: fixed;
     text-align: center;
     box-shadow: 0px 0px 15px var(--shadow-color);
     padding: 20px;
-    bottom: 18%;
     border-radius: 20px;
+    top: 18%;
+}
+
+.confirmation .img-holder,
+.borrowers-list .img-holder {
+    max-width: 200px;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.confirmation img:hover,
+.borrowers-list img:hover {
+    transform: scale(1.05);
+}
+
+.confirmation {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.confirm-btns {
+    width: 100%;
+}
+
+.confirm-btns button{
+    margin: 0% 10%;
 }
 
 .loading {
@@ -44,6 +73,65 @@ body {
     justify-content: center;
     font-size: 70px;
     color: var(--primary-color);
+}
+
+.borrowers-list {
+    display: flex;
+    width: 600px;
+}
+
+.borrowers-list .book-details {
+    margin-right: 10%;
+    margin-left: 5%;
+    margin-top: 7%;
+}
+
+.users {
+    width: 50%;
+    display: flex;
+    flex-direction: column;
+    margin-top: 7%;
+    overflow-y: auto;
+    max-height: 400px;
+}
+
+.user {
+    display: flex;
+    margin: 2% 0%;
+}
+
+.profile-pic-holder {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-right: 10px;
+}
+
+.profile-pic {
+    border-radius: 50%;
+    width: 50px;
+    height: 50px;
+}
+
+.info p {
+    font-family: var(--font-primary);
+    text-align: left;
+    font-size: 12px;
+    font-weight: bold;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-color);
+    transition: all 0.3s ease;
+}
+
+.close-btn:hover {
+    color: var(--primary-hover);
 }
 
 
@@ -95,7 +183,8 @@ body {
     }
 }
 
-.confirmation h4 {
+h4 {
+    text-align: center;
     margin-bottom: 10px;
 }
 
@@ -505,7 +594,7 @@ a {
     right: 10px;
 }
 
-.borrowers-list {
+.borrowers-list-btn {
     display: flex;
     align-items: center;
     background-color: var(--primary-color);
@@ -522,7 +611,7 @@ a {
 }
 
 .search-btn:hover,
-.borrowers-list:hover,
+.borrowers-list-btn:hover,
 .books-pages button:hover {
     background-color: var(--primary-hover);
     color: var(--text-color);
@@ -598,6 +687,10 @@ a {
 @media (max-width: 300px) {
     body {
         width: 300px;
+    }
+
+    .borrowers-list {
+        max-width: 300px;
     }
 }
 
