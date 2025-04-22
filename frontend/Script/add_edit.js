@@ -175,10 +175,10 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('availability').value = '';
             document.getElementById('pub-year').value = '';
         }
-        if(!img.classList.contains('hide') && img.naturalWidth == 0) {
-            img.classList.add('hide');
-            document.querySelector('.upload').style.display = 'flex';
-        }
+        // if(!img.classList.contains('hide') && img.naturalWidth == 0) {
+        //     img.classList.add('hide');
+        //     document.querySelector('.upload').style.display = 'flex';
+        // }
     });
 });
 
