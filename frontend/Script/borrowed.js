@@ -60,6 +60,10 @@ document.addEventListener('DOMContentLoaded', () => {
                 // Add book to favorites if not already there
                 if (!updatedFavorites.some(b => b.title === title && b.author === author)) {
                     updatedFavorites.push(book);
+                    loggedInUser.favorite_books = updatedFavorites;
+                    localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+                    usersData[userIndex].favorite_books = updatedFavorites;
+                    localStorage.setItem('users_data', JSON.stringify(usersData));
                 }
             } 
             else {
