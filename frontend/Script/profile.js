@@ -6,8 +6,7 @@ const profileActions = document.getElementById('profileActions');
 const modal = document.getElementById('modal');
 const modalImg = document.getElementById('modalImage');
 
-// Load user data
-const loggedInUser = JSON.parse(window.localStorage.getItem('loggedIn_user'));
+// Profile Info Elements
 const username = document.getElementById('username');
 const fullName = document.getElementById('fullName');
 const email = document.getElementById('email');
@@ -17,64 +16,104 @@ const booksBorrowed = document.getElementById('booksBorrowed');
 const booksFavorited = document.getElementById('booksFavorited');
 const memberSince = document.getElementById('memberSince');
 
-// Set user data
+// Load logged in user
+let loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+
+// Initialize profile page
 function loadUserData() {
-  username.value = loggedInUser.username;
-  fullName.value = loggedInUser.fullName;
-  email.value = loggedInUser.email;
+  if (!loggedInUser) {
+    window.location.href = 'sign-in.html';
+    return;
+  }
+
+  // Set user data
+  username.value = loggedInUser.username || '';
+  fullName.value = loggedInUser.fullName || '';
+  email.value = loggedInUser.email || '';
   userType.value = loggedInUser.role === 'admin' ? 'Admin' : 'User';
   bio.value = loggedInUser.bio || '';
   booksBorrowed.textContent = loggedInUser.borrowed_books?.length || 0;
   booksFavorited.textContent = loggedInUser.favorite_books?.length || 0;
-  memberSince.textContent = new Date().getFullYear();
   
-  // Load profile picture if exists
+  // Set member since date
+  if (loggedInUser.memberSince) {
+    const date = new Date(loggedInUser.memberSince);
+    memberSince.textContent = date.getFullYear();
+  } else {
+    memberSince.textContent = new Date().getFullYear();
+  }
+
+  // Set profile picture
   if (loggedInUser.profilePicture) {
     preview.src = loggedInUser.profilePicture;
     preview.classList.remove('hide');
     uploadBox.classList.add('hide');
     profileActions.classList.remove('hide');
     msg.textContent = "Click to change profile picture";
+  } else {
+    preview.src = '';
+    preview.classList.add('hide');
+    uploadBox.classList.remove('hide');
+    profileActions.classList.add('hide');
+    msg.textContent = "Click to upload profile picture";
   }
 }
 
+// Initialize page
 loadUserData();
 
-// Profile picture upload functionality
-imgInput.addEventListener('change', function () {
+// Profile picture upload
+imgInput.addEventListener('change', function() {
   const file = this.files[0];
-  if (file) {
-    const reader = new FileReader();
-    reader.onload = function (e) {
-      preview.src = e.target.result;
-      preview.classList.remove('hide');
-      uploadBox.classList.add('hide');
-      profileActions.classList.remove('hide');
-      msg.textContent = "Click to change profile picture";
-      
-      // Save to localStorage
-      const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-      const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-      
-      const updatedUsers = usersData.map(user => {
-        if (user.username === loggedInUser.username) {
-          user.profilePicture = e.target.result;
-          loggedInUser.profilePicture = e.target.result;
-          localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-        }
-        return user;
-      });
-      
-      localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-    };
-    reader.readAsDataURL(file);
+  if (!file) return;
+
+  // Validate file
+  const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
+  const maxSize = 2 * 1024 * 1024; // 2MB
+  
+  if (!validTypes.includes(file.type)) {
+    alert('Please select a valid image file (JPEG, PNG, GIF)');
+    return;
   }
+  
+  if (file.size > maxSize) {
+    alert('Image size should not exceed 2MB');
+    return;
+  }
+
+  const reader = new FileReader();
+  reader.onload = function(e) {
+    // Update the logged in user's profile picture
+    loggedInUser.profilePicture = e.target.result;
+    localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+    
+    // Update the users_data array
+    const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
+    const updatedUsers = usersData.map(user => {
+      if (user.username === loggedInUser.username) {
+        user.profilePicture = e.target.result;
+      }
+      return user;
+    });
+    
+    localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+    
+    // Update UI
+    preview.src = e.target.result;
+    preview.classList.remove('hide');
+    uploadBox.classList.add('hide');
+    profileActions.classList.remove('hide');
+    msg.textContent = "Click to change profile picture";
+  };
+  reader.readAsDataURL(file);
 });
 
 // Preview profile picture in modal
-preview.addEventListener('click', function () {
-  modalImg.src = preview.src;
-  modal.classList.remove('hide');
+preview.addEventListener('click', function() {
+  if (loggedInUser.profilePicture) {
+    modalImg.src = preview.src;
+    modal.classList.remove('hide');
+  }
 });
 
 function closeModal() {
@@ -82,28 +121,30 @@ function closeModal() {
 }
 
 function removeProfilePicture() {
+  // Remove profile picture from logged in user
+  delete loggedInUser.profilePicture;
+  localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+  
+  // Remove from users_data
+  const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
+  const updatedUsers = usersData.map(user => {
+    if (user.username === loggedInUser.username) {
+      delete user.profilePicture;
+    }
+    return user;
+  });
+  
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+  
+  // Update UI
   preview.src = '';
   preview.classList.add('hide');
   uploadBox.classList.remove('hide');
   profileActions.classList.add('hide');
   msg.textContent = "Click to upload profile picture";
   imgInput.value = '';
-  
-  // Remove from localStorage
-  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-  
-  const updatedUsers = usersData.map(user => {
-    if (user.username === loggedInUser.username) {
-      delete user.profilePicture;
-      delete loggedInUser.profilePicture;
-      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    return user;
-  });
-  
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
 }
+
 
 // Password modal functions
 function openPasswordModal() {
