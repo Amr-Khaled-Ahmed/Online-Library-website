@@ -82,7 +82,7 @@ function addBookToDisplay(book) {
                 <span class="availability-badge ${book.availability}">${book.availability[0].toUpperCase() + book.availability.slice(1)}</span>
             </div>
             <div class="book-actions">
-                <a href="./book_details.html?title=${encodeURIComponent(book.title)}&author=${encodeURIComponent(book.author)}&about=${encodeURIComponent(book.description)}&year=${encodeURIComponent(book.pubYear)}&status=${encodeURIComponent(book.availability)}&Genre=${encodeURIComponent(book.genre)}&Pages=320&Language=English&imagePath=${encodeURIComponent(book.coverPath)}" class="book-btn details-btn">Details</a>
+                <a href="./book_details.html?id=${encodeURIComponent(book.id)}" class="book-btn details-btn">Details</a>
                 <a href="#" class="book-btn borrow-btn">Borrow</a>
             </div>
         </div>

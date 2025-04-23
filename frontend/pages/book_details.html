@@ -53,13 +53,12 @@
 
         <div class="container">
             <div class="book-cover">
-                <img id="imagePath" alt="Ice & Fire book cover">
+                <img src="" alt="Book cover">
             </div>
             <div class="details">
-                <h1 id="book-title"></h1>
-                <h2 id="book-author"></h2>
-                <p id="about"><b
-                        style="color: var(--primary-color);">'Game of Thrones'</b>.</p>
+                <h1 class="book-title"></h1>
+                <h2 class="book-author"></h2>
+                <p class="book-description"></p>
 
                 <div class="rating">
                     <i class="fas fa-star"></i>
@@ -74,27 +73,27 @@
                     <div class="meta-item">
                         <i class="fas fa-check-circle"></i>
                         <strong>Status:</strong>
-                        <p id="status"> </p>
+                        <p class="book-status"></p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-tags"></i>
                         <strong>Genre:</strong>
-                        <p id="Genre"> </p>
+                        <p class="book-genre"></p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-calendar-alt"></i>
                         <strong>Published:</strong>
-                        <p id="book-year"> </p>
+                        <p class="book-year"></p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-file-alt"></i>
                         <strong>Pages:</strong>
-                        <p id="Pages"> </p>
+                        <p>320</p>
                     </div>
                     <div class="meta-item">
                         <i class="fas fa-language"></i>
                         <strong>Language:</strong>
-                        <p id="Language"> </p>
+                        <p>English</p>
                     </div>
                 </div>
 
@@ -143,33 +142,10 @@
 
         </footer>
 
-        <script>
-        const urlParams = new URLSearchParams(window.location.search);
-        const title = urlParams.get('title');
-        const author = urlParams.get('author');
-        const year = urlParams.get('year');
-        const about = urlParams.get('about');
-        const status = urlParams.get('status');
-        const Genre = urlParams.get('Genre');
-        const Pages = urlParams.get('Pages');
-        const Language = urlParams.get('Language');
-        const imagePath = urlParams.get('imagePath');
-
-        document.getElementById("book-title").textContent = title;
-        document.getElementById("book-author").textContent = author;
-        document.getElementById("book-year").textContent = year;
-        document.getElementById("about").textContent = about;
-        document.getElementById("status").textContent = status;
-        document.getElementById("Genre").textContent = Genre;
-        document.getElementById("Pages").textContent = Pages;
-        document.getElementById("Language").textContent = Language;
-        document.getElementById("imagePath").src = imagePath;
-
-
-    </script>
-    <script src="./../Script/header.js"></script>
-    <script src="./../Script/footer.js"></script>
-    <script src="./../Script/theme.js"></script>
+        <script src="./../Script/book_details.js"></script>
+        <script src="./../Script/header.js"></script>
+        <script src="./../Script/footer.js"></script>
+        <script src="./../Script/theme.js"></script>
 
     </body>
 
