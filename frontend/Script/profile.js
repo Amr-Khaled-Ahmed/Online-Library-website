@@ -200,6 +200,7 @@ function updatePassword() {
     }
   }
 
+  
   // Validate confirm password
   if (confirmPassword === '') {
     setError(document.getElementById('confirmPassword'), 'Please confirm your new password');
@@ -447,11 +448,20 @@ document.querySelector('.profile-form').addEventListener('submit', function(e) {
   alert('Profile changes saved successfully!');
 });
 
-// Redirect "Home" link based on user role
 document.addEventListener('DOMContentLoaded', function () {
   const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
 
   if (loggedInUser) {
+    const adminHiddenLinks = document.querySelectorAll('#AdminHidden');
+
+    // Show or hide links based on user role
+    if (loggedInUser.role === 'admin') {
+      adminHiddenLinks.forEach(link => link.classList.add('hide'));
+    } else {
+      adminHiddenLinks.forEach(link => link.classList.remove('hide'));
+    }
+
+    // Redirect "Home" link based on user role
     const homeLink = document.getElementById('homeLink');
     const mobileHomeLink = document.getElementById('mobileHomeLink');
 
@@ -478,6 +488,9 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 });
+
+// redirect profile-links
+
 
 // Delete edit
 window.sessionStorage.removeItem('edit');
