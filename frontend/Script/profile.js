@@ -10,10 +10,13 @@ const loggedInUser = JSON.parse(window.localStorage.getItem('loggedIn_user'));
 const username = document.getElementById('username');
 const fullName = document.getElementById('fullName');
 const email = document.getElementById('email');
+const userType = document.getElementById('userType');
 
+// Set user data
 username.value = loggedInUser.username;
 fullName.value = loggedInUser.fullName;
 email.value = loggedInUser.email;
+userType.value = loggedInUser.role === 'admin' ? 'Admin' : 'User';
 
 // Profile picture upload functionality
 imgInput.addEventListener('change', function () {
@@ -53,23 +56,110 @@ function removeProfilePicture() {
 // Password modal functions
 function openPasswordModal() {
   document.getElementById('passwordModal').classList.remove('hide');
+  // Clear any previous errors
+  document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 }
 
 function updatePassword() {
-  const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
+  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
   const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
 
+  const currentPassword = document.getElementById('currentPassword').value.trim();
+  const newPassword = document.getElementById('newPassword').value.trim();
+  const confirmPassword = document.getElementById('confirmPassword').value.trim();
 
+  // Clear previous errors
+  document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
+  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
+
+  let hasError = false;
+
+  // Validate current password
+  if (currentPassword === '') {
+    setError(document.getElementById('currentPassword'), 'Current password is required');
+    hasError = true;
+  } else if (currentPassword !== loggedInUser.password) {
+    setError(document.getElementById('currentPassword'), 'Current password is incorrect');
+    hasError = true;
+  }
+
+  // Validate new password
+  if (newPassword === '') {
+    setError(document.getElementById('newPassword'), 'New password is required');
+    hasError = true;
+  } else {
+    if (newPassword.length < 8) {
+      setError(document.getElementById('newPassword'), 'Password must have at least 8 characters');
+      hasError = true;
+    }
+    if (!/[A-Z]/.test(newPassword)) {
+      setError(document.getElementById('newPassword'), 'Password must include at least one uppercase letter');
+      hasError = true;
+    }
+    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
+      setError(document.getElementById('newPassword'), 'Password must include at least one special character');
+      hasError = true;
+    }
+    if (newPassword === currentPassword) {
+      setError(document.getElementById('newPassword'), 'New password must be different from current password');
+      hasError = true;
+    }
+  }
+
+  // Validate confirm password
+  if (confirmPassword === '') {
+    setError(document.getElementById('confirmPassword'), 'Please confirm your new password');
+    hasError = true;
+  } else if (newPassword !== confirmPassword) {
+    setError(document.getElementById('confirmPassword'), 'Passwords do not match');
+    hasError = true;
+  }
+
+  if (hasError) {
+    return;
+  }
+
+  // Update password for the logged-in user
   const updatedUsers = usersData.map(user => {
     if (user.username === loggedInUser.username) {
-      user.password = document.getElementById('newPassword').value;
-      localStorage.setItem('loggedIn_user', JSON.stringify(user)); // update local session
+      user.password = newPassword;
+      // Update local session
+      loggedInUser.password = newPassword;
+      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
     }
     return user;
   });
 
   localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  closePasswordModal();
+  
+  // Show success message
+  const successMessage = document.createElement('div');
+  successMessage.className = 'success-message';
+  successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Password updated successfully!';
+  document.querySelector('.modal-buttons').before(successMessage);
+  
+  // Clear fields and hide modal after delay
+  setTimeout(() => {
+    document.getElementById('currentPassword').value = '';
+    document.getElementById('newPassword').value = '';
+    document.getElementById('confirmPassword').value = '';
+    document.querySelector('.success-message')?.remove();
+    closePasswordModal();
+  }, 2000);
+}
+
+function setError(input, message) {
+  input.classList.add('error');
+  const errorElement = document.createElement('div');
+  errorElement.className = 'error-message';
+  errorElement.textContent = message;
+  errorElement.style.color = 'var(--error-color)';
+  errorElement.style.marginTop = '5px';
+  errorElement.style.fontSize = '0.8rem';
+  
+  // Insert error message after the input
+  input.parentNode.insertBefore(errorElement, input.nextSibling);
 }
 
 function closePasswordModal() {
@@ -77,6 +167,9 @@ function closePasswordModal() {
   document.getElementById('currentPassword').value = '';
   document.getElementById('newPassword').value = '';
   document.getElementById('confirmPassword').value = '';
+  // Clear any error messages
+  document.querySelectorAll('.error-message').forEach(el => el.remove());
+  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
 }
 
 function togglePasswordVisibility(fieldId, iconElement) {
@@ -108,7 +201,20 @@ function deleteAccount() {
     return;
   }
   
-  console.log('Account deletion requested with password:', password);
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+  if (password !== loggedInUser.password) {
+    alert('Incorrect password. Please try again.');
+    return;
+  }
+  
+  // Remove user from users_data
+  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+  const updatedUsers = usersData.filter(user => user.username !== loggedInUser.username);
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+  
+  // Remove loggedIn_user
+  localStorage.removeItem('loggedIn_user');
+  
   alert('Your account has been deleted successfully. You will be redirected to the home page.');
   
   setTimeout(() => {
@@ -130,6 +236,12 @@ document.getElementById('newPassword').addEventListener('input', function() {
   const strengthBars = document.querySelectorAll('.strength-bar');
   const strengthText = document.querySelector('.strength-text');
   const password = this.value;
+  
+  // Clear previous error messages
+  const existingError = this.nextElementSibling;
+  if (existingError && existingError.classList.contains('error-message')) {
+    existingError.remove();
+  }
   
   strengthBars.forEach(bar => bar.style.backgroundColor = 'var(--border-color)');
   
@@ -157,6 +269,27 @@ document.getElementById('newPassword').addEventListener('input', function() {
 // Form submission
 document.querySelector('.profile-form').addEventListener('submit', function(e) {
   e.preventDefault();
+  
+  // Update user data in localStorage
+  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+  
+  const updatedUsers = usersData.map(user => {
+    if (user.username === loggedInUser.username) {
+      user.fullName = document.getElementById('fullName').value;
+      user.bio = document.getElementById('bio').value;
+      // Update theme preferences if needed
+    }
+    return user;
+  });
+  
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+  
+  // Update loggedIn_user
+  loggedInUser.fullName = document.getElementById('fullName').value;
+  loggedInUser.bio = document.getElementById('bio').value;
+  localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+  
   alert('Profile changes saved successfully!');
 });
 
@@ -177,7 +310,6 @@ document.addEventListener('DOMContentLoaded', function () {
     }
   }
 });
-
 
 document.addEventListener('DOMContentLoaded', function () {
   const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));

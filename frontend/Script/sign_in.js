@@ -24,7 +24,7 @@ signinForm.addEventListener('submit', (e) => {
   }
 
   // Default admin credentials
-  const defaultAdmin = {
+  defaultAdmin = {
     username: 'admin',
     password: 'Admin@123456789',
     role: 'admin',
