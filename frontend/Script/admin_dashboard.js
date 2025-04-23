@@ -30,7 +30,7 @@ window.addEventListener('load', () => {
 
         // Add Book to local storage and page (temporary), no need with database
         const bookParams = new URLSearchParams(window.location.search);
-        const bookData = {
+        const newData = {
             id: bookParams.get('id'),
             title: bookParams.get('title'),
             author: bookParams.get('author'),
@@ -50,10 +50,10 @@ window.addEventListener('load', () => {
         if(window.sessionStorage.getItem('edit') === 'true') {
             let book = document.querySelector(`#_${window.sessionStorage.getItem('editedBook')}`);
             let oldData = JSON.parse(book.dataset.info);
-            bookData.borrowersList = oldData.borrowersList ? oldData.borrowersList : [];
-            book.dataset.info = JSON.stringify(bookData);
+            newData.borrowersList = oldData.borrowersList ? oldData.borrowersList : [];
+            book.dataset.info = JSON.stringify(newData);
 
-            editBook(book.id,bookData,oldData);
+            editBook(book.id,newData,oldData);
 
             books = books.filter(book => {
                 return book.id !== oldData.id;
@@ -61,11 +61,27 @@ window.addEventListener('load', () => {
 
             window.sessionStorage.removeItem('edit');
             window.sessionStorage.removeItem('editedBook');
+
+            // Handle borrowed books if id changed
+            let loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+            const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+            const userIndex = usersData.findIndex(u => u.username === loggedInUser.username);
+
+            usersData.forEach(user => {
+                user.borrowed_books.forEach(borrowed_book => {
+                    if(borrowed_book.id == oldData.id)
+                        borrowed_book.id = newData.id;
+                });
+            });
+
+            loggedInUser = usersData[userIndex];
+            localStorage.setItem('loggedIn_user',JSON.stringify(loggedInUser));
+            localStorage.setItem('users_data',JSON.stringify(usersData));
         }
         else {
-            addBook(bookData);
+            addBook(newData);
         }
-        books.push(bookData);
+        books.push(newData);
         window.localStorage.setItem('books',JSON.stringify(books));
         checkNoBooks();
 
