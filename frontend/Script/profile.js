@@ -6,17 +6,39 @@ const profileActions = document.getElementById('profileActions');
 const modal = document.getElementById('modal');
 const modalImg = document.getElementById('modalImage');
 
+// Load user data
 const loggedInUser = JSON.parse(window.localStorage.getItem('loggedIn_user'));
 const username = document.getElementById('username');
 const fullName = document.getElementById('fullName');
 const email = document.getElementById('email');
 const userType = document.getElementById('userType');
+const bio = document.getElementById('bio');
+const booksBorrowed = document.getElementById('booksBorrowed');
+const booksFavorited = document.getElementById('booksFavorited');
+const memberSince = document.getElementById('memberSince');
 
 // Set user data
-username.value = loggedInUser.username;
-fullName.value = loggedInUser.fullName;
-email.value = loggedInUser.email;
-userType.value = loggedInUser.role === 'admin' ? 'Admin' : 'User';
+function loadUserData() {
+  username.value = loggedInUser.username;
+  fullName.value = loggedInUser.fullName;
+  email.value = loggedInUser.email;
+  userType.value = loggedInUser.role === 'admin' ? 'Admin' : 'User';
+  bio.value = loggedInUser.bio || '';
+  booksBorrowed.textContent = loggedInUser.borrowed_books?.length || 0;
+  booksFavorited.textContent = loggedInUser.favorite_books?.length || 0;
+  memberSince.textContent = new Date().getFullYear();
+  
+  // Load profile picture if exists
+  if (loggedInUser.profilePicture) {
+    preview.src = loggedInUser.profilePicture;
+    preview.classList.remove('hide');
+    uploadBox.classList.add('hide');
+    profileActions.classList.remove('hide');
+    msg.textContent = "Click to change profile picture";
+  }
+}
+
+loadUserData();
 
 // Profile picture upload functionality
 imgInput.addEventListener('change', function () {
@@ -29,6 +51,21 @@ imgInput.addEventListener('change', function () {
       uploadBox.classList.add('hide');
       profileActions.classList.remove('hide');
       msg.textContent = "Click to change profile picture";
+      
+      // Save to localStorage
+      const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+      const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+      
+      const updatedUsers = usersData.map(user => {
+        if (user.username === loggedInUser.username) {
+          user.profilePicture = e.target.result;
+          loggedInUser.profilePicture = e.target.result;
+          localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+        }
+        return user;
+      });
+      
+      localStorage.setItem('users_data', JSON.stringify(updatedUsers));
     };
     reader.readAsDataURL(file);
   }
@@ -51,6 +88,21 @@ function removeProfilePicture() {
   profileActions.classList.add('hide');
   msg.textContent = "Click to upload profile picture";
   imgInput.value = '';
+  
+  // Remove from localStorage
+  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+  
+  const updatedUsers = usersData.map(user => {
+    if (user.username === loggedInUser.username) {
+      delete user.profilePicture;
+      delete loggedInUser.profilePicture;
+      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+    }
+    return user;
+  });
+  
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
 }
 
 // Password modal functions
@@ -229,6 +281,67 @@ function enableEdit(fieldId) {
   field.focus();
   field.style.cursor = 'text';
   field.style.opacity = '1';
+  
+  // Add event listener for Enter key to save changes
+  field.addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') {
+      saveField(fieldId);
+    }
+  });
+  
+  // Add blur event to save when focus is lost
+  field.addEventListener('blur', function() {
+    saveField(fieldId);
+  });
+}
+
+function saveField(fieldId) {
+  const field = document.getElementById(fieldId);
+  const newValue = field.value.trim();
+  
+  if (newValue === '') {
+    alert('Field cannot be empty');
+    return;
+  }
+  
+  // Special validation for email
+  if (fieldId === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newValue)) {
+    alert('Please enter a valid email address');
+    return;
+  }
+  
+  // Check if username is already taken (except for current user)
+  if (fieldId === 'username') {
+    const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+    const usernameTaken = usersData.some(user => 
+      user.username === newValue && user.username !== loggedInUser.username
+    );
+    
+    if (usernameTaken) {
+      alert('Username is already taken');
+      return;
+    }
+  }
+  
+  // Update localStorage
+  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+  
+  const updatedUsers = usersData.map(user => {
+    if (user.username === loggedInUser.username) {
+      user[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
+      loggedInUser[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
+      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+    }
+    return user;
+  });
+  
+  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
+  
+  // Reset field state
+  field.readOnly = true;
+  field.style.cursor = 'default';
+  field.style.opacity = '0.8';
 }
 
 // Password strength indicator
