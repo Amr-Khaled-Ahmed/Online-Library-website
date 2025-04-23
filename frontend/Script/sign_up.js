@@ -33,6 +33,9 @@ signupForm.addEventListener('submit', (e) => {
   } else if (usernameTaken) {
     setError(usernameInput, usernameError, 'Username is already taken');
     hasError = true;
+  } else if (newUsername.length < 3) {
+    setError(usernameInput, usernameError, 'Username must be at least 3 characters');
+    hasError = true;
   }
 
   // Validate full name
@@ -44,6 +47,9 @@ signupForm.addEventListener('submit', (e) => {
   // Validate email
   if (newEmail === '') {
     setError(emailInput, emailError, 'Email is required');
+    hasError = true;
+  } else if (!validateEmail(newEmail)) {
+    setError(emailInput, emailError, 'Please enter a valid email');
     hasError = true;
   } else if (emailTaken) {
     setError(emailInput, emailError, 'Email is already registered');
@@ -63,6 +69,10 @@ signupForm.addEventListener('submit', (e) => {
       setError(passwordInput, passwordError, 'Password must include at least one uppercase letter');
       hasError = true;
     }
+    if (!/[0-9]/.test(newPassword)) {
+      setError(passwordInput, passwordError, 'Password must include at least one number');
+      hasError = true;
+    }
     if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
       setError(passwordInput, passwordError, 'Password must include at least one special character');
       hasError = true;
@@ -70,7 +80,10 @@ signupForm.addEventListener('submit', (e) => {
   }
 
   // Validate confirm password
-  if (newPassword !== confirmPassword) {
+  if (confirmPassword === '') {
+    setError(confirmPasswordInput, confirmPasswordError, 'Please confirm your password');
+    hasError = true;
+  } else if (newPassword !== confirmPassword) {
     setError(confirmPasswordInput, confirmPasswordError, 'Passwords do not match');
     hasError = true;
   }
@@ -79,17 +92,21 @@ signupForm.addEventListener('submit', (e) => {
     return;
   }
 
-  // Add new user to localStorage
+  // Create new user object
   const newUser = {
     username: newUsername,
     fullName: newName,
     password: newPassword,
     email: newEmail,
-    role: 'user', // Default role for new users
+    role: 'user',
     favorite_books: [],
-    borrowed_books: []
+    borrowed_books: [],
+    profilePicture: null,
+    bio: '',
+    memberSince: new Date().toISOString()
   };
 
+  // Update users data
   existingUsers.push(newUser);
   localStorage.setItem('users_data', JSON.stringify(existingUsers));
 
@@ -116,4 +133,9 @@ function clearAllErrors() {
     if (input) input.parentElement.classList.remove('incorrect');
     if (error) error.innerText = '';
   });
+}
+
+function validateEmail(email) {
+  const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+  return re.test(email);
 }
