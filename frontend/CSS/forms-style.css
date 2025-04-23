@@ -57,7 +57,7 @@ body::before {
 
 .sign-up img ,.sign-in img {
     width: 50%;
-    height: 100vh;
+    /* height: 100vh; */
     object-fit: cover;
 }
 
