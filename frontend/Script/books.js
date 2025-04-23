@@ -155,6 +155,15 @@ document.addEventListener('DOMContentLoaded', function() {
                 }
             });
             localStorage.setItem('books',JSON.stringify(books));
+
+            // Display Notification
+            let borrowedNotification = document.querySelector('.borrowed');
+            borrowedNotification.classList.remove('hide');
+            borrowedNotification.style.animation = 'notification 1.7s ease-in-out 2s backwards';
+            borrowedNotification.addEventListener('animationend', () => {
+                borrowedNotification.classList.add('hide');
+                borrowedNotification.style.animation = '';
+            },{once: true});
         });
         
         // Add event listeners to star buttons
