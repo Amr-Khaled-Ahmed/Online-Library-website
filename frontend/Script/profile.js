@@ -329,6 +329,13 @@ function deleteAccount() {
     alert('Incorrect password. Please try again.');
     return;
   }
+
+  // Remove user from borrowers lists
+  const books = JSON.parse(localStorage.getItem('books'));
+  books.forEach(b => {
+      b.borrowersList = b.borrowersList.filter(u => u.username !== loggedInUser.username);
+  });
+  localStorage.setItem('books', JSON.stringify(books));
   
   // Remove user from users_data
   const usersData = JSON.parse(localStorage.getItem('users_data') || []);
