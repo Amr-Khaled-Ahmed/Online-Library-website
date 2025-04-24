@@ -67,6 +67,24 @@ function loadUserData() {
 // Initialize page
 loadUserData();
 
+// Update attribute in borrowed books
+function editAttrBrl(attribute, newValue) {
+  const booksID = loggedInUser.borrowed_books.map(b => {
+    return b.id;
+  });
+  const books = JSON.parse(localStorage.getItem('books'));
+  books.forEach(b => {
+    if(booksID.includes(b.id)) {
+      b.borrowersList.forEach(u => {
+        if(u.username == loggedInUser.username) {
+          u[attribute] = newValue;
+        }
+      });
+    }
+  });
+  localStorage.setItem('books', JSON.stringify(books));
+}
+
 // Profile picture upload
 imgInput.addEventListener('change', function() {
   const file = this.files[0];
@@ -93,20 +111,7 @@ imgInput.addEventListener('change', function() {
     localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
 
     // Update profile picture in borrowed books
-    const booksID = loggedInUser.borrowed_books.map(b => {
-      return b.id;
-    });
-    const books = JSON.parse(localStorage.getItem('books'));
-    books.forEach(b => {
-      if(booksID.includes(b.id)) {
-        b.borrowersList.forEach(u => {
-          if(u.username == loggedInUser.username) {
-            u.profilePic = e.target.result;
-          }
-        });
-      }
-    });
-    localStorage.setItem('books', JSON.stringify(books));
+    editAttrBrl('profilePic', e.target.result);
     
     // Update the users_data array
     const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
@@ -147,21 +152,8 @@ function removeProfilePicture() {
   localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
 
   // Update profile picture in borrowed books
-  const booksID = loggedInUser.borrowed_books.map(b => {
-    return b.id;
-  });
-  const books = JSON.parse(localStorage.getItem('books'));
-  books.forEach(b => {
-    if(booksID.includes(b.id)) {
-      b.borrowersList.forEach(u => {
-        if(u.username == loggedInUser.username) {
-          u.profilePic = './../CSS/assets/blue.avif';
-        }
-      });
-    }
-  });
-  localStorage.setItem('books', JSON.stringify(books));
-  
+  editAttrBrl('profilePic', './../CSS/assets/blue.avif');
+
   // Remove from users_data
   const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
   const updatedUsers = usersData.map(user => {
@@ -412,20 +404,7 @@ function saveField(fieldId) {
 
       // Update username, email in borrowed books
       if(fieldId == 'email' || fieldId == 'username') {
-        let booksID = loggedInUser.borrowed_books.map(b => {
-          return b.id;
-        });
-        const books = JSON.parse(localStorage.getItem('books'));
-        books.forEach(b => {
-          if(booksID.includes(b.id)) {
-            b.borrowersList.forEach(u => {
-              if(u.username == user.username) {
-                u[fieldId] = newValue;
-              }
-            });
-          }
-        });
-        localStorage.setItem('books', JSON.stringify(books));
+        editAttrBrl(fieldId, newValue);
       }
 
       user[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
