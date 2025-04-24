@@ -249,7 +249,8 @@ document.addEventListener('DOMContentLoaded', function () {
                     id: book.id,
                     title: book.title,
                     author: book.author,
-                    coverPath: book.coverPath
+                    coverPath: book.coverPath,
+                    format : book.format
                 });
                 starButton.classList.add('active');
             }
@@ -345,7 +346,8 @@ document.addEventListener('DOMContentLoaded', function () {
                         id: book.id,
                         title: book.title,
                         author: book.author,
-                        coverPath: book.coverPath
+                        coverPath: book.coverPath,
+                        format : book.format
                     });
                     starButton.classList.add('active');
                 }
