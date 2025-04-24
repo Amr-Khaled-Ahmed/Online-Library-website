@@ -175,8 +175,8 @@ document.addEventListener('DOMContentLoaded', function() {
         
         if (!currentUser.borrowed_books) currentUser.borrowed_books = [];
         
-        const isAlreadyBorrowed = currentUser.borrowed_books.some(b => 
-            b.title === book.title && b.author === book.author
+        const isAlreadyBorrowed = currentUser.borrowed_books.some(b =>
+            b.id === book.id
         );
         
         if (isAlreadyBorrowed) {
@@ -216,8 +216,10 @@ document.addEventListener('DOMContentLoaded', function() {
         if (!book.borrowersList) book.borrowersList = [];
         const borrower = {
             username: currentUser.username,
-            profilePic: currentUser.profile_image_url || '../CSS/assets/default_profile.png',
-            borrowDate: currentDate.toISOString()
+            email: currentUser.email,
+            profilePic: currentUser.profile_image_url || '../CSS/assets/blue.avif',
+            borrowDate: currentDate.toISOString(),
+            dueDate: dueDate.toISOString()
         };
         book.borrowersList.push(borrower);
         

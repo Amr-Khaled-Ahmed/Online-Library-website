@@ -19,6 +19,11 @@ const memberSince = document.getElementById('memberSince');
 // Load logged in user
 let loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
 
+// Keep just logged in user in users data
+// let usersData = JSON.parse(localStorage.getItem('users_data'));
+// usersData = usersData.filter(u => u.username == loggedInUser.username);
+// localStorage.setItem('users_data',JSON.stringify(usersData));
+
 // Initialize profile page
 function loadUserData() {
   if (!loggedInUser) {
@@ -86,6 +91,22 @@ imgInput.addEventListener('change', function() {
     // Update the logged in user's profile picture
     loggedInUser.profilePicture = e.target.result;
     localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+
+    // Update profile picture in borrowed books
+    const booksID = loggedInUser.borrowed_books.map(b => {
+      return b.id;
+    });
+    const books = JSON.parse(localStorage.getItem('books'));
+    books.forEach(b => {
+      if(booksID.includes(b.id)) {
+        b.borrowersList.forEach(u => {
+          if(u.username == loggedInUser.username) {
+            u.profilePic = e.target.result;
+          }
+        });
+      }
+    });
+    localStorage.setItem('books', JSON.stringify(books));
     
     // Update the users_data array
     const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
@@ -124,6 +145,22 @@ function removeProfilePicture() {
   // Remove profile picture from logged in user
   delete loggedInUser.profilePicture;
   localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+
+  // Update profile picture in borrowed books
+  const booksID = loggedInUser.borrowed_books.map(b => {
+    return b.id;
+  });
+  const books = JSON.parse(localStorage.getItem('books'));
+  books.forEach(b => {
+    if(booksID.includes(b.id)) {
+      b.borrowersList.forEach(u => {
+        if(u.username == loggedInUser.username) {
+          u.profilePic = './../CSS/assets/blue.avif';
+        }
+      });
+    }
+  });
+  localStorage.setItem('books', JSON.stringify(books));
   
   // Remove from users_data
   const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
@@ -332,15 +369,16 @@ function enableEdit(fieldId) {
   });
   
   // Add blur event to save when focus is lost
-  field.addEventListener('blur', function() {
-    saveField(fieldId);
-  });
+  // field.addEventListener('blur', function() {
+  //   saveField(fieldId);
+  // });
 }
 
 function saveField(fieldId) {
   const field = document.getElementById(fieldId);
   const newValue = field.value.trim();
-  
+  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+
   if (newValue === '') {
     alert('Field cannot be empty');
     return;
@@ -367,10 +405,29 @@ function saveField(fieldId) {
   
   // Update localStorage
   const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+  
   
   const updatedUsers = usersData.map(user => {
     if (user.username === loggedInUser.username) {
+
+      // Update username, email in borrowed books
+      if(fieldId == 'email' || fieldId == 'username') {
+        let booksID = loggedInUser.borrowed_books.map(b => {
+          return b.id;
+        });
+        const books = JSON.parse(localStorage.getItem('books'));
+        books.forEach(b => {
+          if(booksID.includes(b.id)) {
+            b.borrowersList.forEach(u => {
+              if(u.username == user.username) {
+                u[fieldId] = newValue;
+              }
+            });
+          }
+        });
+        localStorage.setItem('books', JSON.stringify(books));
+      }
+
       user[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
       loggedInUser[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
       localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));

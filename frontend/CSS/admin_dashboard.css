@@ -111,7 +111,7 @@ body {
 .user {
     display: flex;
     align-items: center;
-    border-top: 1.5px solid var(--form-bg-color);
+    border-top: 1.5px solid var(--border-color);
 }
 
 .profile-pic-holder {
@@ -133,7 +133,7 @@ body {
     font-family: var(--font-primary);
     text-align: left;
     font-size: 12px;
-    font-weight: bold;
+    font-weight: 500;
 }
 
 .close-btn {
@@ -537,39 +537,48 @@ h4 {
 }
 
 .available {
-    background-color: var(--primary-active);
+    background-color: var(--primary-color);
+    color: white;
 }
 
 .low-stock {
-    background-color: #B6761E;
+    background-color: #f39c12;
+    color: white;
 }
 
 .unavailable {
-    background-color: #C2352A;
+    background-color: #e74c3c;
+    color: white;
 }
 
 .late-fees {
     background-color: #a44fb4;
+    color: white;
 }
 
 .lvl1-borrow {
     background-color: var(--lvl1-borrow);
+    color: white;
 }
 
 .lvl2-borrow {
     background-color: var(--lvl2-borrow);
+    color: white;
 }
 
 .lvl3-borrow {
     background-color: var(--lvl3-borrow);
+    color: white;
 }
 
 .lvl4-borrow {
     background-color: var(--lvl4-borrow);
+    color: white;
 }
 
 .lvl5-borrow {
     background-color: var(--lvl5-borrow);
+    color: white;
 }
 
 .borrow-duration {

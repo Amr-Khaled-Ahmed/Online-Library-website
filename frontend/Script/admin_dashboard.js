@@ -441,9 +441,15 @@ function addBook(book) {
             borrowDate.textContent = 'Borrow Date: ' + new Date(user.borrowDate).toLocaleString('en-US', { month: 'long' })
                                     + ' ' + new Date(user.borrowDate).getDate()
                                     + ', ' + new Date(user.borrowDate).getFullYear();
+
+            let dueDate = document.createElement('p');
+            dueDate.textContent = 'Due Date: ' + new Date(user.dueDate).toLocaleString('en-US', { month: 'long' })
+                                    + ' ' + new Date(user.dueDate).getDate()
+                                    + ', ' + new Date(user.dueDate).getFullYear();
             
             info.appendChild(username);
             info.appendChild(borrowDate);
+            info.appendChild(dueDate);
 
             profilePicHolder.appendChild(profilePic);
 
