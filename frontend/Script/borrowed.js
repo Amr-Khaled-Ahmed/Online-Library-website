@@ -340,6 +340,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const details = button.closest('.borrowed-details');
             const title = details.querySelector('.borrowed-title')?.textContent.trim();
             const author = details.querySelector('.borrowed-author')?.textContent.trim().replace(/^By\s*/, '');
+            const coverPath = details.closest('.borrowed-item').querySelector('.borrowed-cover img')?.src || '';
         
             let favorites = loggedInUser.favorite_books || [];
             const isFavorite = favorites.some(b => b.title === title && b.author === author);
@@ -366,7 +367,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     : 'Unknown';
         
                 let updatedFavorites = [...(loggedInUser.favorite_books || [])];
-                const book = { title, author, format };
+                const book = { title, author, format, coverPath };
         
                 if (newButton.classList.contains('active')) {
                     if (!updatedFavorites.some(b => b.title === title && b.author === author)) {
@@ -716,7 +717,9 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('favorite-item');
             item.innerHTML = `
                 <div class="favorite-cover">
-                    <img src = "${book.coverPath}" alt = "Book cover" >
+                    ${book.coverPath ? 
+                        `<img src="${book.coverPath}" alt="${book.title} cover">` : 
+                        `<i class="fas fa-book-open"></i>`}
                 </div>
                 <div class="favorite-details">
                     <h3 class="favorite-title">${book.title}</h3>
