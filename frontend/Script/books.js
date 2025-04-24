@@ -225,7 +225,7 @@ document.addEventListener('DOMContentLoaded', function () {
         const starButton = bookItem.querySelector('.star-button');
 
         // Highlight if already favorite
-        if (userData.favorite_books?.some(fav => fav.id === book.id)) {
+        if (userData.favorite_books?.some(fav => fav.title === book.title)) {
             starButton.classList.add('active');
         }
 
@@ -239,10 +239,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
             if (!currentUser.favorite_books) currentUser.favorite_books = [];
 
-            const isFavorite = currentUser.favorite_books.some(fav => fav.id === book.id);
+            const isFavorite = currentUser.favorite_books.some(fav => fav.title === book.title);
 
             if (isFavorite) {
-                currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.id !== book.id);
+                currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.title !== book.title);
                 starButton.classList.remove('active');
             } else {
                 currentUser.favorite_books.push({
@@ -322,7 +322,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
             const starButton = bookItem.querySelector('.star-button');
 
-            if (userData.favorite_books?.some(fav => fav.id === book.id)) {
+            if (userData.favorite_books?.some(fav => fav.title === book.title)) {
                 starButton.classList.add('active');
             }
 
@@ -335,10 +335,10 @@ document.addEventListener('DOMContentLoaded', function () {
 
                 if (!currentUser.favorite_books) currentUser.favorite_books = [];
 
-                const isFavorite = currentUser.favorite_books.some(fav => fav.id === book.id);
+                const isFavorite = currentUser.favorite_books.some(fav => fav.title === book.title);
 
                 if (isFavorite) {
-                    currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.id !== book.id);
+                    currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.title !== book.title);
                     starButton.classList.remove('active');
                 } else {
                     currentUser.favorite_books.push({
