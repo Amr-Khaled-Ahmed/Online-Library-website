@@ -716,7 +716,7 @@ document.addEventListener('DOMContentLoaded', () => {
             item.classList.add('favorite-item');
             item.innerHTML = `
                 <div class="favorite-cover">
-                    <i class="fas fa-book-open"></i>
+                    <img src = "${book.coverPath}" alt = "Book cover" >
                 </div>
                 <div class="favorite-details">
                     <h3 class="favorite-title">${book.title}</h3>

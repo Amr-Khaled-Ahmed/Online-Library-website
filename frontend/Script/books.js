@@ -15,33 +15,16 @@ function initializeUserData() {
         localStorage.setItem('loggedIn_user', JSON.stringify(defaultUser));
         return defaultUser;
     }
-    
-    if (!loggedInUser.borrowed_books) {
-        loggedInUser.borrowed_books = [];
-        localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    
-    if (!loggedInUser.borrowing_history) {
-        loggedInUser.borrowing_history = [];
-        localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    
-    if (!loggedInUser.favorite_books) {
-        loggedInUser.favorite_books = [];
-        localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    
+
+    if (!loggedInUser.borrowed_books) loggedInUser.borrowed_books = [];
+    if (!loggedInUser.borrowing_history) loggedInUser.borrowing_history = [];
+    if (!loggedInUser.favorite_books) loggedInUser.favorite_books = [];
+
+    localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
     return loggedInUser;
 }
 
 const userData = initializeUserData();
-
-document.querySelectorAll('.star-button').forEach(button => {
-    button.addEventListener('click', (event) => {
-        event.stopPropagation();
-        button.classList.toggle('active');
-    });
-});
 
 const sampleBooks = [
     {
@@ -55,7 +38,7 @@ const sampleBooks = [
         availability: 'available',
         borrowNum: '25',
         lateFees: '5',
-        description: 'A Song of Ice and Fire is Martin\'s epic fantasy saga, spanning thousands of pages, which captured the imagination of millions and inspired the HBO hit show Game of Thrones.',
+        description: 'A Song of Ice and Fire is Martin\'s epic fantasy saga...',
         borrowersList: []
     },
     {
@@ -69,7 +52,7 @@ const sampleBooks = [
         availability: 'low-stock',
         borrowNum: '42',
         lateFees: '3',
-        description: 'The novel was inspired by a youthful romance Fitzgerald had with socialite Ginevra King, and the riotous parties he attended on Long Island\'s North Shore in 1922.',
+        description: 'The novel was inspired by a youthful romance Fitzgerald had...',
         borrowersList: []
     },
     {
@@ -83,7 +66,7 @@ const sampleBooks = [
         availability: 'unavailable',
         borrowNum: '37',
         lateFees: '4',
-        description: 'The story unfolds as her father, Atticus Finch, a principled lawyer, defends Tom Robinson, a Black man falsely accused of raping a white woman.',
+        description: 'The story unfolds as her father, Atticus Finch...',
         borrowersList: []
     }
 ];
@@ -125,7 +108,7 @@ function isBookBorrowed(bookId) {
     return userData.borrowed_books.some(borrowedBook => borrowedBook.id === bookId);
 }
 
-document.addEventListener('DOMContentLoaded', function() {
+document.addEventListener('DOMContentLoaded', function () {
     if (!document.getElementById('custom-notification-styles')) {
         const notificationStyles = document.createElement('style');
         notificationStyles.id = 'custom-notification-styles';
@@ -142,12 +125,12 @@ document.addEventListener('DOMContentLoaded', function() {
                 z-index: 9999;
                 animation: slide-in 0.5s forwards, fade-out 0.5s 2.5s forwards;
             }
-            
+
             @keyframes slide-in {
                 from { transform: translateX(100%); opacity: 0; }
                 to { transform: translateX(0); opacity: 1; }
             }
-            
+
             @keyframes fade-out {
                 from { opacity: 1; }
                 to { opacity: 0; }
@@ -155,30 +138,27 @@ document.addEventListener('DOMContentLoaded', function() {
         `;
         document.head.appendChild(notificationStyles);
     }
-    
-    if(!localStorage.getItem('books') || JSON.parse(localStorage.getItem('books')).length === 0) {
+
+    if (!localStorage.getItem('books') || JSON.parse(localStorage.getItem('books')).length === 0) {
         localStorage.setItem('books', JSON.stringify(sampleBooks));
     }
-    
+
     const books = JSON.parse(localStorage.getItem('books'));
-    
     const bookGrid = document.querySelector('.book-grid');
-    
     bookGrid.innerHTML = '';
-    
+
     function handleBorrowBook(book, event) {
         event.preventDefault();
-        
+
         const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
         const currentUsersData = JSON.parse(localStorage.getItem('users_data')) || [];
         const currentUserIndex = currentUsersData.findIndex(u => u && u.username === currentUser?.username);
-        
+
         if (!currentUser.borrowed_books) currentUser.borrowed_books = [];
-        
+
         const isAlreadyBorrowed = currentUser.borrowed_books.some(b =>
             b.id === book.id
         );
-        
         if (isAlreadyBorrowed) {
             const notif = document.createElement('div');
             notif.className = 'custom-notification';
@@ -187,11 +167,11 @@ document.addEventListener('DOMContentLoaded', function() {
             setTimeout(() => notif.remove(), 3000);
             return;
         }
-        
+
         const currentDate = new Date();
         const dueDate = new Date(currentDate);
         dueDate.setDate(dueDate.getDate() + 21);
-        
+
         const borrowedBook = {
             id: book.id,
             title: book.title,
@@ -207,7 +187,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
         currentUser.borrowed_books.push(borrowedBook);
         localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
-        
+
         if (currentUserIndex !== -1) {
             currentUsersData[currentUserIndex].borrowed_books = currentUser.borrowed_books;
             localStorage.setItem('users_data', JSON.stringify(currentUsersData));
@@ -222,9 +202,9 @@ document.addEventListener('DOMContentLoaded', function() {
             dueDate: dueDate.toISOString()
         };
         book.borrowersList.push(borrower);
-        
+
         book.borrowNum = String(parseInt(book.borrowNum) + 1);
-        
+
         const updatedBooks = books.map(b => b.id === book.id ? book : b);
         localStorage.setItem('books', JSON.stringify(updatedBooks));
 
@@ -234,55 +214,89 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.appendChild(notif);
         setTimeout(() => notif.remove(), 3000);
     }
-    
+
     books.forEach(book => {
         const bookItem = addBookToDisplay(book);
         bookGrid.appendChild(bookItem);
 
         const borrowBtn = bookItem.querySelector('.borrow-btn');
         borrowBtn.addEventListener('click', handleBorrowBook.bind(null, book));
-        
+
         const starButton = bookItem.querySelector('.star-button');
+
+        // Highlight if already favorite
+        if (userData.favorite_books?.some(fav => fav.id === book.id)) {
+            starButton.classList.add('active');
+        }
+
+        // Star button event
         starButton.addEventListener('click', (event) => {
             event.stopPropagation();
-            starButton.classList.toggle('active');
+
+            const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+            const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+            const userIndex = usersData.findIndex(u => u && u.username === currentUser?.username);
+
+            if (!currentUser.favorite_books) currentUser.favorite_books = [];
+
+            const isFavorite = currentUser.favorite_books.some(fav => fav.id === book.id);
+
+            if (isFavorite) {
+                currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.id !== book.id);
+                starButton.classList.remove('active');
+            } else {
+                currentUser.favorite_books.push({
+                    id: book.id,
+                    title: book.title,
+                    author: book.author,
+                    coverPath: book.coverPath
+                });
+                starButton.classList.add('active');
+            }
+
+            localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
+
+            if (userIndex !== -1) {
+                usersData[userIndex].favorite_books = currentUser.favorite_books;
+                localStorage.setItem('users_data', JSON.stringify(usersData));
+            }
         });
     });
-    
+
     const searchForm = document.querySelector('.search-form');
     const searchInput = document.querySelector('.search-input');
     const filterSelects = document.querySelectorAll('.filter-select');
-    
-    searchForm.addEventListener('submit', function(e) {
+
+    searchForm.addEventListener('submit', function (e) {
         e.preventDefault();
         filterBooks();
     });
-    
+
     filterSelects.forEach(select => {
         select.addEventListener('change', filterBooks);
     });
-    
+
     function filterBooks() {
         const searchTerm = searchInput.value.toLowerCase();
         const genreFilter = filterSelects[0].value;
         const formatFilter = filterSelects[1].value;
         const sortBy = filterSelects[2].value;
         const availabilityFilter = filterSelects[3].value;
-        
+
         bookGrid.innerHTML = '';
-        
+
         let filteredBooks = books.filter(book => {
-            const matchesSearch = book.title.toLowerCase().includes(searchTerm) || 
-                                 book.author.toLowerCase().includes(searchTerm);
+            const matchesSearch = book.title.toLowerCase().includes(searchTerm) ||
+                book.author.toLowerCase().includes(searchTerm);
             const matchesGenre = genreFilter === '' || book.genre === genreFilter;
             const matchesFormat = formatFilter === '' || book.format === formatFilter;
-            const matchesAvailability = availabilityFilter === '' || 
-                                       availabilityFilter === 'all' || 
-                                       book.availability === availabilityFilter;
-            
+            const matchesAvailability = availabilityFilter === '' ||
+                availabilityFilter === 'all' ||
+                book.availability === availabilityFilter;
+
             return matchesSearch && matchesGenre && matchesFormat && matchesAvailability;
         });
-        
+
         if (sortBy === 'newest') {
             filteredBooks.sort((a, b) => b.pubYear - a.pubYear);
         } else if (sortBy === 'oldest') {
@@ -298,21 +312,53 @@ document.addEventListener('DOMContentLoaded', function() {
         } else if (sortBy === 'popular') {
             filteredBooks.sort((a, b) => b.borrowNum - a.borrowNum);
         }
-        
+
         filteredBooks.forEach(book => {
             const bookItem = addBookToDisplay(book);
             bookGrid.appendChild(bookItem);
-            
+
             const borrowBtn = bookItem.querySelector('.borrow-btn');
             borrowBtn.addEventListener('click', handleBorrowBook.bind(null, book));
-            
+
             const starButton = bookItem.querySelector('.star-button');
+
+            if (userData.favorite_books?.some(fav => fav.id === book.id)) {
+                starButton.classList.add('active');
+            }
+
             starButton.addEventListener('click', (event) => {
                 event.stopPropagation();
-                starButton.classList.toggle('active');
+
+                const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+                const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+                const userIndex = usersData.findIndex(u => u && u.username === currentUser?.username);
+
+                if (!currentUser.favorite_books) currentUser.favorite_books = [];
+
+                const isFavorite = currentUser.favorite_books.some(fav => fav.id === book.id);
+
+                if (isFavorite) {
+                    currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.id !== book.id);
+                    starButton.classList.remove('active');
+                } else {
+                    currentUser.favorite_books.push({
+                        id: book.id,
+                        title: book.title,
+                        author: book.author,
+                        coverPath: book.coverPath
+                    });
+                    starButton.classList.add('active');
+                }
+
+                localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
+
+                if (userIndex !== -1) {
+                    usersData[userIndex].favorite_books = currentUser.favorite_books;
+                    localStorage.setItem('users_data', JSON.stringify(usersData));
+                }
             });
         });
-        
+
         if (filteredBooks.length === 0) {
             const noResults = document.createElement('div');
             noResults.className = 'no-results';
