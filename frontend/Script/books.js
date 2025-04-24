@@ -2,6 +2,7 @@ const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
 const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
 const userIndex = usersData.findIndex(u => u && u.username === loggedInUser?.username);
 
+
 function initializeUserData() {
     if (!loggedInUser) {
         const defaultUser = {

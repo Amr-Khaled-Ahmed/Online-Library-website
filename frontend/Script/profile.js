@@ -334,6 +334,7 @@ function deleteAccount() {
   const books = JSON.parse(localStorage.getItem('books'));
   books.forEach(b => {
       b.borrowersList = b.borrowersList.filter(u => u.username !== loggedInUser.username);
+      b.borrowNum = String(b.borrowersList.length);
   });
   localStorage.setItem('books', JSON.stringify(books));
   
