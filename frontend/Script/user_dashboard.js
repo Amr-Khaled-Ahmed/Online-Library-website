@@ -17,7 +17,6 @@ window.addEventListener("click", function(event) {
     if (event.target === smallPage) {
         smallPage.style.display = "none";
     }
-  
 });
 
 document.querySelectorAll('.star-button').forEach(button => {
@@ -52,7 +51,6 @@ document.querySelectorAll(".book-card").forEach(card => {
     });
 });
 
-
 closeModal.addEventListener("click", () => {
     modal.classList.add("hidden");
 });
@@ -62,7 +60,8 @@ window.addEventListener("click", (e) => {
         modal.classList.add("hidden");
     }
 });
-const friends = [];
+
+let friends = JSON.parse(localStorage.getItem('friends')) || [];
 
 function showPopup() {
     document.getElementById('popup').style.display = 'block';
@@ -85,6 +84,7 @@ function toggleInputField() {
 function showAlert(message) {
     alert(message);
 }
+
 function showMessagePopup(message) {
     const popup = document.getElementById('message-popup');
     popup.textContent = message;
@@ -100,10 +100,24 @@ function submitForm() {
     const type = document.getElementById('entry-type').value;
     const name = document.getElementById('friend-name').value.trim();
     const email = document.getElementById('friend-email').value.trim().toLowerCase();
+    
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+    if (!loggedInUser) {
+        showMessagePopup("You need to be logged in to add friends.");
+        return;
+    }
+
+    let friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
 
     if (type === 'name') {
         if (name.length < 2) {
             showMessagePopup("Please enter a valid name.");
+            return;
+        }
+
+        const nameIsValid = /^[A-Za-z]+$/.test(name);
+        if (!nameIsValid) {
+            showMessagePopup("Please enter a name with alphabetic characters only.");
             return;
         }
 
@@ -116,20 +130,28 @@ function submitForm() {
         friends.push({ name, email: '' });
 
     } else if (type === 'email') {
-        const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-        if (!emailRegex.test(email)) {
+        if (!email || !email.includes('@')) {
             showMessagePopup("Please enter a valid email.");
             return;
         }
-    
+
         const exists = friends.some(friend => friend.email === email);
         if (exists) {
             showMessagePopup("This email is already associated with a friend.");
             return;
         }
-    
-        friends.push({ name, email });
+
+        const friendIndex = friends.findIndex(friend => friend.name && !friend.email);
+        if (friendIndex === -1) {
+            showMessagePopup("Please enter a valid name before adding an email.");
+            return;
+        }
+
+        friends[friendIndex].email = email;
     }
+
+    localStorage.setItem(`friends_${loggedInUser.username}`, JSON.stringify(friends));
+
     updateFriendList();
     hidePopup();
 }
@@ -140,12 +162,22 @@ let friendIndexToDelete = null;
 function updateFriendList() {
     const listDiv = document.querySelector('.friend-list');
     listDiv.innerHTML = '';
-    if (!Array.isArray(friends) || friends.length === 0) {
+
+    const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+    if (!loggedInUser) {
+        showMessagePopup("You need to be logged in to view your friends.");
+        return;
+    }
+
+    const friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
+
+    if (friends.length === 0) {
         listDiv.innerHTML = 'No friends available';
         listDiv.style.color = 'red';
         listDiv.style.fontSize = '24px';
         return;
     }
+
     let x = 0;
     friends.forEach((friend, index) => {
         const container = document.createElement('div');
@@ -161,12 +193,13 @@ function updateFriendList() {
         const span = document.createElement('span');
         span.textContent = friend.email ? `${friend.name} (${friend.email})` : friend.name;
 
-        
+
         const statusSpan = document.createElement('span');
         if (x % 2 === 0) {
             statusSpan.textContent = 'Finished';
             statusSpan.style.color = 'green';
-        } else {
+        }
+        else {
             statusSpan.textContent = 'On Reading';
             statusSpan.style.color = 'red';
         }
@@ -193,12 +226,19 @@ function updateFriendList() {
         listDiv.appendChild(container);
     });
 }
+
 updateFriendList();
 
 
 document.getElementById('confirm-yes').addEventListener('click', () => {
     if (friendIndexToDelete !== null) {
+        // Remove the friend from storage
+        const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+        let friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
         friends.splice(friendIndexToDelete, 1);
+        // Save on local storage
+        localStorage.setItem(`friends_${loggedInUser.username}`, JSON.stringify(friends));
+
         updateFriendList();
         friendIndexToDelete = null;
     }
