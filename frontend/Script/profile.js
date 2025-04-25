@@ -39,6 +39,14 @@ function loadUserData() {
   bio.value = loggedInUser.bio || '';
   booksBorrowed.textContent = loggedInUser.borrowed_books?.length || 0;
   booksFavorited.textContent = loggedInUser.favorite_books?.length || 0;
+  const book_maximized = document.querySelector('a[href="./books.html"]');
+  const book_minimized = document.querySelector('.mobile-nav a[href="./books.html"]');
+   if (loggedInUser.role === 'admin') {
+    booksBorrowed.parentElement.style.display = 'none';
+    booksFavorited.parentElement.style.display = 'none';
+    book_maximized.style.display = 'none';
+    book_minimized.style.display = 'none';
+  }
   
   // Set member since date
   if (loggedInUser.memberSince) {

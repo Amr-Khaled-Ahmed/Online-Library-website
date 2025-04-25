@@ -66,9 +66,9 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // Ensure to trigger hash checking once DOM is ready
     if (window.location.hash === "#favorites") {
-      document.getElementById("tab3").checked = true;
+        document.getElementById("tab3").checked = true;
     }
-
+    
 
     let bookToDelete = null;
     let bookToDeleteData = null;

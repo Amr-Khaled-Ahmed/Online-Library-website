@@ -45,14 +45,7 @@ document.addEventListener('DOMContentLoaded', function () {
     // Display book info
     document.querySelector('.book-title').textContent = book.title || "No title";
     document.querySelector('.book-author').textContent = `By ${book.author || "Unknown"}`;
-    
-    // Check if book.coverPath exists and set image source
-    if (book.coverPath) {
-        document.querySelector('.book-cover img').src = book.coverPath;
-    } else {
-        document.querySelector('.book-cover img').src = 'default-image-path.jpg';  // Default image if coverPath is missing
-    }
-
+    document.querySelector('.book-cover img').src = book.coverPath;
     document.querySelector('.book-description').textContent = book.description || "No description.";
     document.querySelector('.book-status').textContent = book.availability || "Available";
     document.querySelector('.book-genre').textContent = book.genre || "Unknown";
@@ -85,6 +78,7 @@ document.addEventListener('DOMContentLoaded', function () {
                 id: book.id,
                 title: book.title,
                 author: book.author,
+                coverPath: book.coverPath || '',
                 borrowDate: borrowDate.toISOString(),
                 dueDate: dueDate.toISOString()
             };
@@ -112,7 +106,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
-// ✅ Notification helper
+
 function showNotification(message) {
     const notif = document.createElement('div');
     notif.className = 'custom-notification';

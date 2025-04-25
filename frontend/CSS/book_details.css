@@ -145,7 +145,7 @@
 }
 
 .logo span {
-    color: white !important;
+    color: var(--text-color) !important;
 }
 
 .bodyStyle {
