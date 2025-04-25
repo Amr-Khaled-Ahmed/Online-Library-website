@@ -68,21 +68,7 @@ document.addEventListener('DOMContentLoaded', () => {
     if (window.location.hash === "#favorites") {
       document.getElementById("tab3").checked = true;
     }
-    
-    // Add book notification
-    const addBookBtn = document.getElementById('add_book');
-    if (addBookBtn) {
-        addBookBtn.addEventListener('click', (e) => {
-            e.preventDefault();
-            const notif = document.createElement('div');
-            notif.className = 'custom-notification';
-            notif.textContent = '🚧 Book adding feature coming in the next phase!';
-            document.body.appendChild(notif);
-            setTimeout(() => {
-                notif.remove();
-            }, 3000);
-        });
-    }
+
 
     let bookToDelete = null;
     let bookToDeleteData = null;
