@@ -5,6 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
     <link rel="stylesheet" href="./../CSS/forms-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init("6Fq49Zy_LiJcwlloj")
+    </script>
     <title>Online-library</title>
 </head>
 <body>
@@ -52,10 +56,10 @@
                     <i class="fa-solid fa-envelope"></i>
                     <label for="email">Email</label>
                 </div>
-                <input class="input" type="email" id="email" name="pass-confirm" placeholder="Enter email">
+                <input type="email" id="email" name="user_email" placeholder="Enter email">
                 <span class="error-text" id="email-error"></span>
             </div>
-            <button type="submit">Sign up</button>
+            <button type="submit" id="button">Sign up</button>
             <a class="cancel-button" href="./../../index.html">Cancel</a>
             <div class="sign-in">
                 <span>Already have an account ?</span>

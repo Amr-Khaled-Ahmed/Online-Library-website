@@ -139,3 +139,22 @@ function validateEmail(email) {
   const re = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   return re.test(email);
 }
+const btn = document.getElementById('button');
+
+document.getElementById('form').addEventListener('submit', function(event) {
+  event.preventDefault();
+
+  btn.value = 'Sending...';
+
+  const serviceID = 'service_fmvv571'; // Or your custom service ID
+  const templateID = 'template_or6zamu';
+
+  emailjs.sendForm(serviceID, templateID, this)
+    .then(() => {
+      btn.value = 'Send Email';
+      alert('✅ Confirmation email sent!');
+    }, (err) => {
+      btn.value = 'Send Email';
+      alert('❌ Failed to send:\n' + JSON.stringify(err));
+    });
+});
