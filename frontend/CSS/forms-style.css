@@ -31,6 +31,8 @@ body::before {
     z-index: -1;
 }
 .sign-up , .sign-in {
+    color: var(--text-color);
+
     display: flex;
     align-items: center;
     justify-content: center;
@@ -81,6 +83,7 @@ body::before {
 .field:nth-of-type(4) { animation-delay: 0.4s; }
 
 input {
+    color: var(--text-color);
     border: none;
     border-bottom: 2px solid var(--border-color);
     padding: 8px;
@@ -96,7 +99,7 @@ input:focus {
 }
 
 input::placeholder {
-    color: #bbb;
+    color: var(--text-color);
     font-size: 14px;
     opacity: 0.7;
 }
