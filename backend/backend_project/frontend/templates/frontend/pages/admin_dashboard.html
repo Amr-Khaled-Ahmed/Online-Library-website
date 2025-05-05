@@ -32,7 +32,7 @@
                     <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
                             Dashboard</a></li>
-                    <li><a href="{% url 'logout' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                    <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
                 </ul>
             </nav>
             <!-- Mobile menu toggle -->
@@ -48,7 +48,7 @@
             <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
                             Dashboard</a></li>
-            <li><a href="{% url 'logout' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+            <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
         </ul>
     </div>
 
@@ -58,6 +58,7 @@
         <div class="confirmation hide">
             <h4>Are you sure to delete this book?</h4>
             <div class="book-details">
+                
                 <div class="img-holder">
                     <img src="{% static 'assets/ChildOfTheKindred_ebook1.jpg' %}" alt="Book Cover" class="book-cover">
                 </div>

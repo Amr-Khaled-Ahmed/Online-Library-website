@@ -1,13 +1,14 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link rel="stylesheet" href="./../CSS/_variables.css">
-        <link rel="stylesheet" href="./../CSS/header.css">
-        <link rel="stylesheet" href="./../CSS/footer.css">
-        <link rel="stylesheet" href="./../CSS/index.css">
-        <link rel="stylesheet" href="./../CSS/borrowed.css">
+        <link rel="stylesheet" href="{% static 'CSS/_variables.css' %}">
+        <link rel="stylesheet" href="{% static 'CSS/header.css' %}">
+        <link rel="stylesheet" href="{% static 'CSS/footer.css' %}">
+        <link rel="stylesheet" href="{% static 'CSS/index.css' %}">
+        <link rel="stylesheet" href="{% static 'CSS/borrowed.css' %}">
         <link rel="stylesheet"
             href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
         <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -18,8 +19,8 @@
         <link rel="icon"
             href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
         <title>My Borrowed Books - Online Library</title>
-        <script src="./../Script/header.js"></script>
-        <script src="./../Script/footer.js"></script>
+        <script src="{% static 'Script/header.js' %}"></script>
+        <script src="{% static 'Script/footer.js' %}"></script>
     </head>
     <body>
         <header>
@@ -31,18 +32,18 @@
                 </div>
                 <nav>
                     <ul class="nav-bar">
-                        <li><a href="./user_dashboard.html"><i
+                        <li><a href="{% url 'user_dashboard' %}"><i
                                     class="fas fa-home"></i> Home</a></li>
-                        <li><a href="./books.html"><i class="fas fa-book"></i>
+                        <li><a href="{% url 'books' %}"><i class="fas fa-book"></i>
                                 Books</a></li>
-                        <li><a href="./borrowed.html" class="active"><i
+                        <li><a href="{% url 'borrowed' %}" class="active"><i
                                     class="fas fa-bookmark"></i> My
                                 Borrows</a></li>
-                        <li><a href="./profile.html"><i
+                        <li><a href="{% url 'profile' %}"><i
                                     class="fas fa-user"></i> Account</a></li>
                         <li><a href="#contact"><i class="fas fa-envelope"></i>
                                 Contact</a></li>
-                        <li><a href="../../../index.html"><i
+                        <li><a href="{% url 'logout' %}"><i
                                     class="fas fa-sign-out-alt"></i>
                                 Logout</a></li>
                     </ul>
@@ -55,17 +56,17 @@
 
         <div class="mobile-menu">
             <ul class="mobile-nav">
-                <li><a href="../../index.html"><i class="fas fa-home"></i>
+                <li><a href="{% url 'home' %}"><i class="fas fa-home"></i>
                         Home</a></li>
-                <li><a href="./books.html"><i class="fas fa-book"></i>
+                <li><a href="{% url 'books' %}"><i class="fas fa-book"></i>
                         Books</a></li>
-                <li><a href="./borrowed.html" class="active"><i
+                <li><a href="{% url 'borrowed' %}" class="active"><i
                             class="fas fa-bookmark"></i> My Borrows</a></li>
-                <li><a href="./user_dashboard.html"><i class="fas fa-user"></i>
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i>
                         Account</a></li>
                 <li><a href="#contact"><i class="fas fa-envelope"></i>
                         Contact</a></li>
-                <li><a href="../../index.html"><i
+                <li><a href="{% url 'logout' %}"><i
                             class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
@@ -86,7 +87,6 @@
         <input type="radio" id="tab2" name="tabs" class="tab-input">
         <input type="radio" id="tab3" name="tabs" class="tab-input">
 
-
         <div class="tabs">
             <label for="tab1" class="tab">Current Borrows</label>
             <label for="tab2" class="tab">Borrowing History</label>
@@ -95,352 +95,158 @@
 
         <div class="tab-panels">
             <div class="tab-panel borrowed-list" id="current-borrows">
+                {% if fines %}
                 <div class="fines-section">
                     <h3><i class="fas fa-exclamation-circle"></i> Overdue Fines</h3>
                     <hr class="fines-divider">
 
+                    {% for fine in fines %}
                     <div class="fine-item">
-                        <div class="fine-book">1984 (12 days overdue)</div>
-                        <div class="fine-amount">$6.00</div>
+                        <div class="fine-book">{{ fine.book.title }} ({{ fine.days_overdue }} days overdue)</div>
+                        <div class="fine-amount">${{ fine.amount }}</div>
                     </div>
-
-                    <div class="fine-item">
-                        <div class="fine-book">A Song of Ice and Fire (7 days overdue)</div>
-                        <div class="fine-amount">$3.50</div>
-                    </div>
+                    {% endfor %}
 
                     <hr class="fines-divider">
                     <div class="total-fine">
                         <div>Total Due</div>
-                        <div class="fine-amount">$9.50</div>
+                        <div class="fine-amount">${{ total_fine }}</div>
                     </div>
                 </div>
+                {% endif %}
 
+                {% for borrow in current_borrows %}
                 <div class="borrowed-item">
                     <div class="borrowed-cover">
-                        <img src="./../CSS/assets/book5.jpeg" alt="A Song of Ice and Fire book cover">
+                        {% if borrow.book.cover %}
+                            <img src="{{ borrow.book.cover.url }}" alt="{{ borrow.book.title }} book cover">
+                        {% else %}
+                            <i class="fas fa-book-open"></i>
+                        {% endif %}
                     </div>
                     <div class="borrowed-details">
                         <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">1984</h3>
-                        <p class="borrowed-author">By George Orwell</p>
+                        <h3 class="borrowed-title">{{ borrow.book.title }}</h3>
+                        <p class="borrowed-author">By {{ borrow.book.author }}</p>
 
                         <div class="borrowed-info">
                             <div class="info-item">
                                 <span class="info-label">Borrowed On</span>
-                                <span class="info-value">March 10, 2025</span>
+                                <span class="info-value">{{ borrow.borrow_date|date:"F j, Y" }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Due Date</span>
-                                <span class="info-value">March 31, 2025</span>
+                                <span class="info-value">{{ borrow.due_date|date:"F j, Y" }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Renewals Left</span>
-                                <span class="info-value">0/2</span>
+                                <span class="info-value">{{ borrow.renewals_used }}/{{ borrow.max_renewals }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Format</span>
-                                <span class="info-value">Paperback</span>
+                                <span class="info-value">{{ borrow.book.format }}</span>
                             </div>
                         </div>
 
+                        {% if borrow.is_overdue %}
                         <span class="status-badge overdue">Overdue</span>
-
-                        <div class="action-buttons">
-                            <button class="renew-btn" disabled>Renew</button>
-                            <button class="return-btn">Return</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <img src="./../CSS/assets/book_cover.jpg" alt="A Song of Ice and Fire book cover">
-                    </div>
-                    <div class="borrowed-details"> 
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">A Song of Ice and Fire</h3>
-                        <p class="borrowed-author">By R.R. Martin</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">March 15, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">April 5, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Renewals Left</span>
-                                <span class="info-value">0/2</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Hardcover</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge overdue">Overdue</span>
-
-                        <div class="action-buttons">
-                            <button class="renew-btn" disabled>Renew</button>
-                            <button class="return-btn">Return</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">Brave New World</h3>
-                        <p class="borrowed-author">By Aldous Huxley</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">April 5, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">April 26, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Renewals Left</span>
-                                <span class="info-value">1/2</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Paperback</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge due-tomorrow">Due in 1 day</span>
-
-                        <div class="action-buttons">
-                            <button class="renew-btn">Renew</button>
-                            <button class="return-btn">Return</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">The Great Gatsby</h3>
-                        <p class="borrowed-author">By F. Scott Fitzgerald</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">April 8, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">April 29, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Renewals Left</span>
-                                <span class="info-value">1/2</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Paperback</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge due-soon">Due in 3 days</span>
-
-                        <div class="action-buttons">
-                            <button class="renew-btn">Renew</button>
-                            <button class="return-btn">Return</button>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">The Hobbit</h3>
-                        <p class="borrowed-author">By J.R.R. Tolkien</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">April 12, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">May 3, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Renewals Left</span>
-                                <span class="info-value">2/2</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Hardcover</span>
-                            </div>
-                        </div>
-
+                        {% elif borrow.due_soon %}
+                        <span class="status-badge due-soon">Due in {{ borrow.days_until_due }} days</span>
+                        {% else %}
                         <span class="status-badge on-time">Not due soon</span>
+                        {% endif %}
 
                         <div class="action-buttons">
-                            <button class="renew-btn">Renew</button>
-                            <button class="return-btn">Return</button>
+                            {% if borrow.can_renew %}
+                            <button class="renew-btn" data-borrow-id="{{ borrow.id }}">Renew</button>
+                            {% else %}
+                            <button class="renew-btn" disabled>Renew</button>
+                            {% endif %}
+                            <button class="return-btn" data-borrow-id="{{ borrow.id }}">Return</button>
                         </div>
                     </div>
                 </div>
+                {% empty %}
+                <p class="no-books">You currently have no borrowed books.</p>
+                {% endfor %}
             </div>
 
             <div class="tab-panel borrowed-list" id="borrowing-history">
+                {% for history in borrowing_history %}
                 <div class="borrowed-item">
                     <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
+                        {% if history.book.cover %}
+                            <img src="{{ history.book.cover.url }}" alt="{{ history.book.title }} book cover">
+                        {% else %}
+                            <i class="fas fa-book-open"></i>
+                        {% endif %}
                     </div>
                     <div class="borrowed-details">
                         <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">Pride and Prejudice</h3>
-                        <p class="borrowed-author">By Jane Austen</p>
+                        <h3 class="borrowed-title">{{ history.book.title }}</h3>
+                        <p class="borrowed-author">By {{ history.book.author }}</p>
 
                         <div class="borrowed-info">
                             <div class="info-item">
                                 <span class="info-label">Borrowed On</span>
-                                <span class="info-value">January 5, 2025</span>
+                                <span class="info-value">{{ history.borrow_date|date:"F j, Y" }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Due Date</span>
-                                <span class="info-value">January 26, 2025</span>
+                                <span class="info-value">{{ history.due_date|date:"F j, Y" }}</span>
                             </div>
                             <div class="info-item">
                                 <span class="info-label">Returned On</span>
-                                <span class="info-value">January 22, 2025</span>
+                                <span class="info-value">{{ history.return_date|date:"F j, Y" }}</span>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Paperback</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge returned">Returned</span>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">The Lord of the Rings</h3>
-                        <p class="borrowed-author">By J.R.R. Tolkien</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">December 12, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">January 2, 2025</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Returned On</span>
-                                <span class="info-value">December 30, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Hardcover</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge returned">Returned</span>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">To Kill a Mockingbird</h3>
-                        <p class="borrowed-author">By Harper Lee</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">November 10, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">December 1, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Returned On</span>
-                                <span class="info-value">December 10, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Format</span>
-                                <span class="info-value">Hardcover</span>
-                            </div>
-                        </div>
-
-                        <span class="status-badge late-return">Returned Late</span>
-                    </div>
-                </div>
-
-                <div class="borrowed-item">
-                    <div class="borrowed-cover">
-                        <i class="fas fa-book-open"></i>
-                    </div>
-                    <div class="borrowed-details">
-                        <button class="star-button"><i class="fas fa-star"></i></button>
-                        <h3 class="borrowed-title">The Catcher in the Rye</h3>
-                        <p class="borrowed-author">By J.D. Salinger</p>
-
-                        <div class="borrowed-info">
-                            <div class="info-item">
-                                <span class="info-label">Borrowed On</span>
-                                <span class="info-value">October 15, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Due Date</span>
-                                <span class="info-value">November 5, 2024</span>
-                            </div>
+                            {% if history.renewed %}
                             <div class="info-item">
                                 <span class="info-label">Renewed On</span>
-                                <span class="info-value">November 3, 2024</span>
+                                <span class="info-value">{{ history.renew_date|date:"F j, Y" }}</span>
                             </div>
-                            <div class="info-item">
-                                <span class="info-label">Extended Due Date</span>
-                                <span class="info-value">November 26, 2024</span>
-                            </div>
-                            <div class="info-item">
-                                <span class="info-label">Returned On</span>
-                                <span class="info-value">November 20, 2024</span>
-                            </div>
+                            {% endif %}
                             <div class="info-item">
                                 <span class="info-label">Format</span>
-                                <span class="info-value">Hardcover</span>
+                                <span class="info-value">{{ history.book.format }}</span>
                             </div>
                         </div>
 
+                        {% if history.returned_late %}
+                        <span class="status-badge late-return">Returned Late</span>
+                        {% else %}
                         <span class="status-badge returned">Returned</span>
+                        {% endif %}
                     </div>
                 </div>
+                {% empty %}
+                <p class="no-books">No borrowing history found.</p>
+                {% endfor %}
             </div>
 
             <div class="tab-panel favorites-list" id="favorites">
+                {% for favorite in favorites %}
+                <div class="favorite-item">
+                    <div class="favorite-cover">
+                        {% if favorite.book.cover %}
+                            <img src="{{ favorite.book.cover.url }}" alt="{{ favorite.book.title }} book cover">
+                        {% else %}
+                            <i class="fas fa-book-open"></i>
+                        {% endif %}
+                    </div>
+                    <div class="favorite-details">
+                        <button class="star-button active"><i class="fas fa-star"></i></button>
+                        <h3 class="favorite-title">{{ favorite.book.title }}</h3>
+                        <p class="favorite-author">By {{ favorite.book.author }}</p>
+                        <p class="favorite-description">{{ favorite.book.description|truncatewords:20 }}</p>
+                        <div class="action-buttons">
+                            <button class="borrow-btn" data-book-id="{{ favorite.book.id }}">Borrow</button>
+                            <button class="remove-favorite-btn" data-favorite-id="{{ favorite.id }}">Remove</button>
+                        </div>
+                    </div>
+                </div>
+                {% empty %}
+                <p class="no-books">You have no favorite books yet.</p>
+                {% endfor %}
             </div>
         </div>
     </div>
@@ -469,9 +275,9 @@
                 <div class="footer-section">
                     <h3>Quick Links</h3>
                     <ul>
-                        <li><a href="./user_dashboard.html">Home</a></li>
-                        <li><a href="./books.html">Books</a></li>
-                        <li><a href="./borrowed.html">My Borrows</a></li>
+                        <li><a href="{% url 'user_dashboard' %}">Home</a></li>
+                        <li><a href="{% url 'books' %}">Books</a></li>
+                        <li><a href="{% url 'borrowed' %}">My Borrows</a></li>
                     </ul>
                 </div>
                 <div class="footer-section">
@@ -482,7 +288,7 @@
                 </div>
             </div>
             <div class="footer-bottom">
-                <p>&copy; 2025 Online Library. All rights reserved.</p>
+                <p>&copy; {% now "Y" %} Online Library. All rights reserved.</p>
             </div>
             <a href="#" class="scroll-top">
                 <i class="fas fa-arrow-up"></i>
@@ -525,9 +331,8 @@
                 </div>
             </div>
         </div>
-        <script src="../Script/footer.js"></script>
-        <script src="../Script/borrowed.js"></script>
-    <script src="./../Script/theme.js"></script>
-
+        <script src="{% static 'Script/footer.js' %}"></script>
+        <script src="{% static 'Script/borrowed.js' %}"></script>
+        <script src="{% static 'Script/theme.js' %}"></script>
     </body>
 </html>

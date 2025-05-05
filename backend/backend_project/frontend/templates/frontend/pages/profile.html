@@ -1,17 +1,17 @@
 {% load static %}
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>User Profile | Online Library</title>
-  <link rel="stylesheet" href="{% static 'styles/_variables.css' %}" />
-  <link rel="stylesheet" href="{% static 'CSS/header.css' %}">
-  <link rel="stylesheet" href="{% static 'CSS/footer.css' %}">
-  <link rel="stylesheet" href="{% static 'CSS/profile.css' %}">
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
-  <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
-</head>
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+    <title>User Profile | Online Library</title>
+    <link rel="stylesheet" href="{% static 'CSS/_variables.css' %}" />
+    <link rel="stylesheet" href="{% static 'CSS/header.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/footer.css' %}">
+    <link rel="stylesheet" href="{% static 'CSS/profile.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+    <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+  </head>
 <body>
   <header>
     <div class="header-container">
@@ -21,10 +21,11 @@
       </div>
       <nav>
         <ul class="nav-bar">
-          <li><a href="#" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
+          {% comment %} the id home link doesnot work yet, it have to work with the database {% endcomment %}
+          <li><a href="{% url 'user_dashboard' %}" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
           <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
           <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
-          <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+          <li><a href="{% url 'home' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
         </ul>
       </nav>
       <button class="menu-toggle">
@@ -33,27 +34,24 @@
     </div>
   </header>
       
-      <!-- Mobile Menu Side Panel -->
-      <div class="mobile-menu">
-        <ul class="mobile-nav">
-          <li><a href="#" id="mobileHomeLink"><i class="fas fa-home"></i> Home</a></li>
-          <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
-          <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
-          <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
-        </ul>
-      </div>
+  <!-- Mobile Menu Side Panel -->
+  <div class="mobile-menu">
+    <ul class="mobile-nav">
+      <li><a href="{% url 'user_dashboard' %}" id="mobileHomeLink"><i class="fas fa-home"></i> Home</a></li>
+      <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
+      <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
+      <li><a href="{% url 'home' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+    </ul>
+  </div>
       
-      <!-- Overlay for Mobile Menu -->
-      <div class="overlay"></div>
-      
+  <!-- Overlay for Mobile Menu -->
+  <div class="overlay"></div>
 
-
-    <main class="profile-container">
-        <div class="profile-header">
-            <h1>User Profile</h1>
-            <p>Manage your personal information and preferences</p>
-        </div>
-
+  <main class="profile-container">
+    <div class="profile-header">
+      <h1>User Profile</h1>
+      <p>Manage your personal information and preferences</p>
+    </div>
 
 
         <div class="profile-content">
@@ -96,10 +94,10 @@
             </div>
             
             <div class="profile-links">
-              <a href="./borrowed.html" id="AdminHidden" class="profile-link">
+              <a href="{%url 'borrowed'%}" id="AdminHidden" class="profile-link">
                 <i class="fas fa-book-open"></i> My Borrowed Books
               </a>
-              <a href="./borrowed.html#favorites" id="AdminHidden" class="profile-link">
+              <a href="{%url 'borrowed'%}#favorites" id="AdminHidden" class="profile-link">
                 <i class="fas fa-heart"></i> My Favorites
               </a>
             </div>
@@ -169,23 +167,6 @@
                     <option value="light">Light Mode</option>
                     <option value="system">System Default</option>
                   </select>
-                </div>
-                <div class="form-group">
-                  <label for="notifications">Notification Preferences</label>
-                  <div class="checkbox-group">
-                    <label>
-                      <input type="checkbox" checked> Email notifications
-                    </label>
-                    <label>
-                      <input type="checkbox" checked> Borrow reminders
-                    </label>
-                    <label>
-                      <input type="checkbox"> New book alerts
-                    </label>
-                    <label>
-                      <input type="checkbox" checked> Friend activity
-                    </label>
-                  </div>
                 </div>
               </div>
 

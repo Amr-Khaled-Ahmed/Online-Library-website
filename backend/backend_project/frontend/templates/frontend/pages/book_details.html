@@ -26,7 +26,7 @@
                         <li><a href="{% url 'user_dashboard' %}" class="active"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
                         <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                        <li><a href="{% url 'home' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
                     </ul>
                 </nav>
                 <button class="menu-toggle">
@@ -41,7 +41,7 @@
                 <li><a href="{% url 'user_dashboard' %}" class="active"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
                 <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
-                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
+                <li><a href="{% url 'home' %}"><i class="fas fa-sign-out-alt"></i> Logout</a></li>
             </ul>
         </div>
 
@@ -78,7 +78,7 @@
                         <strong>Genre:</strong>
                         <p class="book-genre">{{ book.genre }}</p>
                     </div>
-                    <div class="meta-item">
+                    <div class="meta-item"> 
                         <i class="fas fa-calendar-alt"></i>
                         <strong>Published:</strong>
                         <p class="book-year">{{ book.publication_year }}</p>
