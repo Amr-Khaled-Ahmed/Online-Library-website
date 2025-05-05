@@ -1,0 +1,310 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>User Profile | Online Library</title>
+  <link rel="stylesheet" href="./../styles/_variables.css" />
+  <link rel="stylesheet" href="../CSS/header.css">
+  <link rel="stylesheet" href="../CSS/footer.css">
+  <link rel="stylesheet" href="../CSS/profile.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css"/>
+  <link rel="icon"
+  href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+</head>
+<body>
+    <header>
+        <div class="header-container">
+          <div class="logo">
+            <i class="fas fa-book-open"></i>
+            <span style="color: var(--text-color);">Online Library</span>
+          </div>
+          <nav>
+            <ul class="nav-bar">
+              <li><a href="#" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
+              <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
+              <li><a href="./profile.html" class="active"><i class="fas fa-user"></i> Profile</a></li>
+              <li><a href="./../../index.html"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+            </ul>
+          </nav>
+          <button class="menu-toggle">
+            <i class="fas fa-bars"></i>
+          </button>
+        </div>
+      </header>
+      
+      <!-- Mobile Menu Side Panel -->
+      <div class="mobile-menu">
+        <ul class="mobile-nav">
+          <li><a href="#" id="mobileHomeLink"><i class="fas fa-home"></i> Home</a></li>
+          <li><a href="./books.html"><i class="fas fa-book"></i> Books</a></li>
+          <li><a href="./profile.html" class="active"><i class="fas fa-user"></i> Profile</a></li>
+          <li><a href="./../../index.html"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+        </ul>
+      </div>
+      
+      <!-- Overlay for Mobile Menu -->
+      <div class="overlay"></div>
+      
+
+
+    <main class="profile-container">
+        <div class="profile-header">
+            <h1>User Profile</h1>
+            <p>Manage your personal information and preferences</p>
+        </div>
+
+
+
+        <div class="profile-content">
+            
+          <div class="profile-sidebar">
+            <div class="profile-card">
+              <div class="img-holder">
+                  <img src="https://via.placeholder.com/150" alt="Profile Picture" id="profilePreview" class="profile-picture hide">
+                  <div class="upload" id="uploadBox" onclick="document.getElementById('img-input').click()">
+                      <i class="fa-solid fa-arrow-up-from-bracket"></i>
+                      <p id="msg">Click to upload profile picture</p>
+                  </div>
+
+                  <input type="file" id="img-input" class="hide" accept="image/*">
+                  <div class="profile-actions" id="profileActions" class="hide">
+                    
+                    <button id="updateBtn" class="profile-btn" onclick="document.getElementById('img-input').click()">
+                        <i class="fas fa-sync-alt"></i> update
+                    </button>
+                    
+                    <button id="removeBtn" class="profile-btn danger" onclick="removeProfilePicture()">
+                        <i class="fas fa-trash"></i> Remove
+                    </button>
+                  </div>
+              </div>
+              <div class="profile-stats">
+                <div class="stat-item">
+                  <i class="fas fa-book"></i>
+                  <span id="booksBorrowed">24</span> books borrowed
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-star"></i>
+                  <span id="booksFavorited">12</span> favorites
+                </div>
+                <div class="stat-item">
+                  <i class="fas fa-clock"></i>
+                  Member since <span id="memberSince">2023</span>
+                </div>
+              </div>
+            </div>
+            
+            <div class="profile-links">
+              <a href="./borrowed.html" id="AdminHidden" class="profile-link">
+                <i class="fas fa-book-open"></i> My Borrowed Books
+              </a>
+              <a href="./borrowed.html#favorites" id="AdminHidden" class="profile-link">
+                <i class="fas fa-heart"></i> My Favorites
+              </a>
+            </div>
+          </div>
+
+          <div class="profile-main">
+            <div id="modal" class="modal hide" onclick="closeModal()">
+              <img id="modalImage" src="" alt="Preview" />
+            </div>
+
+            <form class="profile-form">
+              <div class="form-section">
+                <h3><i class="fas fa-user-edit"></i> Personal Information</h3>
+                <div class="form-group">
+                  <label for="username">Username</label>
+                  <div class="input-with-action">
+                    <input id="username" type="text" value="booklover42" readonly />
+                    <button type="button" class="edit-btn" onclick="enableEdit('username')">
+                      <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="fullName">Full Name</label>
+                  <div class="input-with-action">
+                    <input id="fullName" type="text" value="Mostafa Mahmoud Fathy" readonly />
+                    <button type="button" class="edit-btn" onclick="enableEdit('fullName')">
+                      <i class="fas fa-pencil-alt"></i> Edit
+                    </button>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="email">Email</label>
+                  <input id="email" type="email" value="mostafa@example.com" readonly />
+                </div>
+                
+                <div class="form-group">
+                  <label for="bio">Bio</label>
+                  <textarea id="bio" rows="3" placeholder="Tell us about yourself and your reading preferences..."></textarea>
+                </div>
+              </div>
+              <div class="form-section">
+                <h3><i class="fas fa-user-edit"></i> Personal Information</h3>
+                <div class="form-group">
+                  <label for="userType">Account Type</label>
+                  <input id="userType" type="text" value="Admin" readonly />
+                </div>
+                <!-- <p> can hold personal info</p>                  -->
+              </div>
+              <div class="form-section">
+                <h3><i class="fas fa-lock"></i> Security</h3>
+                <div class="form-group">
+                  <label for="membership">Membership Status</label>
+                  <input id="membership" type="text" value="Active member" readonly />
+                </div>
+                <button type="button" id="changePassword" class="profile-btn" onclick="openPasswordModal()">
+                  <i class="fas fa-lock"></i> Change Password
+                </button>
+              </div>
+
+              <div class="form-section">
+                <h3><i class="fas fa-cog"></i> Preferences</h3>
+                <div class="form-group">
+                  <label for="theme">Theme Preference</label>
+                  <select id="theme">
+                    <option value="dark">Dark Mode</option>
+                    <option value="light">Light Mode</option>
+                    <option value="system">System Default</option>
+                  </select>
+                </div>
+                <div class="form-group">
+                  <label for="notifications">Notification Preferences</label>
+                  <div class="checkbox-group">
+                    <label>
+                      <input type="checkbox" checked> Email notifications
+                    </label>
+                    <label>
+                      <input type="checkbox" checked> Borrow reminders
+                    </label>
+                    <label>
+                      <input type="checkbox"> New book alerts
+                    </label>
+                    <label>
+                      <input type="checkbox" checked> Friend activity
+                    </label>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-actions">
+                <button type="button" class="profile-btn danger" onclick="confirmDeleteAccount()">
+                  <i class="fas fa-trash"></i> Delete Account
+                </button>
+                <button type="submit" class="profile-btn primary">
+                  <i class="fas fa-save"></i> Save Changes
+                </button>
+              </div>
+            </form>
+
+            <div id="passwordModal" class="password-modal modal hide"> 
+              <div class="modal-container">
+                <div class="modal-header">
+                  <h2><i class="fas fa-lock"></i> Change Password</h2>
+                  <button class="close-btn" onclick="closePasswordModal()">&times;</button>
+                </div>
+                <div class="form-group">
+                  <label for="currentPassword">Current Password</label>
+                  <div class="password-input">
+                    <input id="currentPassword" type="password" placeholder="Enter current password" />
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="newPassword">New Password</label>
+                  <div class="password-input">
+                    <input id="newPassword" type="password" placeholder="Enter new password" />
+                  </div>
+                  <div class="password-strength">
+                    <span class="strength-bar"></span>
+                    <span class="strength-bar"></span>
+                    <span class="strength-bar"></span>
+                    <span class="strength-text">Password strength</span>
+                  </div>
+                </div>
+                <div class="form-group">
+                  <label for="confirmPassword">Confirms New Password</label>
+                  <div class="password-input">
+                    <input id="confirmPassword" type="password" placeholder="Confirm new password" />
+                  </div>
+                </div>
+                <div class="modal-buttons">
+                  <button type="button" class="profile-btn" onclick="closePasswordModal()">
+                    <i class="fas fa-times"></i> Cancel
+                  </button>
+                  <button type="button" class="profile-btn primary" onclick="updatePassword()">
+                    <i class="fas fa-save"></i> Update Password
+                  </button>
+                </div>
+              </div>           
+            </div>
+
+            <div id="deleteModal" class="confirm-modal modal hide">
+              <div class="modal-container">
+                <div class="modal-header">
+                  <h2><i class="fas fa-exclamation-triangle"></i> Confirm Account Deletion</h2>
+                  <button class="close-btn" onclick="closeDeleteModal()">&times;</button>
+                </div>
+                <p>Are you sure you want to delete your account? This action cannot be undone. All your data, including reading history and favorites, will be permanently removed.</p>
+                <div class="form-group">
+                  <label for="deletePassword">Enter your password to confirm:</label>
+                  <div class="password-input">
+                    <input id="deletePassword" type="password" placeholder="Enter your password" />
+                  </div>
+                </div>
+                <div class="modal-buttons">
+                  <button type="button" class="profile-btn" onclick="closeDeleteModal()">
+                    <i class="fas fa-times"></i> Cancel
+                  </button>
+                  <button type="button" class="profile-btn danger" onclick="deleteAccount()">
+                    <i class="fas fa-trash"></i> Delete Account
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content" id="contact">
+            <div class="footer-section">
+                <h3>Online Library</h3>
+                <p>Your gateway to knowledge and imagination.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                  <li><a href="#" id="homeLink"> Home</a></li>
+                  <li><a id="bookLink" href="#">Books</a></li>
+                  <li><a href="./../../index.html">Log out</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i>
+                    support@libraryonline.com</p>
+                <p><i class="fas fa-phone"></i> +200000000000</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Online Library. All rights reserved.</p>
+        </div>
+        <a href="#" class="scroll-top">
+            <i class="fas fa-arrow-up"></i>
+        </a>
+    </footer>
+    <link rel="stylesheet" href="./../CSS/theme.css">
+    <script src="./../Script/sign"></script>
+    <script src="./../Script/theme.js" defer></script>
+    <script src="../Script/footer.js"></script>
+    <script src="../Script/profile.js"></script>
+    <script src="./../Script/header.js"></script>
+</body>
+</html>

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css" integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link rel="stylesheet" href="./../CSS/forms-style.css">
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+    <script type="text/javascript">
+        emailjs.init("6Fq49Zy_LiJcwlloj")
+    </script>
+    <title>Online-library</title>
+</head>
+<body>
+    <section class="sign-up">
+        <form id="form" >
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span style="color: var(--text-color);">Online Library</span>
+            </div>
+            <h2>Sign-Up</h2>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-user"></i>
+                    <label for="username">Username</label>
+                </div>
+                <input class="input" type="text" id="username" name="username" placeholder="Enter username">
+                <span class="error-text" id="username-error"></span>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-user"></i>
+                    <label for="fullName">Full name</label>
+                </div>
+                <input class="input" type="text" id="fullName" name="fullName" placeholder="Enter your name">
+                <span class="error-text" id="name-error"></span>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-lock"></i>
+                    <label for="password">password</label>
+                </div>
+                <input class="input" type="password" id="password" name="password" placeholder="Enter password">
+                <span class="error-text" id="password-error"></span>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-pencil"></i>
+                    <label for="pass-confirm">Confirm password</label>
+                </div>
+                <input class="input" type="password" id="pass-confirm" name="pass-confirm" placeholder="Confirm password">
+                <span class="error-text" id="pass-confirm-error"></span>
+            </div>
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-envelope"></i>
+                    <label for="email">Email</label>
+                </div>
+                <input type="email" id="email" name="user_email" placeholder="Enter email">
+                <span class="error-text" id="email-error"></span>
+            </div>
+            <button type="submit" id="button">Sign up</button>
+            <a class="cancel-button" href="./../../index.html">Cancel</a>
+            <div class="sign-in">
+                <span>Already have an account ?</span>
+                <a href="./sign-in.html">Sign in</a>
+            </div>
+        </form>
+        <img src="./../CSS/assets/woman-reading-chair.png" alt="man reading a book">
+    </section>
+    <script src="./../Script/theme.js"></script>
+    <script src="./../Script/sign_up.js"></script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!DOCTYPE html>
+<html lang="en">
+
+    <head>
+        <link rel="icon"
+            href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E
+        %3Ctext y='0.9em' font-size='90'%3E📖%3C/text%3E
+        %3C/svg%3E">
+        <title>Online Library</title>
+
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link rel="stylesheet"
+            href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css">
+
+        <link rel="stylesheet" href="./../CSS/book_details.css">
+        <link rel="stylesheet" href="./../CSS/footer.css">
+        <link rel="stylesheet" href="./../CSS/header.css">
+
+    </head>
+
+    <body class="bodyStyle">
+        <header>
+            <div class="header-container">
+                <div class="logo">
+                    <i class="fas fa-book-open"></i>
+                    <span>Online Library</span>
+                </div>
+                <nav>
+                    <ul class="nav-bar">
+                        <li><a href="./../pages/user_dashboard.html"
+                                class="active"><i class="fas fa-home"></i>
+                                Home</a></li>
+                        <li><a href="./../pages/books.html"><i
+                                    class="fas fa-book"></i> Books</a></li>
+                    </ul>
+                </nav>
+                <button class="menu-toggle">
+                    <i class="fas fa-bars"></i>
+                </button>
+            </div>
+        </header>
+
+        <!-- Mobile Menu Side Panel -->
+        <div class="mobile-menu">
+            <ul class="mobile-nav">
+                <li><a href="./../pages/user_dashboard.html" class="active"><i
+                            class="fas fa-home"></i> Home</a></li>
+                <li><a href="./../pages/books.html"><i class="fas fa-book"></i>
+                        Books</a></li>
+            </ul>
+        </div>
+
+        <div class="container">
+            <div class="book-cover">
+                <img src="" alt="Book cover">
+            </div>
+            <div class="details">
+                <h1 class="book-title"></h1>
+                <h2 class="book-author"></h2>
+                <p class="book-description"></p>
+
+                <div class="rating">
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star"></i>
+                    <i class="fas fa-star-half-alt"></i>
+                    <span>(4.5/5)</span>
+                </div>
+
+                <div class="book-meta">
+                    <div class="meta-item">
+                        <i class="fas fa-check-circle"></i>
+                        <strong>Status:</strong>
+                        <p class="book-status"></p>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-tags"></i>
+                        <strong>Genre:</strong>
+                        <p class="book-genre"></p>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-calendar-alt"></i>
+                        <strong>Published:</strong>
+                        <p class="book-year"></p>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-file-alt"></i>
+                        <strong>Pages:</strong>
+                        <p>320</p>
+                    </div>
+                    <div class="meta-item">
+                        <i class="fas fa-language"></i>
+                        <strong>Language:</strong>
+                        <p>English</p>
+                    </div>
+                </div>
+
+                <div class="button-container">
+                    <a href="./../pages/books.html" class="back-btn"><i
+                            class="fas fa-arrow-left"></i> Back to Books</a>
+                    <button class="btn"><i class="fas fa-book-reader"></i>
+                        <strong>Borrow Now</strong></button>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <div class="footer-content" id="contact">
+                <div class="footer-section">
+                    <h3>Online Library</h3>
+                    <p>Your gateway to knowledge and imagination.</p>
+                    <div class="social-icons">
+                        <a href="#"><i class="fab fa-facebook"></i></a>
+                        <a href="#"><i class="fab fa-twitter"></i></a>
+                        <a href="#"><i class="fab fa-instagram"></i></a>
+                    </div>
+                </div>
+                <div class="footer-section">
+                    <h3>Quick Links</h3>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="pages/books.html">Books</a></li>
+                        <li><a href="#features">features</a></li>
+                    </ul>
+                </div>
+                <div class="footer-section">
+                    <h3>Contact Us</h3>
+                    <p><i class="fas fa-envelope"></i>
+                        support@libraryonline.com</p>
+                    <p><i class="fas fa-phone"></i> +20100100100</p>
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p>&copy; 2025 Online Library. All rights reserved.</p>
+            </div>
+            <!-- Back to Top Button -->
+            <a href="#" class="scroll-top">
+                <i class="fas fa-arrow-up"></i>
+            </a>
+
+        </footer>
+
+        <script src="./../Script/book_details.js"></script>
+        <script src="./../Script/header.js"></script>
+        <script src="./../Script/footer.js"></script>
+        <script src="./../Script/theme.js"></script>
+
+    </body>
+
+</html>
