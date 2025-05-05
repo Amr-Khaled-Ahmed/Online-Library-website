@@ -15,91 +15,103 @@ This project is built using **pure HTML, CSS, JavaScript (Frontend), and Python 
 
 ```
 D:.
-|   index.html
-|   LICENSE
-|   README.md
-|
-+---.vscode
-|       c_cpp_properties.json
-|       launch.json
-|       settings.json
-|
-\---frontend
-    +---CSS
-    |   |   add_edit.css
-    |   |   admin_dashboard.css
-    |   |   books.css
-    |   |   book_details.css
-    |   |   borrowed.css
-    |   |   footer.css
-    |   |   forms-style.css
-    |   |   header.css
-    |   |   index.css
-    |   |   loader.css
-    |   |   profile.css
-    |   |   theme.css
-    |   |   user_dashboard.css
-    |   |   _variables.css
-    |   |
-    |   \---assets
-    |           add.gif
-    |           alert.gif
-    |           background1.png
-    |           background2.png
-    |           background3.png
-    |           blue.avif
-    |           book1.jpeg
-    |           book2.jpeg
-    |           book3.jpeg
-    |           book4.jpeg
-    |           book5.jpeg
-    |           book_cover.jpg
-    |           ChildOfTheKindred_ebook1.jpg
-    |           ChildOfTheKindred_ebook1.png
-    |           cover3.jpg
-    |           crime-and-mystery-cover-scaled-1.jpeg
-    |           delete.gif
-    |           enceladus.jpg
-    |           friend1.jpeg
-    |           friend2.jpeg
-    |           friend3.jpeg
-    |           friend4.jpeg
-    |           man-reading-design.png
-    |           online-education.gif
-    |           The_Great_Gatsby_Cover.jpg
-    |           woman-reading-chair.png
-    |
-    +---pages
-    |   |   add_edit.html
-    |   |   admin_dashboard.html
-    |   |   books.html
-    |   |   book_details.html
-    |   |   borrowed.html
-    |   |   footer.html
-    |   |   header.html
-    |   |   profile.html
-    |   |   sign-in.html
-    |   |   sign-up.html
-    |   |   user_dashboard.html
-    |   |
-    |   \---build
-    |       \---Debug
-    \---Script
-            add_edit.js
-            admin_dashboard.js
-            await.js
-            books.js
-            borrowed.js
-            footer.js
-            Forms_validation.js
-            getEnter.js
-            header.js
-            profile.js
-            theme.js
-            user_dashboard.js
+├── index.html
+├── LICENSE
+├── README.md
+├── .vscode/
+│   ├── c_cpp_properties.json
+│   ├── launch.json
+│   └── settings.json
+├── frontend/
+│   ├── CSS/
+│   │   ├── add_edit.css
+│   │   ├── admin_dashboard.css
+│   │   ├── books.css
+│   │   ├── book_details.css
+│   │   ├── borrowed.css
+│   │   ├── footer.css
+│   │   ├── forms-style.css
+│   │   ├── header.css
+│   │   ├── index.css
+│   │   ├── loader.css
+│   │   ├── profile.css
+│   │   ├── theme.css
+│   │   ├── user_dashboard.css
+│   │   └── _variables.css
+│   ├── assets/
+│   │   ├── add.gif
+│   │   ├── alert.gif
+│   │   ├── background1.png
+│   │   ├── background2.png
+│   │   ├── background3.png
+│   │   ├── blue.avif
+│   │   ├── book1.jpeg
+│   │   ├── book2.jpeg
+│   │   ├── book3.jpeg
+│   │   ├── book4.jpeg
+│   │   ├── book5.jpeg
+│   │   ├── book_cover.jpg
+│   │   ├── ChildOfTheKindred_ebook1.jpg
+│   │   ├── ChildOfTheKindred_ebook1.png
+│   │   ├── cover3.jpg
+│   │   ├── crime-and-mystery-cover-scaled-1.jpeg
+│   │   ├── delete.gif
+│   │   ├── enceladus.jpg
+│   │   ├── friend1.jpeg
+│   │   ├── friend2.jpeg
+│   │   ├── friend3.jpeg
+│   │   ├── friend4.jpeg
+│   │   ├── man-reading-design.png
+│   │   ├── online-education.gif
+│   │   ├── The_Great_Gatsby_Cover.jpg
+│   │   └── woman-reading-chair.png
+│   ├── pages/
+│   │   ├── add_edit.html
+│   │   ├── admin_dashboard.html
+│   │   ├── books.html
+│   │   ├── book_details.html
+│   │   ├── borrowed.html
+│   │   ├── footer.html
+│   │   ├── header.html
+│   │   ├── profile.html
+│   │   ├── sign-in.html
+│   │   ├── sign-up.html
+│   │   └── user_dashboard.html
+│   └── Script/
+│       ├── add_edit.js
+│       ├── admin_dashboard.js
+│       ├── await.js
+│       ├── books.js
+│       ├── borrowed.js
+│       ├── footer.js
+│       ├── Forms_validation.js
+│       ├── getEnter.js
+│       ├── header.js
+│       ├── profile.js
+│       ├── theme.js
+│       └── user_dashboard.js
+├── backend/
+│   ├── manage.py
+│   ├── requirements.txt
+│   ├── .gitignore
+│   ├── templates/
+│   ├── static/                # Only custom static files (not collected)
+│   ├── your_app/
+│   │   ├── migrations/
+│   │   ├── views.py
+│   │   ├── urls.py
+│   │   ├── models.py
+│   │   └── ...
+│   └── db.sqlite3             # OPTIONAL (exclude in production)
+└── backend/ or venv/          # DO NOT upload
 ```
 
 ---
+## 😒requirements
+asgiref==3.8.1
+Django==5.2
+sqlparse==0.5.3
+tzdata==2025.2
 
 ## ⚙️ Features
 
@@ -185,3 +197,4 @@ This project is **licensed under the Apache License 2.0**.
 This repository is **not open for public contributions**. Only team members are allowed to work on it. If you are a team member, please use a branch-based workflow for modifications.
 
 ---
+````

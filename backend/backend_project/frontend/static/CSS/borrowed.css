@@ -1,0 +1,647 @@
+@import url('_variables.css');
+@import url('header.css');
+@import url('footer.css');
+
+.borrowed-header {
+    background-color: var(--form-bg-color);
+    padding: 2rem;
+    border-radius: 10px;
+    margin: 2rem auto;
+    max-width: 1200px;
+    text-align: center;
+}
+
+.borrowed-header h1 {
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.borrowed-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1rem;
+    justify-content: center;
+    margin: 1rem 0;
+}
+
+.action-btn {
+    padding: 0.8rem 1.5rem;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.action-btn i {
+    font-size: 1.1rem;
+}
+
+.export-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.export-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.tab-container {
+    max-width: 1200px;
+    margin: 0 auto 2rem;
+}
+
+.tabs {
+    display: flex;
+    background-color: var(--form-bg-color);
+    border-radius: 10px 10px 0 0;
+    overflow: hidden;
+}
+
+.tab-input {
+    display: none;
+}
+
+.tab {
+    padding: 1rem 2rem;
+    background-color: var(--form-bg-color);
+    color: var(--text-color);
+    border: none;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    font-family: var(--font-primary);
+    flex: 1;
+    text-align: center;
+    border-bottom: 3px solid transparent;
+}
+
+.tab:hover {
+    background-color: rgba(0, 0, 0, 0.1);
+}
+
+/* <Panel switching logic> */
+.tab-panel {
+    display: none;
+    background-color: var(--form-bg-color);
+    border-radius: 0 0 10px 10px;
+    padding: 2rem;
+}
+
+#tab1:checked ~ .tab-panels #current-borrows,
+#tab2:checked ~ .tab-panels #borrowing-history,
+#tab3:checked ~ .tab-panels #favorites
+{
+    display: block;
+}
+
+#tab1:checked ~ .tabs label[for="tab1"],
+#tab2:checked ~ .tabs label[for="tab2"],
+#tab3:checked ~ .tabs label[for="tab3"]
+{
+    background-color: rgba(0, 0, 0, 0.2);
+    border-bottom: 3px solid var(--primary-color);
+}
+/* </Panel switching logic> */
+
+.borrowed-list,
+.favorites-list
+{
+    background-color: var(--form-bg-color);
+    border-radius: 0 0 10px 10px;
+    padding: 2rem;
+}
+
+.borrowed-item,
+.favorite-item {
+    display: flex;
+    gap: 1.5rem;
+    padding: 1.5rem;
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+    margin-bottom: 1.5rem;
+    transition: transform 0.3s ease;
+}
+
+.borrowed-item:hover,
+.favorite-item:hover {
+    transform: translateY(-5px);
+}
+
+.borrowed-cover,
+.favorite-cover {
+    width: 100px;
+    height: 150px;
+    overflow: hidden;
+    border-radius: 5px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: rgba(0, 0, 0, 0.2);
+    flex-shrink: 0;
+}
+
+.borrowed-cover img,
+.favorite-cover img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.borrowed-cover i,
+.favorite-cover i {
+    font-size: 3rem;
+    color: rgba(255, 255, 255, 0.3);
+}
+
+.borrowed-details,
+.favorite-details {
+    position: relative;
+    flex-grow: 1;
+    display: flex;
+    flex-direction: column;
+}
+
+.borrowed-title,
+.favorite-title {
+    font-size: 1.2rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: var(--text-color);
+}
+
+.borrowed-author,
+.favorite-author {
+    font-size: 0.9rem;
+    color: var(--text-color);
+    margin-bottom: 1rem;
+}
+
+.borrowed-info,
+.favorite-info {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 1.5rem;
+    margin-bottom: 1rem;
+    font-size: 0.9rem;
+}
+
+.info-item {
+    display: flex;
+    flex-direction: column;
+}
+
+.info-label {
+    font-size: 0.8rem;
+    color: var(--text-color);
+    margin-bottom: 0.3rem;
+}
+
+.status-badge {
+    display: inline-block;
+    padding: 0.4rem 0.8rem;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    margin-top: auto;
+    align-self: flex-start;
+}
+
+.due-soon {
+    background-color: #f39c12;
+    color: white;
+}
+
+.due-tomorrow {
+    background-color: #e67e22;
+    color: white;
+}
+
+.overdue {
+    background-color: #e74c3c;
+    color: white;
+}
+
+.on-time {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.returned {
+    background-color: #7f8c8d;
+    color: white;
+}
+
+.late-return {
+    background-color: #9b59b6;
+    color: white;
+}
+
+.fine-paid {
+    margin-top: 0.8rem;
+    font-size: 0.9rem;
+    color: #e74c3c;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+}
+
+.fine-paid i {
+    font-size: 1rem;
+}
+
+.action-buttons {
+    display: flex;
+    gap: 1rem;
+    margin-top: 1rem;
+    margin-left: auto;
+    align-self: flex-end;
+}
+
+.renew-btn, .return-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    cursor: pointer;
+}
+
+.renew-btn {
+    background-color: transparent;
+    border: 1px solid var(--primary-color);
+    color: var(--primary-color);
+}
+
+.renew-btn:hover {
+    background-color: var(--primary-color);
+    color: white;
+}
+
+.renew-btn:disabled {
+    border-color: #7f8c8d;
+    color: #7f8c8d;
+    cursor: not-allowed;
+}
+
+.return-btn {
+    background-color: var(--primary-color);
+    color: white;
+    border: none;
+}
+
+.return-btn:hover {
+    background-color: var(--primary-hover);
+}
+
+.fines-section {
+    background-color: rgba(231, 76, 60, 0.2);
+    border-radius: 10px;
+    padding: 1.5rem;
+    margin-bottom: 2rem;
+}
+
+.fines-section h3 {
+    color: #e74c3c;
+    margin-bottom: 1rem;
+    font-weight: bold;
+}
+
+.fines-divider {
+    border: 0;
+    height: 1px;
+    background-color: rgba(231, 76, 60, 0.3);
+    margin: 1rem 0;
+}
+
+.fine-item {
+    display: flex;
+    justify-content: space-between;
+    padding: 0.8rem 0;
+}
+
+.fine-item:last-child {
+    border-bottom: none;
+}
+
+.fine-amount {
+    color: #e74c3c;
+    font-weight: bold;
+}
+
+.total-fine {
+    display: flex;
+    justify-content: space-between;
+    padding: 1rem 0;
+    margin-top: 1rem;
+    border-top: 1px solid rgba(255, 255, 255, 0.2);
+    font-weight: bold;
+}
+#add_book {
+    background-color: green;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    margin-right: 2%;
+    margin-bottom: 2%;
+    height: 10%;
+    width: 12%;
+    border-radius: 12px;
+}
+#add_book:hover{
+    background-color: rgba(0, 128, 0, 0.49);
+}
+#add_book:active {
+    background-color: rgba(0, 100, 0, 0.6);
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.delete_book {
+    background-color: rgb(198, 7, 7);
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    cursor: pointer;
+    float: left;
+    margin-top: 5%;
+    margin-bottom: 1%;
+    margin-left: -14%;
+    height: 18%;
+    width: 18%;
+    border-radius: 12px;
+}
+.delete_book:hover,
+.modal-buttons #confirm-no:hover{
+    background-color: rgba(125, 0, 0, 0.49);
+}
+.modal-buttons #confirm-yes:hover{
+    background-color: darkolivegreen;
+}
+.delete_book:active {
+    background-color: rgba(200, 0, 0, 0.6);
+    transform: scale(0.97);
+    box-shadow: inset 0 2px 5px rgba(0, 0, 0, 0.2);
+}
+.custom-notification {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    background-color: var(--primary-color);
+    color: white;
+    padding: 12px 20px;
+    border-radius: 5px;
+    z-index: 9999;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    animation: slideInRight 0.3s ease-out, fadeOut 0.3s ease-in 1.7s forwards;
+    max-width: 300px;
+}
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+@keyframes fadeOut {
+    from {
+        opacity: 1;
+    }
+    to {
+        opacity: 0;
+    }
+}
+.confirm-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 999;
+}
+
+.modal-content {
+    background: var(--form-bg-color);
+    padding: 1.5rem 2rem;
+    border-radius: 10px;
+    text-align: center;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.3);
+}
+.modal-buttons {
+    margin-top: 1rem;
+    display: flex;
+    justify-content: center;
+    gap: 1rem;
+}
+.modal-buttons #confirm-yes,
+.modal-buttons #confirm-no{
+    all: unset;
+    width: 50px;
+    height: 30px;
+    padding: 8px 14px;
+    background-color: var(--primary-color);
+    border-radius: 10%;
+}
+.modal-buttons #confirm-no{
+    background-color: rgb(198, 7, 7);
+}
+
+.hidden {
+    display: none;
+}
+
+@media (max-width: 768px) {
+    .borrowed-item {
+        flex-direction: column;
+    }
+
+    .borrowed-cover {
+        width: 80px;
+        height: 120px;
+        align-self: center;
+    }
+
+    .action-buttons {
+        align-self: center;
+        margin-left: 0;
+    }
+}
+
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: var(--overlay-color);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 999;
+}
+
+.modal.hidden {
+    display: none;
+}
+
+.modal-content {
+    background: var(--form-bg-color);
+    padding: 2rem;
+    border-radius: 12px;
+    max-width: 500px;
+    width: 90%;
+    position: relative;
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    margin: 0 auto;
+}
+
+.modal-grid {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 1.5rem;
+    width: 100%;
+}
+
+.modal-image-section {
+    width: 100%;
+    max-width: 300px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: center;
+}
+
+.modal-image-section img {
+    width: 100%;
+    max-width: 150px;
+    height: auto;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    display: block;
+    margin: 0 auto;
+}
+
+.modal-info-section {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+    text-align: center;
+}
+
+.modal-info-section h2 {
+    font-size: 1.8rem;
+    color: var(--primary-color);
+    margin: 0;
+}
+
+.modal-info-section #modal-author {
+    font-size: 1.2rem;
+    color: var(--text-color);
+    margin: 0;
+}
+
+.modal-info-section #modal-description {
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--text-color);
+    margin: 0.5rem 0 1.5rem 0;
+    text-align: left;
+}
+
+.modal-details-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 1rem;
+    margin-top: 1rem;
+    width: 100%;
+}
+
+.detail-item {
+    background-color: var(--modal-crd);
+    padding: 0.75rem 1rem;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
+    text-align: center;
+}
+
+.detail-item:nth-last-child(-n+2) {
+    grid-column: span 1.5;
+}
+
+.detail-item strong {
+    display: block;
+    margin-bottom: 0.5rem;
+    color: var(--primary-color);
+    font-size: 0.9rem;
+}
+
+.close-btn {
+    position: absolute;
+    top: 15px;
+    right: 20px;
+    font-size: 24px;
+    cursor: pointer;
+    color: var(--primary-color);
+}
+
+@media (max-width: 768px) {
+    .modal-details-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .detail-item:nth-last-child(-n+2) {
+        grid-column: auto;
+    }
+}
+
+.star-button {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    background: transparent;
+    border: none;
+    font-size: 1.8rem;
+    color: grey;
+    cursor: pointer;
+    z-index: 1;
+    transition: color 0.3s ease;
+}
+
+.star-button.active {
+    color: orange;
+}
+
+/* Add CSS for empty favorites display */
+.empty-favorites {
+    text-align: center;
+    padding: 3rem 1rem;
+    background-color: rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    margin: 1rem 0;
+}
+
+.empty-favorites i {
+    font-size: 3rem;
+    color: var(--primary-color);
+    margin-bottom: 1rem;
+    opacity: 0.6;
+}
+
+.empty-favorites p {
+    color: var(--text-color);
+    margin-bottom: 0.5rem;
+}
+
+.empty-favorites p:first-of-type {
+    font-weight: bold;
+    font-size: 1.2rem;
+}

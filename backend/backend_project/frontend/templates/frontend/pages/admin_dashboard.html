@@ -1,0 +1,241 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22><i class='fas fa-book'></i></text></svg>">
+    <link rel="icon"
+        href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="{% static 'CSS/admin_dashboard.css' %}">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+
+    <script src="{% static 'Script/admin_dashboard.js' %}"></script>
+    <script src="{% static 'Script/header.js' %}"></script>
+    <script src="{% static 'Script/footer.js' %}"></script>
+
+    <title>Admin Dashboard</title>
+</head>
+
+<body>
+    <header>
+        <div class="header-container">
+            <div class="logo">
+                <i class="fas fa-book-open"></i>
+                <span style="color: var(--text-color);">Online Library</span>
+            </div>
+            <nav>
+                <ul class="nav-bar">
+                    <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+                    <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
+                            Dashboard</a></li>
+                    <li><a href="{% url 'logout' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                </ul>
+            </nav>
+            <!-- Mobile menu toggle -->
+            <button class="menu-toggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </header>
+
+    <!-- Mobile menu structure -->
+    <div class="mobile-menu">
+        <ul class="mobile-nav">
+            <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+            <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
+                            Dashboard</a></li>
+            <li><a href="{% url 'logout' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+        </ul>
+    </div>
+
+    <button id="add-book"><i class="fa-solid fa-plus"></i></button>
+
+    <div class="overlayer hide">
+        <div class="confirmation hide">
+            <h4>Are you sure to delete this book?</h4>
+            <div class="book-details">
+                <div class="img-holder">
+                    <img src="{% static 'assets/ChildOfTheKindred_ebook1.jpg' %}" alt="Book Cover" class="book-cover">
+                </div>
+                <div class="info">
+                    <label for="confirmation" class="id"></label>
+                    <label for="confirmation" class="book-title"></label>
+                    <label for="confirmation" class="author"></label>
+                </div>
+            </div>
+            <div class="confirm-btns">
+                <button id="confirm-delete">Delete</button>
+                <button id="cancel-delete">Cancel</button>
+            </div>
+        </div>
+        <div class="loading hide">
+            <i class="fa-solid fa-spinner"></i>
+        </div>
+        <div class="borrowers-list hide">
+            <span class="close-btn"><i class="fa-solid fa-xmark"></i></span>
+            <div class="book-details">
+                <div class="img-holder">
+                    <img src="{% static 'assets/ChildOfTheKindred_ebook1.jpg' %}" alt="Book Cover" class="book-cover">
+                </div>
+                <div class="info">
+                    <label for="borrowers-list" class="id"></label>
+                    <label for="borrowers-list" class="book-title"></label>
+                    <label for="borrowers-list" class="author"></label>
+                </div>
+            </div>
+            <div class="users">
+                <h4>Borrowers List</h4>
+                <div class="no-users hide">
+                    <h3>No users found!</h3>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="saved hide">
+        <p>Saved Successfully</p>
+        <img src="{% static 'assets/add.gif' %}" alt="saved icon">
+    </div>
+
+    <div class="deleted hide">
+        <p>Deleted Successfully</p>
+        <img src="{% static 'assets/delete.gif' %}" alt="Deleted icon">
+    </div>
+
+    <main class="dashboard-container">
+        <div class="definition">
+            <h1><i class="fa-solid fa-table-columns"></i> Admin
+                Dashboard</h1>
+            <p>You can add, edit, delete books to the library.</p>
+        </div>
+        <section class="search-container">
+            <form class="search-form" method="GET" action="{% url 'admin_dashboard' %}">
+                <div class="search-box">
+                    <input type="search" name="q" class="search-input" placeholder="Search by title, author or ID ..." value="{{ request.GET.q }}">
+                    <!-- <button type="submit" class="search-btn"><i class="fas fa-search"></i></button> -->
+                </div>
+
+                <div class="filter-group">
+                    <select class="filter-select genre-selector" name="genre">
+                        <option value="">All Genres</option>
+                        <option value="fiction" {% if request.GET.genre == 'fiction' %}selected{% endif %}>Fiction</option>
+                        <option value="non-fiction" {% if request.GET.genre == 'non-fiction' %}selected{% endif %}>Non-Fiction</option>
+                        <option value="mystery" {% if request.GET.genre == 'mystery' %}selected{% endif %}>Mystery</option>
+                        <option value="fantasy" {% if request.GET.genre == 'fantasy' %}selected{% endif %}>Fantasy</option>
+                        <option value="sci-fi" {% if request.GET.genre == 'sci-fi' %}selected{% endif %}>Science Fiction</option>
+                        <option value="romance" {% if request.GET.genre == 'romance' %}selected{% endif %}>Romance</option>
+                        <option value="biography" {% if request.GET.genre == 'biography' %}selected{% endif %}>Biography</option>
+                        <option value="history" {% if request.GET.genre == 'history' %}selected{% endif %}>History</option>
+                        <option value="self-help" {% if request.GET.genre == 'self-help' %}selected{% endif %}>Self-Help</option>
+                    </select>
+
+                    <select class="filter-select format-selector" name="format">
+                        <option value="">All Formats</option>
+                        <option value="hardcover" {% if request.GET.format == 'hardcover' %}selected{% endif %}>Hardcover</option>
+                        <option value="paperback" {% if request.GET.format == 'paperback' %}selected{% endif %}>Paperback</option>
+                        <option value="ebook" {% if request.GET.format == 'ebook' %}selected{% endif %}>E-Book</option>
+                        <option value="audiobook" {% if request.GET.format == 'audiobook' %}selected{% endif %}>Audiobook</option>
+                    </select>
+
+                    <select class="filter-select sort-selector" name="sort">
+                        <option value="">Sort By</option>
+                        <option value="newest" {% if request.GET.sort == 'newest' %}selected{% endif %}>Newest First</option>
+                        <option value="oldest" {% if request.GET.sort == 'oldest' %}selected{% endif %}>Oldest First</option>
+                        <option value="title-asc" {% if request.GET.sort == 'title-asc' %}selected{% endif %}>Title (A-Z)</option>
+                        <option value="title-desc" {% if request.GET.sort == 'title-desc' %}selected{% endif %}>Title (Z-A)</option>
+                        <option value="author-asc" {% if request.GET.sort == 'author-asc' %}selected{% endif %}>Author (A-Z)</option>
+                        <option value="author-desc" {% if request.GET.sort == 'author-desc' %}selected{% endif %}>Author (Z-A)</option>
+                        <option value="popular" {% if request.GET.sort == 'popular' %}selected{% endif %}>Most Popular</option>
+                    </select>
+
+                    <select class="filter-select availability-selector" name="availability">
+                        <option value="">Availability</option>
+                        <option value="available" {% if request.GET.availability == 'available' %}selected{% endif %}>Available</option>
+                        <option value="unavailable" {% if request.GET.availability == 'unavailable' %}selected{% endif %}>Unavailable</option>
+                        <option value="low-stock" {% if request.GET.availability == 'low-stock' %}selected{% endif %}>Low Stock</option>
+                    </select>
+                </div>
+            </form>
+        </section>
+
+        <h1 id="title">Books</h1>
+
+        <div class="no-results hide">
+            <h1>Oops!</h1>
+            <h3>No results found!</h3>
+        </div>
+
+        <div class="books-container" id="books-container">
+            {% for book in books %}
+            <div class="book-card" data-id="{{ book.id }}">
+                <div class="book-cover-container">
+                    <img src="{{ book.cover_image.url }}" alt="Book Cover" class="book-cover">
+                    <div class="book-actions">
+                        <button class="edit-btn" data-id="{{ book.id }}"><i class="fas fa-edit"></i></button>
+                        <button class="delete-btn" data-id="{{ book.id }}"><i class="fas fa-trash"></i></button>
+                        <button class="borrowers-btn" data-id="{{ book.id }}"><i class="fas fa-users"></i></button>
+                    </div>
+                </div>
+                <div class="book-info">
+                    <h3 class="book-title">{{ book.title }}</h3>
+                    <p class="book-author">{{ book.author }}</p>
+                    <p class="book-id">ID: {{ book.id }}</p>
+                    <p class="book-status {% if book.available_copies > 0 %}available{% else %}unavailable{% endif %}">
+                        {% if book.available_copies > 0 %}
+                            Available ({{ book.available_copies }})
+                        {% else %}
+                            Unavailable
+                        {% endif %}
+                    </p>
+                </div>
+            </div>
+            {% empty %}
+            <div class="no-results">
+                <h1>Oops!</h1>
+                <h3>No books found!</h3>
+            </div>
+            {% endfor %}
+        </div>
+    </main>
+
+    <footer>
+        <div class="footer-content" id="contact">
+            <div class="footer-section">
+                <h3>Online Library</h3>
+                <p>Your gateway to knowledge and imagination.</p>
+                <div class="social-icons">
+                    <a href="#"><i class="fab fa-facebook"></i></a>
+                    <a href="#"><i class="fab fa-twitter"></i></a>
+                    <a href="#"><i class="fab fa-instagram"></i></a>
+                </div>
+            </div>
+            <div class="footer-section">
+                <h3>Quick Links</h3>
+                <ul>
+                    <li><a href="{% url 'profile' %}">Profile</a></li>
+                    <li><a href="{% url 'admin_dashboard' %}" class="active">Dashboard</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h3>Contact Us</h3>
+                <p><i class="fas fa-envelope"></i>
+                    support@libraryonline.com</p>
+                <p><i class="fas fa-phone"></i> +20100100100</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; {% now "Y" %} Online Library. All rights reserved.</p>
+        </div>
+    </footer>
+    <button class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+    </button>
+
+    <script src="{% static 'Script/theme.js' %}"></script>
+</body>
+
+</html>
