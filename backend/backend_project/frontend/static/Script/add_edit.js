@@ -2,7 +2,7 @@ document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
         window.sessionStorage.removeItem('editedBook');
-        window.location.href = "./admin_dashboard.html";
+        window.location.href = "./admin-dashboard";
     });
 
     document.getElementById('id').addEventListener('input',() => {

@@ -1,4 +1,3 @@
-
 // Check if books item is not exist
 if(localStorage.getItem('books') == null) {
     let Array = [];
@@ -103,7 +102,7 @@ document.addEventListener('DOMContentLoaded', function() {
     checkNoBooks();
     
     document.getElementById('add-book').addEventListener('click',() => {
-        window.location.href = "./add_edit.html";
+        window.location.href = "./add-edit";
     });
 
     // Search
@@ -377,7 +376,7 @@ function addBook(book) {
         window.sessionStorage.setItem('description',JSON.parse(bookContainer.dataset.info).description);
         window.sessionStorage.setItem('edit','true');
         window.sessionStorage.setItem('editedBook',JSON.parse(bookContainer.dataset.info).id);
-        window.location.href = `./add_edit.html?${dataParams.toString()}`;
+        window.location.href = `./add-edit?${dataParams.toString()}`;
     });
 
     let deleteBtn = document.createElement('button');
