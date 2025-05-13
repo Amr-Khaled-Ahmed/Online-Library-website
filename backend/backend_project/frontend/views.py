@@ -1,4 +1,11 @@
 from django.shortcuts import render
+from django.http import JsonResponse
+from db_scripts import library_api
+
+def search_books(request):
+    # results = library_api.search_books(search_query="python")  (example)
+    return JsonResponse(results)
+
 
 # Create your views here.
 def home(request):
