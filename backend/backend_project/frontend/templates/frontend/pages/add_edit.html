@@ -55,42 +55,39 @@
                 <div class="back-btn">
                     <button id="back"><i class="fa fa-angle-left" aria-hidden="true"></i> Back</button>
                 </div>
-                <div class="book-details">
-                    <div class="all-cover-upload">
-                        <div class="img-holder">
-                            <img src alt="Book Cover" class="book-cover hide">
-                            <div class="upload">
-                                <i id="upload-icon" class="fa-solid fa-arrow-up-from-bracket"></i>
-                                <p id="msg">Click or Drag and Drop to upload book cover</p>
+                <form>
+                    <div class="book-details">
+                        <div class="all-cover-upload">
+                            <div class="img-holder">
+                                <img src alt="Book Cover" class="book-cover hide">
+                                <div class="upload">
+                                    <i id="upload-icon" class="fa-solid fa-arrow-up-from-bracket"></i>
+                                    <p id="msg">Click or Drag and Drop to upload book
+                                        cover</p>
+                                </div>
+                                <input type="file" id="img-input" class="hide">
                             </div>
-                            <input type="file" id="img-input" class="hide">
+                            <div>
+                                <p id="book-cover-validation" class="hide">You must upload book cover</p>
+                            </div>
                         </div>
-                        <div>
-                            <p id="book-cover-validation" class="hide">You must upload book cover</p>
-                        </div>
-                    </div>
-                    
-                    <div class="details-form">
-                        <form>
+                        <div class="all-fields">
                             <div class="field">
                                 <div class="input-header">
                                     <i class="fa-solid fa-id-badge"></i>
-                                    <label for="book-id">Book ID</label>
+                                    <label for="isbn">Book ISBN</label>
                                 </div>
-                                <input type="text" id="id" name="id"
+                                <input type="text" id="isbn" name="isbn"
                                     oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                                    placeholder="Enter Book ID"
-                                    autocomplete="off"
-                                    required>
-                                <p id="id-validation" class="hide">This ID is already Taken</p>
+                                    placeholder="Enter Book ISBN must be exactly 13 digit" minlength="13" maxlength="13"
+                                    pattern="\d{13}" autocomplete="off" required>
                             </div>
                             <div class="field">
                                 <div class="input-header">
                                     <i class="fa-solid fa-book"></i>
                                     <label for="title">Book Title</label>
                                 </div>
-                                <input type="text" id="title" name="book-title"
-                                    placeholder="Enter Book Title"
+                                <input type="text" id="title" name="book-title" placeholder="Enter Book Title"
                                     autocomplete="off" required>
                             </div>
                             <div class="field">
@@ -98,35 +95,24 @@
                                     <i class="fa-solid fa-pen"></i>
                                     <label for="author">Author</label>
                                 </div>
-                                <input type="text" id="author" name="author"
-                                    placeholder="Enter Author"
-                                    autocomplete="off"
+                                <input type="text" id="author" name="author" placeholder="Enter Author" autocomplete="off"
                                     required>
                             </div>
                             <div class="select-field">
-                                <select class="filter-select" id="genre"
-                                    name="book-genre" required>
+                                <select class="filter-select" id="genre" name="book-genre" required>
                                     <option value>All Genres</option>
                                     <option value="fiction">Fiction</option>
                                     <option value="non-fiction">Non-Fiction</option>
                                     <option value="mystery">Mystery</option>
                                     <option value="fantasy">Fantasy</option>
-                                    <option value="sci-fi">Science Fiction</option>
+                                    <option value="sci-fi">Science
+                                        Fiction</option>
                                     <option value="romance">Romance</option>
                                     <option value="biography">Biography</option>
                                     <option value="history">History</option>
                                     <option value="self-help">Self-Help</option>
                                 </select>
-                                <select class="filter-select" id="format"
-                                    name="book-format" required>
-                                    <option value>All Formats</option>
-                                    <option value="hardcover">Hardcover</option>
-                                    <option value="paperback">Paperback</option>
-                                    <option value="ebook">E-Book</option>
-                                    <option value="audiobook">Audiobook</option>
-                                </select>
-                                <select class="filter-select" id="availability"
-                                    name="book-availability" required>
+                                <select class="filter-select" id="availability" name="book-availability" required>
                                     <option value>Availability</option>
                                     <option value="available">Available</option>
                                     <option value="unavailable">Unavailable</option>
@@ -136,23 +122,19 @@
                             <div class="field">
                                 <div class="input-header">
                                     <i class="fa-regular fa-calendar"></i>
-                                    <label for="pub-year">Year of Publication</label>
+                                    <label for="pub-year">Year of
+                                        Publication</label>
                                 </div>
-                                <input type="number" id="pub-year"
-                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');"
-                                    placeholder="2025"
-                                    name="year-of-publication" min="1900"
-                                    max="2025" required>
+                                <input type="number" id="pub-year" oninput="this.value = this.value.replace(/[^0-9]/g, '');"
+                                    placeholder="2025" name="year-of-publication" min="1900" max="2025" required>
                             </div>
                             <div class="field">
                                 <div class="input-header">
                                     <i class="fa-solid fa-money-bill-wave"></i>
                                     <label for="late-fee">Late Fee</label>
                                 </div>
-                                <input type="text" id="late-fee"
-                                    autocomplete="off"
-                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '');"
-                                    placeholder="Enter Late Fee"
+                                <input type="text" id="late-fee" autocomplete="off"
+                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '');" placeholder="Enter Late Fee"
                                     name="late-fee" required>
                             </div>
                             <div class="field">
@@ -160,19 +142,14 @@
                                     <i class="fa-solid fa-file-prescription"></i>
                                     <label for="description">Book Description</label>
                                 </div>
-                                <input type="text" id="description" name="description"
-                                    placeholder="Enter Book Description"
-                                    autocomplete="off"
-                                    required>
-                            </div>
-                            
-                            <input type="reset" id="reset" name="reset"
-                                value="Reset">
-                            <input type="submit" id="save" name="save"
-                                value="Save">
-                        </form>
+                                <input type="text" id="description" name="description" placeholder="Enter Book Description"
+                                    autocomplete="off" required>
+                        </div>
+
+                        <input type="reset" id="reset" name="reset" value="Reset">
+                        <input type="submit" id="save" name="save" value="Save">
                     </div>
-                </div>
+                </form>
             </div>
         </main>
 

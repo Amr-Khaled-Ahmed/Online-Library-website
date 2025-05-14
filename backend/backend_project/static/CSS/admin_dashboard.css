@@ -81,7 +81,7 @@ body {
 }
 
 .borrowers-list .book-details {
-    margin-right: 10%;
+    margin-right: 5%;
     margin-left: 5%;
     margin-top: 7%;
 }
@@ -439,6 +439,7 @@ h4 {
     justify-content: center;
     margin: 5%;
     padding: 10%;
+    width: 100%;
     color: var(--primary-color);
     background-color: var(--form-bg-color);
     border-radius: 10px;

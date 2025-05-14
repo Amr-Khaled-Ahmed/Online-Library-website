@@ -116,7 +116,7 @@
         <section class="search-container">
             <form class="search-form" method="GET" action="{% url 'admin_dashboard' %}">
                 <div class="search-box">
-                    <input type="search" name="q" class="search-input" placeholder="Search by title, author or ID ..." value="{{ request.GET.q }}">
+                    <input type="search" name="q" class="search-input" placeholder="Search by title, author ..." value="{{ request.GET.q }}">
                     <!-- <button type="submit" class="search-btn"><i class="fas fa-search"></i></button> -->
                 </div>
 
@@ -134,13 +134,13 @@
                         <option value="self-help" {% if request.GET.genre == 'self-help' %}selected{% endif %}>Self-Help</option>
                     </select>
 
-                    <select class="filter-select format-selector" name="format">
+                    {% comment %} <select class="filter-select format-selector" name="format">
                         <option value="">All Formats</option>
                         <option value="hardcover" {% if request.GET.format == 'hardcover' %}selected{% endif %}>Hardcover</option>
                         <option value="paperback" {% if request.GET.format == 'paperback' %}selected{% endif %}>Paperback</option>
                         <option value="ebook" {% if request.GET.format == 'ebook' %}selected{% endif %}>E-Book</option>
                         <option value="audiobook" {% if request.GET.format == 'audiobook' %}selected{% endif %}>Audiobook</option>
-                    </select>
+                    </select> {% endcomment %}
 
                     <select class="filter-select sort-selector" name="sort">
                         <option value="">Sort By</option>
