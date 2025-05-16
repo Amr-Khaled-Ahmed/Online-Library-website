@@ -18,7 +18,13 @@
                 <span style="color: var(--text-color);">Online Library</span>
             </div>
             <h2>Sign-In</h2>
-
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
             <div class="field">
                 <div class="field-heading">
                     <i class="fa-solid fa-user"></i>

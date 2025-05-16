@@ -33,7 +33,12 @@ import json
 # Import FileSystemStorage for saving files and OperationalError
 from django.core.files.storage import FileSystemStorage
 from django.db.utils import OperationalError
-
+# customize email
+from django.core.mail import send_mail, EmailMultiAlternatives
+from django.template.loader import render_to_string
+from django.utils.html import strip_tags
+from django.contrib.auth.hashers import make_password
+import traceback
 logger = logging.getLogger(__name__)
 # Initialize the library API (if needed globally)
 db_path = os.path.join(settings.BASE_DIR, 'library.db')
@@ -312,7 +317,8 @@ def sign_in(request):
         else:
             # Should not happen if signup/admin creation is correct, but handle defensively
             logger.warning(f"Authenticated user {request.user.username} has no app role. Logging out.")
-            messages.warning(request, "Your user role is undefined. Please contact support.")
+            # This line generates an error message if the user has no role
+            messages.error(request, "Your user role is undefined. Please contact support.")
             auth_logout(request)
             return redirect('sign_in')
 
@@ -323,6 +329,7 @@ def sign_in(request):
 
         context['form_data'] = {'username': username_or_email}
 
+        # This block generates an error message if fields are empty
         if not username_or_email or not password:
             messages.error(request, "Both username/email and password are required.")
             return render(request, "frontend/pages/sign-in.html", context)
@@ -356,22 +363,23 @@ def sign_in(request):
                     # Fallback for authenticated users without a defined app role
                     logger.warning(
                         f"Authenticated user {request.user.username} has no app role post-login. Logging out.")
+                    # This line generates an error message if the user has no role after successful auth
                     messages.error(request,
                                    "Login successful, but no role (Admin/Customer) is assigned. Please contact support.")
                     auth_logout(request)
                     return redirect('sign_in')
             else:
                 logger.warning(f"Attempted login for inactive user: {username_or_email}")
+                # This line generates an error message for inactive accounts
                 messages.error(request, "This account is inactive. Please contact support.")
                 return render(request, "frontend/pages/sign-in.html", context)
         else:
             logger.warning(f"Failed login attempt for: {username_or_email}")
+            # This line generates the error message for invalid credentials
             messages.error(request, "Invalid username/email or password. Please try again.")
             return render(request, "frontend/pages/sign-in.html", context)
 
     return render(request, "frontend/pages/sign-in.html", context)
-
-
 def user_dashboard(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access the user dashboard')
@@ -892,7 +900,7 @@ def send_verification_email_view(request):
     """
     Handles the AJAX request to send a password reset verification email.
     Expects a POST request with JSON data containing the 'username'.
-    Generates and saves a verification token.
+    Generates and saves a verification token and sends an HTML email.
     """
     if request.method == 'POST':
         try:
@@ -917,28 +925,44 @@ def send_verification_email_view(request):
 
                 # Create and save the token
                 # The expires_at is set automatically by the model's save method
-                PasswordResetToken.objects.create(user=user, token=verification_code)
+                token_obj = PasswordResetToken.objects.create(user=user, token=verification_code)
 
-                # --- Email Sending Logic ---
-                subject = 'Password Reset Verification Code'
-                message = f'Hello {user.username},\n\nYour password reset verification code is: {verification_code}\n\nThis code will expire in 15 minutes. If you did not request a password reset, please ignore this email.\n\nBest regards,\nYour Library Team'
-                from_email = settings.EMAIL_HOST_USER # Ensure EMAIL_HOST_USER is configured in settings.py
+                # --- Email Sending Logic (Using HTML Template) ---
+                subject = 'Online Library - Password Reset Verification Code' # Improved subject
+                from_email = settings.EMAIL_HOST_USER
                 recipient_list = [user.email] # Send to the user's registered email address
 
-                send_mail(subject, message, from_email, recipient_list)
+                # Render the HTML email template
+                # Ensure your template is in frontend/templates/emails/password_reset_code.html
+                html_message = render_to_string('frontend/emails/password_reset_code.html', {
 
-                # Set a session variable to indicate the user is in the password reset flow
-                # and store the username temporarily.
+                    'username': user.username,
+                    'verification_code': verification_code,
+                    'sign_in_url': request.build_absolute_uri(reverse('sign_in')), # Pass the sign-in URL
+                })
+
+                # Create a plain text version as a fallback (recommended)
+                plain_message = strip_tags(html_message)
+
+                # Use EmailMultiAlternatives to send both versions
+                email = EmailMultiAlternatives(subject, plain_message, from_email, recipient_list)
+                email.attach_alternative(html_message, "text/html")
+
+                email.send() # Send the email
+
+                # Set session variable after successful email sending and token creation
                 request.session['password_reset_username'] = username
-                # You might also store the token's ID or the user's ID securely
+
 
                 return JsonResponse({'success': True, 'message': 'Verification code sent to your email.'})
 
             except User.DoesNotExist:
-                # Return a generic error message to prevent user enumeration
-                return JsonResponse({'success': False, 'error': 'If a user with that username exists, a verification email has been sent.'}, status=200)
+                 # Generic message for security
+                 return JsonResponse({'success': False, 'error': 'If a user with that username exists, a verification email has been sent.'}, status=200)
             except Exception as e:
+                # Log the error and print the full traceback
                 print(f"Error sending verification email: {e}")
+                traceback.print_exc() # <--- This will print the detailed error!
                 return JsonResponse({'success': False, 'error': 'An error occurred while trying to send the verification email. Please try again.'}, status=500)
 
         except json.JSONDecodeError:
@@ -960,8 +984,14 @@ def verify_reset_code_view(request):
             code = data.get('code')
             username = request.session.get('password_reset_username') # Get username from session
 
+            # Log details for debugging
+            print(f"Verification code attempt for username: {username} with code: {code}")
+
             if not code or not username:
-                return JsonResponse({'success': False, 'error': 'Code and username are required.'}, status=400)
+                # Clear session data if prerequisites are not met unexpectedly
+                request.session.pop('password_reset_username', None)
+                request.session.pop('password_reset_code_verified', None)
+                return JsonResponse({'success': False, 'error': 'Password reset flow not initiated or session expired. Please start again.'}, status=400)
 
             try:
                 user = User.objects.get(username=username)
@@ -976,7 +1006,7 @@ def verify_reset_code_view(request):
 
                     # Set a session variable to indicate code verification was successful
                     request.session['password_reset_code_verified'] = True
-                    # You might store a token or user ID here for extra security
+                    # You might store a token ID or user ID here for extra security in a production system
 
                     return JsonResponse({'success': True, 'message': 'Code verified successfully.'})
                 else:
@@ -984,10 +1014,17 @@ def verify_reset_code_view(request):
 
             except User.DoesNotExist:
                  # Should not happen if username is from session, but handle defensively
-                 return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
+                request.session.pop('password_reset_username', None) # Clear session data
+                request.session.pop('password_reset_code_verified', None)
+                return JsonResponse({'success': False, 'error': 'User not found during code verification.'}, status=404)
             except Exception as e:
                 print(f"Error verifying reset code: {e}")
-                return JsonResponse({'success': False, 'error': 'An error occurred during code verification.'}, status=500)
+                # Log the traceback for better debugging
+                traceback.print_exc() # <--- This will print the detailed error!
+                # Clear session data on error to force restart of reset flow
+                request.session.pop('password_reset_username', None)
+                request.session.pop('password_reset_code_verified', None)
+                return JsonResponse({'success': False, 'error': 'An error occurred during code verification. Please try again.'}, status=500)
 
         except json.JSONDecodeError:
             return JsonResponse({'success': False, 'error': 'Invalid data format. Please send valid JSON.'}, status=400)
@@ -1009,15 +1046,22 @@ def reset_password_confirm_view(request):
             username = request.session.get('password_reset_username') # Get username from session
             code_verified = request.session.get('password_reset_code_verified') # Check session for verification status
 
+            # Log details for debugging
+            print(f"Reset password attempt for username: {username}")
+            print(f"Code verified status in session: {code_verified}")
+
 
             if not new_password or not username or not code_verified:
                  # Return appropriate error if prerequisites are not met
                  error_message = 'Password and username are required.'
-                 if not code_verified:
-                     error_message = 'Code verification is required before setting a new password.'
-                     # Clear session data if verification flag is missing unexpectedly
-                     request.session.pop('password_reset_username', None)
-                     request.session.pop('password_reset_code_verified', None)
+                 if not username:
+                      error_message = 'Password reset flow not initiated or session expired. Please start again.'
+                 elif not code_verified:
+                     error_message = 'Code verification is required before setting a new password. Please go back and verify the code.'
+
+                 # Clear session data if prerequisites are not met unexpectedly
+                 request.session.pop('password_reset_username', None)
+                 request.session.pop('password_reset_code_verified', None)
 
 
                  return JsonResponse({'success': False, 'error': error_message}, status=400)
@@ -1026,7 +1070,7 @@ def reset_password_confirm_view(request):
             try:
                 user = User.objects.get(username=username)
 
-                # Use Django's set_password method to handle hashing
+                # Use Django's set_password method to handle hashing securely
                 user.set_password(new_password)
                 user.save()
 
@@ -1035,15 +1079,18 @@ def reset_password_confirm_view(request):
                 request.session.pop('password_reset_code_verified', None)
 
 
-                return JsonResponse({'success': True, 'message': 'Password has been reset successfully.'})
+                return JsonResponse({'success': True, 'message': 'Password has been reset successfully. You can now log in with your new password.'})
 
             except User.DoesNotExist:
-                 # Should not happen if username is from session, but handle defensively
+                 # This case should ideally not happen if username is from a verified session,
+                 # but handle defensively.
                 request.session.pop('password_reset_username', None) # Clear session data
                 request.session.pop('password_reset_code_verified', None)
-                return JsonResponse({'success': False, 'error': 'User not found.'}, status=404)
+                return JsonResponse({'success': False, 'error': 'User not found during password reset.'}, status=404)
             except Exception as e:
                 print(f"Error resetting password: {e}")
+                # Log the traceback for better debugging
+                traceback.print_exc() # <--- This will print the detailed error!
                 # Clear session data on error to force restart of reset flow
                 request.session.pop('password_reset_username', None)
                 request.session.pop('password_reset_code_verified', None)
