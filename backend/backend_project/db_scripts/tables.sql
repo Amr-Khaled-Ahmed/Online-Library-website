@@ -98,15 +98,17 @@ CREATE TABLE BookCopies (
 ) STRICT;
 
 CREATE TABLE BookAuthor (
+    bookauthor_id INTEGER PRIMARY KEY AUTOINCREMENT,
     book_id INTEGER REFERENCES Books(book_id) ON DELETE CASCADE ON UPDATE CASCADE,
     author_id INTEGER REFERENCES Authors(author_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (book_id, author_id)
+    UNIQUE (book_id, author_id)
 ) STRICT;
 
 CREATE TABLE BookGenre (
+    bookgenre_id INTEGER PRIMARY KEY AUTOINCREMENT,
     book_id INTEGER REFERENCES Books(book_id) ON DELETE CASCADE ON UPDATE CASCADE,
     genre_id INTEGER REFERENCES Genres(genre_id) ON DELETE CASCADE ON UPDATE CASCADE,
-    PRIMARY KEY (book_id, genre_id)
+    UNIQUE (book_id, genre_id)
 ) STRICT;
 
 CREATE TABLE Borrowings (

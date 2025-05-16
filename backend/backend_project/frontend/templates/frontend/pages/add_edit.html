@@ -27,7 +27,6 @@
                     <ul class="nav-bar">
                         <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                         <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
-                        <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
                     </ul>
                 </nav>
                 <button class="menu-toggle">
@@ -41,7 +40,7 @@
             <ul class="mobile-nav">
                 <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i> Dashboard</a></li>
-                <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+
             </ul>
         </div>
 
@@ -112,12 +111,6 @@
                                     <option value="history">History</option>
                                     <option value="self-help">Self-Help</option>
                                 </select>
-                                <select class="filter-select" id="availability" name="book-availability" required>
-                                    <option value>Availability</option>
-                                    <option value="available">Available</option>
-                                    <option value="unavailable">Unavailable</option>
-                                    <option value="low-stock">Low Stock</option>
-                                </select>
                             </div>
                             <div class="field">
                                 <div class="input-header">
@@ -130,12 +123,12 @@
                             </div>
                             <div class="field">
                                 <div class="input-header">
-                                    <i class="fa-solid fa-money-bill-wave"></i>
-                                    <label for="late-fee">Late Fee</label>
+                                    <i class="fa-solid fa-file"></i>
+                                    <label for="late-fee">Pages Number</label>
                                 </div>
-                                <input type="text" id="late-fee" autocomplete="off"
-                                    oninput="this.value = this.value.replace(/[^0-9.]/g, '');" placeholder="Enter Late Fee"
-                                    name="late-fee" required>
+                                <input type="number" id="page-count" autocomplete="off"
+                                    oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Pages number"
+                                    name="page-count" required>
                             </div>
                             <div class="field">
                                 <div class="input-header">

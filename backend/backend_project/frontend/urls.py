@@ -1,6 +1,10 @@
+# backend_project/urls.py
 from django.urls import path
 from django.contrib.auth.views import LogoutView
 from . import views
+from django.conf import settings
+from django.conf.urls.static import static
+
 
 urlpatterns = [
     path('', views.home, name='home'),
@@ -10,10 +14,39 @@ urlpatterns = [
     path('book-details', views.book_details, name='book_details'),
     path('borrowed', views.borrowed, name='borrowed'),
     path('profile', views.profile, name='profile'),
+    path('profile', views.profile, name='profile'),
+    # Add URL for updating profile picture
+    path('profile/update_picture/', views.update_profile_picture, name='update_profile_picture'),
+    # Removed the delete account URL pattern
+
     path('sign-in', views.sign_in, name='sign_in'),
     path('sign-up', views.sign_up, name='sign_up'),
+
+    path('forgot-password', views.forgot_password, name='forgot_password'),
     path('user-dashboard', views.user_dashboard, name='user_dashboard'),
-    path('logout', LogoutView.as_view(next_page='home'), name='logout'),  # Add this line
+    path('logout/', views.logout_user, name='logout'),
+    path('add-book', views.add_book, name='add_book'),
+    path('delete-book', views.delete_book, name='delete_book'),
+    path('get-book/<int:book_id>', views.get_book, name='get_book'),
+    path('edit-book/<int:book_id>', views.edit_book, name='edit_book'),
+    path('add-copies', views.add_copies, name='add_copies'),
+
+    #  Password Reset URL Patterns
+    path('send-verification-email/', views.send_verification_email_view, name='send_verification_email'),
+    path('verify-reset-code/', views.verify_reset_code_view, name='verify_reset_code'),
+    path('reset-password-confirm/', views.reset_password_confirm_view, name='reset_password_confirm'),
+
+
+    path('api/books/', views.get_books, name='api_books'),
+    path('api/books/<int:book_id>/', views.get_book_details, name='get_book_details'),
+    path('api/books/<int:book_id>/borrow/', views.borrow_book, name='borrow_book'),
+    path('api/user/current/', views.get_current_user, name='get_current_user'),
 
     # path('about', views.about, name='about'),
 ]
+
+# Add this to serve media files during development
+# IMPORTANT: In production, you should serve media files using a proper web server (like Nginx)
+# or a cloud storage service (like AWS S3). This is for development convenience only.
+if settings.DEBUG:
+    urlpatterns += static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

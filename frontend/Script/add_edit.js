@@ -5,20 +5,8 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = "./admin_dashboard.html";
     });
 
-    document.getElementById('id').addEventListener('input',() => {
-        if(takenID())
-            document.getElementById('id-validation').classList.remove('hide');
-        else
-            document.getElementById('id-validation').classList.add('hide');
-    });
-
     document.querySelector('form').addEventListener('submit',(e) => {
         e.preventDefault();
-
-        if(takenID()) {
-            document.getElementById('id-validation').classList.remove('hide');
-            return;
-        }
 
         // Check not empty book cover
         let img = document.querySelector('.book-cover');
@@ -27,37 +15,52 @@ document.addEventListener('DOMContentLoaded', function() {
             return;
         }
 
-        const bookParams = new URLSearchParams(window.location.search);
-        // Save book info
+        // book info
         const bookData = {
-            id: id.value,
+            isbn: document.getElementById('isbn').value,
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
-            // coverPath: document.querySelector('.book-cover').src,
+            coverPath: document.querySelector('.book-cover').src,
             genre: document.getElementById('genre').value,
-            format: document.getElementById('format').value,
             pubYear: document.getElementById('pub-year').value,
             availability: document.getElementById('availability').value,
-            borrowNum: (window.sessionStorage.getItem('edit') === 'true') ? bookParams.get('borrowNum') : '0',
             lateFees: document.getElementById('late-fee').value,
-            // description: document.getElementById('description').value,
-            // borrowersList: []
+            description: document.getElementById('description').value,
         };
 
-        // Send book info to admin dashboard and save there (temporary), no need with database
-        const dataParams = new URLSearchParams();
-        for(const [key,value] of Object.entries(bookData)) {
-            dataParams.append(key,value);
-        }
-        window.sessionStorage.setItem('save','true');
-        // The link is too long
-        window.sessionStorage.setItem('coverPath',document.querySelector('.book-cover').src);
-        window.sessionStorage.setItem('description',document.getElementById('description').value);
-
         // Save book to database
+        fetch('/add-book/', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': getCookie('csrftoken')
+            },
+        body: JSON.stringify(bookData)
+        })
+        .then(response => response.json())
+        .then(() => {
+            // Return to Admin Dashboard
+            window.sessionStorage.setItem('save') = 'true';
+            window.location.href = './admin_dashboard.html'
+        });
 
-        window.location.href = `./admin_dashboard.html?${dataParams.toString()}`;
     });
+
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.startsWith(name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
+
 
     // Upload book cover
     let imgHolder = document.querySelector('.img-holder');
@@ -177,21 +180,5 @@ document.addEventListener('DOMContentLoaded', function() {
             document.getElementById('availability').value = '';
             document.getElementById('pub-year').value = '';
         }
-        // if(!img.classList.contains('hide') && img.naturalWidth == 0) {
-        //     img.classList.add('hide');
-        //     document.querySelector('.upload').style.display = 'flex';
-        // }
     });
 });
-
-// Check not taken id
-function takenID() {
-    let books = JSON.parse(window.localStorage.getItem('books'));
-    let id = document.getElementById('id').value;
-    let taken = false;
-    books.forEach(book => {
-        if(book.id == id && window.sessionStorage.getItem('editedBook') !== id)
-            taken = true;
-    });
-    return taken;
-}

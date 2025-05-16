@@ -9,53 +9,17 @@ signinForm.addEventListener('submit', (e) => {
   e.preventDefault();
   clearAllErrors();
 
-  let hasError = false;
-
   const username = usernameInput.value.trim();
   const password = passwordInput.value;
+
+  let hasError = false;
 
   if (username === '') {
     setError(usernameInput, usernameError, 'Username is required');
     hasError = true;
   }
-
   if (password === '') {
     setError(passwordInput, passwordError, 'Password is required');
-    hasError = true;
-  }
-
-  // Default admin credentials
-  const defaultAdmin = {
-    username: 'admin',
-    password: 'Admin@123456789',
-    role: 'admin',
-    fullName: 'Admin User',
-    email: 'admin@library.com',
-    favorite_books: [],
-    borrowed_books: [],
-    profilePicture: null,
-    bio: '',
-    memberSince: new Date().toISOString()
-  };
-
-  const users = JSON.parse(localStorage.getItem('users_data') || '[]');
-  const matchedUser = users.find(u => u.username === username);
-
-  // Check for default admin login
-  if (!matchedUser && username === defaultAdmin.username && password === defaultAdmin.password) {
-    localStorage.setItem('loggedIn_user', JSON.stringify(defaultAdmin));
-    window.location.href = 'admin_dashboard.html';
-    return;
-  }
-
-  // Validate user exists
-  if (!matchedUser) {
-    setError(usernameInput, usernameError, 'Username does not exist');
-    hasError = true;
-  } 
-  // Validate password
-  else if (matchedUser.password !== password) {
-    setError(passwordInput, passwordError, 'Incorrect password');
     hasError = true;
   }
 
@@ -63,15 +27,33 @@ signinForm.addEventListener('submit', (e) => {
     return;
   }
 
-  // Successful login
-  localStorage.setItem('loggedIn_user', JSON.stringify(matchedUser));
-  
-  // Redirect based on role
-  if (matchedUser.role === 'admin') {
-    window.location.href = 'admin_dashboard.html';
-  } else {
-    window.location.href = 'user_dashboard.html';
-  }
+  fetch(signinForm.action, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/x-www-form-urlencoded',
+      'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
+    },
+    body: new URLSearchParams({
+      username_or_email: username,
+      password,
+    }),
+  })
+    .then((response) => {
+      if (response.ok) {
+        window.location.href = '/user-dashboard';
+      } else {
+        return response.json();
+      }
+    })
+    .then((data) => {
+      if (data && data.error) {
+        alert(data.error);
+      }
+    })
+    .catch((error) => {
+      console.error('Error:', error);
+      alert('An error occurred. Please try again.');
+    });
 });
 
 function setError(input, errorElement, message) {
@@ -91,7 +73,6 @@ function clearAllErrors() {
   });
 }
 
-// Clear errors when typing
 usernameInput.addEventListener('input', () => {
   usernameInput.parentElement.classList.remove('incorrect');
   usernameError.innerText = '';

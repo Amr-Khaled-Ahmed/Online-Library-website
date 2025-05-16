@@ -15,7 +15,8 @@ import os
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-
+MEDIA_URL = '/media/'
+MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/5.2/howto/deployment/checklist/
 
@@ -56,7 +57,7 @@ TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'frontend', 'templates'),  
+            os.path.join(BASE_DIR, 'frontend', 'templates'),
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -78,7 +79,7 @@ WSGI_APPLICATION = 'backend_project.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'my_db.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'my_db.sqlite3'), # <--- This is your database file
     }
 }
 
@@ -133,3 +134,19 @@ STATICFILES_DIRS = [
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+
+# AUTH_USER_MODEL = 'frontend.User'
+
+
+
+# email verfication
+EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_PORT = 587
+EMAIL_USE_TLS = True  # Gmail uses TLS on port 587
+EMAIL_USE_SSL = False # Do not use SSL with TLS
+EMAIL_HOST_USER = 'amr171516@gmail.com' # Your Gmail address
+EMAIL_HOST_PASSWORD = 'emdb nrvw unpa edoq' # Your Gmail password or App Password
+DEFAULT_FROM_EMAIL = 'amr171516@gmail.com' # Emails will appear to be from this address
+SERVER_EMAIL = 'amr171516@gmail.com' # For server error notifications

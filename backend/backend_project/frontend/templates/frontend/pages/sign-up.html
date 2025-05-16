@@ -16,53 +16,84 @@
     <section class="sign-up">
         <form id="form" method="post" action="{% url 'sign_up' %}">
             {% csrf_token %}
+
+            {% if messages %}
+                <ul class="messages">
+                    {% for message in messages %}
+                        <li class="{{ message.tags }}">{{ message }}</li>
+                    {% endfor %}
+                </ul>
+            {% endif %}
+
             <div class="logo">
                 <i class="fas fa-book-open"></i>
                 <span style="color: var(--text-color);">Online Library</span>
             </div>
             <h2>Sign-Up</h2>
+
             <div class="field">
                 <div class="field-heading">
                     <i class="fa-solid fa-user"></i>
                     <label for="username">Username</label>
                 </div>
                 <input class="input" type="text" id="username" name="username" placeholder="Enter username" required>
-                <span class="error-text" id="username-error"></span>
             </div>
+
             <div class="field">
                 <div class="field-heading">
                     <i class="fa-solid fa-user"></i>
-                    <label for="fullName">Full name</label>
+                    <label for="first_name">First Name</label>
                 </div>
-                <input class="input" type="text" id="fullName" name="fullName" placeholder="Enter your name" required>
-                <span class="error-text" id="name-error"></span>
+                <input class="input" type="text" id="first_name" name="first_name" placeholder="Enter first name" required>
             </div>
+
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-user"></i>
+                    <label for="last_name">Last Name</label>
+                </div>
+                <input class="input" type="text" id="last_name" name="last_name" placeholder="Enter last name" required>
+            </div>
+
+            <div class="field">
+                <div class="field-heading">
+                    <i class="fa-solid fa-envelope"></i>
+                    <label for="email">Email</label>
+                </div>
+                <input type="email" id="email" name="email" placeholder="Enter email" required>
+            </div>
+
             <div class="field">
                 <div class="field-heading">
                     <i class="fa-solid fa-lock"></i>
                     <label for="password">Password</label>
                 </div>
                 <input class="input" type="password" id="password" name="password" placeholder="Enter password" required>
-                <span class="error-text" id="password-error"></span>
             </div>
+
             <div class="field">
                 <div class="field-heading">
                     <i class="fa-solid fa-pencil"></i>
-                    <label for="pass-confirm">Confirm password</label>
+                    <label for="pass_confirm">Confirm password</label>
                 </div>
-                <input class="input" type="password" id="pass-confirm" name="pass-confirm" placeholder="Confirm password" required>
-                <span class="error-text" id="pass-confirm-error"></span>
+                <input class="input" type="password" id="pass_confirm" name="pass_confirm" placeholder="Confirm password" required>
             </div>
+
             <div class="field">
                 <div class="field-heading">
-                    <i class="fa-solid fa-envelope"></i>
-                    <label for="email">Email</label>
+                    <i class="fa-solid fa-user-tag"></i> {# You might need a different icon #}
+                    <label for="user_type">User Type</label>
                 </div>
-                <input type="email" id="email" name="user_email" placeholder="Enter email" required>
-                <span class="error-text" id="email-error"></span>
+                <select id="user_type" name="user_type" class="select_user_type" required>
+                    <option value="customer">Customer</option>
+                    <option value="admin">Admin</option>
+                </select>
             </div>
+
+
             <button type="submit" id="button">Sign up</button>
             <a class="cancel-button" href="{% url 'home' %}">Cancel</a>
+
             <div class="sign-in">
                 <span>Already have an account?</span>
                 <a href="{% url 'sign_in' %}">Sign in</a>
@@ -70,7 +101,9 @@
         </form>
         <img src="{% static 'assets/woman-reading-chair.png' %}" alt="Woman reading a book">
     </section>
+
     <script src="{% static 'Script/theme.js' %}"></script>
-    <script src="{% static 'Script/sign_up.js' %}"></script>
+    {# You might need a specific sign_up.js for client-side validation #}
+    {# <script src="{% static 'Script/sign_up.js' %}"></script> #}
 </body>
 </html>

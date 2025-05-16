@@ -11,7 +11,8 @@
     </head>
 <body>
     <section class="sign-in">
-        <form id="form">
+        <form id="form" method="post" action="{% url 'sign_in' %}">
+            {% csrf_token %}
             <div class="logo">
                 <i class="fas fa-book-open"></i>
                 <span style="color: var(--text-color);">Online Library</span>
@@ -23,7 +24,7 @@
                     <i class="fa-solid fa-user"></i>
                     <label for="username">Username</label>
                 </div>
-                <input class="input" type="text" id="username" name="username" placeholder="Enter username">
+                <input class="input" type="text" id="username" name="username" placeholder="Enter username" required>
                 <span class="error-text" id="username-error"></span>
             </div>
             <div class="field">
@@ -31,7 +32,7 @@
                     <i class="fa-solid fa-lock"></i>
                     <label for="password">password</label>
                 </div>
-                <input class="input" type="password" id="password" name="password" placeholder="Enter password">
+                <input class="input" type="password" id="password" name="password" placeholder="Enter password" required>
                 <span class="error-text" id="password-error"></span>
             </div>
 
@@ -42,7 +43,7 @@
                 </div>
 
                 {% comment %}  need to set the verified email to send the password {% endcomment %}
-                <a href="#" class="forgot-password">Forgot password?</a>
+                <a href="{%url 'forgot_password' %}" class="forgot_password">Forgot password?</a>
             </div>
 
             <button type="submit">Sign in</button>
@@ -54,8 +55,7 @@
         </form>
         <img src="{%static 'assets/man-reading-design.png'%}" alt="man reading a book">
     </section>
-    <script src="{% static 'Script/sign_in.js' %}"></script>
+    {% comment %} <script src="{% static 'Script/sign_in.js' %}"></script> {% endcomment %}
     <script src="{%static 'Script/theme.js'%}"></script>
-
 </body>
 </html>

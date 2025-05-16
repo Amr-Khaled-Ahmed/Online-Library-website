@@ -171,3 +171,45 @@ input::placeholder {
 border-bottom: 2px solid red;
 }
 
+
+/* Styling for the user type select field */
+.field select {
+    color: var(--primary-color); /* Make the text green */
+    border: none;
+    border-bottom: 2px solid var(--primary-color); /* Make the default border green */
+    padding: 8px;
+    width: 100%;
+    background-color: transparent;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    /* Remove default browser styling and add custom arrow if desired */
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    cursor: pointer;
+    /* Add some right padding to make space for a custom arrow */
+    padding-right: 24px; /* Adjust as needed */
+    /* Example of adding a custom arrow (requires an SVG or image) */
+    /* background-image: url('...'); */
+    /* background-repeat: no-repeat; */
+    /* background-position: right 8px center; */
+    /* background-size: 12px; */
+}
+
+.field select:focus {
+    border-bottom: 2px solid var(--primary-hover); /* A slightly different green on focus */
+    padding-top: 20px;
+     color: var(--text-color);
+
+}
+
+/* Style for the options within the select */
+.field select option {
+     background-color: var(--form-bg-color);
+     color: var(--text-color);
+}
+
+/* Style for the icon next to the label */
+.field-heading .fa-user-tag {
+  color: var(--primary-color); /* Make option text green */
+}

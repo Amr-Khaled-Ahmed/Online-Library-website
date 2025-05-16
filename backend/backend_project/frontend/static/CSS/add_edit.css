@@ -76,7 +76,7 @@ body {
 form {
     display: flex;
     justify-content: center;
-    height: 100vh;
+    height: 99vh;
 }
 
 .book-details {
@@ -86,7 +86,7 @@ form {
     align-content: center;
     gap: 5vw;
     width: 100%;
-    height: fit-content;
+    height: 100%;
     padding-top: 2.5%;
     padding-bottom: 2.5%;
 }

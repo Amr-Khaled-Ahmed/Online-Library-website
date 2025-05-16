@@ -1,7 +1,8 @@
 document.addEventListener('DOMContentLoaded', function() {
     // Save book
     document.getElementById('back').addEventListener('click',() => {
-        window.sessionStorage.removeItem('editedBook');
+        window.sessionStorage.removeItem('edit');
+        window.sessionStorage.removeItem('bookId');
         window.location.href = "./admin-dashboard";
     });
 
@@ -23,43 +24,51 @@ document.addEventListener('DOMContentLoaded', function() {
             coverPath: document.querySelector('.book-cover').src,
             genre: document.getElementById('genre').value,
             pubYear: document.getElementById('pub-year').value,
-            availability: document.getElementById('availability').value,
-            lateFees: document.getElementById('late-fee').value,
+            pageCount: document.getElementById('page-count').value,
             description: document.getElementById('description').value,
         };
 
-        // Save book to database
-        fetch('/add-book/', {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-            'X-CSRFToken': getCookie('csrftoken')
-            },
-        body: JSON.stringify(bookData)
-        })
-        .then(response => response.json())
-        .then(() => {
-            // Return to Admin Dashboard
-            window.sessionStorage.setItem('save') = 'true';
-            window.location.href = './admin-dashboard'
-        });
 
-    });
-
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.startsWith(name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
+        if(window.sessionStorage.getItem('edit') === 'true') {
+            // Edit book in database
+            fetch(`/edit-book/${window.sessionStorage.getItem('bookId')}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(bookData)
+                })
+            .then(response => response.json())
+            .then(() => {
+                // Return to Admin Dashboard
+                window.sessionStorage.removeItem('edit');
+                window.sessionStorage.removeItem('bookId');
+                window.sessionStorage.setItem('save','true');
+                window.location.href = './admin-dashboard'
+            });
         }
-        return cookieValue;
-    }
+        else {
+            // Save book to database
+            fetch('/add-book', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': getCookie('csrftoken')
+                },
+                body: JSON.stringify(bookData)
+                })
+            .then(response => response.json())
+            .then(() => {
+                // Return to Admin Dashboard
+                window.sessionStorage.setItem('save','true');
+                window.location.href = './admin-dashboard'
+            });
+        }
+
+
+
+        });
 
 
     // Upload book cover
@@ -111,7 +120,7 @@ document.addEventListener('DOMContentLoaded', function() {
     imgHolder.addEventListener('drop', (e) => {
         const dt = e.dataTransfer;
         const files = dt.files;
-    
+
         if (files.length) {
             loadImg(files);
         }
@@ -149,29 +158,32 @@ document.addEventListener('DOMContentLoaded', function() {
 
     window.addEventListener('load',() => {
         if(window.sessionStorage.getItem('edit') === 'true') {
-            const bookParams = new URLSearchParams(window.location.search);
-            if(bookParams.size == 0) {
-                window.sessionStorage.removeItem('edit');
-                return;
-            }
-            
-            document.querySelector('.upload').style.display = 'none';
-            let img = document.querySelector('.book-cover');
-            img.src = window.sessionStorage.getItem('coverPath');
-            document.getElementById('id').value = bookParams.get('id');
-            document.getElementById('title').value = bookParams.get('title');
-            document.getElementById('author').value = bookParams.get('author');
-            document.getElementById('genre').value = bookParams.get('genre');
-            document.getElementById('format').value = bookParams.get('format');
-            document.getElementById('availability').value = bookParams.get('availability');
-            document.getElementById('pub-year').value = bookParams.get('pubYear');
-            document.getElementById('late-fee').value = bookParams.get('lateFees');
+            const bookId = window.sessionStorage.getItem('bookId');
 
-            img.classList.remove('hide');
+            fetch(`get-book/${bookId}`)
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error("Book not found");
+                }
+                return response.json();
+            })
+            .then(data => {
+                document.querySelector('.upload').style.display = 'none';
+                let img = document.querySelector('.book-cover');
+                img.src = data.coverPath;
+                img.classList.remove('hide');
 
-            document.getElementById('description').value = window.sessionStorage.getItem('description');
-            window.sessionStorage.removeItem('description');
-            window.sessionStorage.removeItem('coverPath');
+                document.getElementById('isbn').value = data.isbn;
+                document.getElementById('title').value = data.title;
+                document.getElementById('author').value = data.author;
+                document.getElementById('genre').value = data.genre;
+                document.getElementById('pub-year').value = data.pubYear;
+                document.getElementById('page-count').value = data.pageCount;
+                document.getElementById('description').value = data.description;
+            })
+            .catch(error => {
+                console.error("Error fetching book:", error);
+            });
         }
         else {
             document.querySelector('.upload').style.display = 'flex';
@@ -182,3 +194,18 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 });
+
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.startsWith(name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}

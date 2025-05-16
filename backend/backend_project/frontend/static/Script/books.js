@@ -75,31 +75,66 @@ const sampleBooks = [
 function addBookToDisplay(book) {
     const bookItem = document.createElement('div');
     bookItem.className = 'book-item';
-    bookItem.id = `_${book.id}`;
-    bookItem.dataset.info = JSON.stringify(book);
+    bookItem.id = `_${book.book_id}`;
 
     bookItem.innerHTML = `
         <button class="star-button"><i class="fas fa-star"></i></button>
         <div class="book-cover">
-            <img src="${book.coverPath}" alt="${book.title} book cover">
+            <img src="${book.cover_image_url}" alt="${book.title} book cover">
         </div>
         <div class="book-details">
             <h3 class="book-title">${book.title}</h3>
-            <p class="book-author">By ${book.author}</p>
+            <p class="book-author">By ${book.author_name}</p>
             <div class="book-meta">
-                <span class="meta-item">${book.genre[0].toUpperCase() + book.genre.slice(1)}</span>
-                <span class="meta-item">${book.format[0].toUpperCase() + book.format.slice(1)}</span>
-                <span class="meta-item">${book.pubYear}</span>
+                <span class="meta-item">${book.genre_name || 'Unknown'}</span>
+                <span class="meta-item">${book.publication_year || 'Unknown'}</span>
             </div>
             <div class="availability">
-                <span class="availability-badge ${book.availability}">${book.availability[0].toUpperCase() + book.availability.slice(1)}</span>
+                <span class="availability-badge ${book.is_available ? 'available' : 'unavailable'}">
+                    ${book.is_available ? 'Available' : 'Not Available'}
+                </span>
             </div>
             <div class="book-actions">
-                <a href="./book_details.html?id=${encodeURIComponent(book.id)}" class="book-btn details-btn">Details</a>
-                <a href="#" class="book-btn borrow-btn">Borrow</a>
+                <a href="/book-details?id=${book.book_id}" class="book-btn details-btn">Details</a>
+                ${book.is_available ? 
+                    `<button class="book-btn borrow-btn" data-book-id="${book.book_id}">Borrow</button>` :
+                    `<button class="book-btn borrow-btn" disabled>Not Available</button>`
+                }
             </div>
         </div>
     `;
+
+    // Add borrow button event listener
+    const borrowBtn = bookItem.querySelector('.borrow-btn');
+    if (!borrowBtn.disabled) {
+        borrowBtn.addEventListener('click', async () => {
+            try {
+                const response = await fetch(`/api/books/${book.book_id}/borrow/`, {
+                    method: 'POST',
+                    headers: {
+                        'X-CSRFToken': getCookie('csrftoken')
+                    }
+                });
+
+                const data = await response.json();
+
+                if (!response.ok) {
+                    throw new Error(data.error || 'Failed to borrow book');
+                }
+
+                showNotification("✅ Book borrowed successfully!");
+
+                // Refresh the page after a short delay
+                setTimeout(() => {
+                    window.location.reload();
+                }, 1500);
+
+            } catch (error) {
+                showNotification(error.message || "❌ An error occurred while borrowing the book");
+                console.error('Error:', error);
+            }
+        });
+    }
 
     return bookItem;
 }
@@ -109,7 +144,7 @@ function isBookBorrowed(bookId) {
     return userData.borrowed_books.some(borrowedBook => borrowedBook.id === bookId);
 }
 
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
     if (!document.getElementById('custom-notification-styles')) {
         const notificationStyles = document.createElement('style');
         notificationStyles.id = 'custom-notification-styles';
@@ -140,131 +175,60 @@ document.addEventListener('DOMContentLoaded', function () {
         document.head.appendChild(notificationStyles);
     }
 
-    if (!localStorage.getItem('books') || JSON.parse(localStorage.getItem('books')).length === 0) {
-        localStorage.setItem('books', JSON.stringify(sampleBooks));
-    }
-
-    const books = JSON.parse(localStorage.getItem('books'));
     const bookGrid = document.querySelector('.book-grid');
     bookGrid.innerHTML = '';
 
-    function handleBorrowBook(book, event) {
-        event.preventDefault();
-
-        const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-        const currentUsersData = JSON.parse(localStorage.getItem('users_data')) || [];
-        const currentUserIndex = currentUsersData.findIndex(u => u && u.username === currentUser?.username);
-
-        if (!currentUser.borrowed_books) currentUser.borrowed_books = [];
-
-        const isAlreadyBorrowed = currentUser.borrowed_books.some(b =>
-            b.id === book.id
-        );
-        if (isAlreadyBorrowed) {
-            const notif = document.createElement('div');
-            notif.className = 'custom-notification';
-            notif.textContent = '⚠️ This book is already borrowed!';
-            document.body.appendChild(notif);
-            setTimeout(() => notif.remove(), 3000);
-            return;
-        }
-
-        const currentDate = new Date();
-        const dueDate = new Date(currentDate);
-        dueDate.setDate(dueDate.getDate() + 21);
-
-        const borrowedBook = {
-            id: book.id,
-            title: book.title,
-            author: book.author,
-            coverPath: book.coverPath,
-            format: book.format,
-            borrowDate: currentDate.toISOString(),
-            dueDate: dueDate.toISOString(),
-            renewals: 2,
-            returned: false,
-            overdue: false
-        };
-
-        currentUser.borrowed_books.push(borrowedBook);
-        localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
-
-        if (currentUserIndex !== -1) {
-            currentUsersData[currentUserIndex].borrowed_books = currentUser.borrowed_books;
-            localStorage.setItem('users_data', JSON.stringify(currentUsersData));
-        }
-
-        if (!book.borrowersList) book.borrowersList = [];
-        const borrower = {
-            username: currentUser.username,
-            email: currentUser.email,
-            profilePic: currentUser.profile_image_url || '../CSS/assets/blue.avif',
-            borrowDate: currentDate.toISOString(),
-            dueDate: dueDate.toISOString()
-        };
-        book.borrowersList.push(borrower);
-
-        book.borrowNum = String(parseInt(book.borrowNum) + 1);
-
-        const updatedBooks = books.map(b => b.id === book.id ? book : b);
-        localStorage.setItem('books', JSON.stringify(updatedBooks));
-
+    // Function to show notifications
+    function showNotification(message) {
         const notif = document.createElement('div');
         notif.className = 'custom-notification';
-        notif.textContent = '✅ Book borrowed successfully!';
+        notif.textContent = message;
         document.body.appendChild(notif);
         setTimeout(() => notif.remove(), 3000);
     }
 
-    books.forEach(book => {
-        const bookItem = addBookToDisplay(book);
-        bookGrid.appendChild(bookItem);
+    // Helper function to get CSRF token
+    function getCookie(name) {
+        let cookieValue = null;
+        if (document.cookie && document.cookie !== '') {
+            const cookies = document.cookie.split(';');
+            for (let i = 0; i < cookies.length; i++) {
+                const cookie = cookies[i].trim();
+                if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                    break;
+                }
+            }
+        }
+        return cookieValue;
+    }
 
-        const borrowBtn = bookItem.querySelector('.borrow-btn');
-        borrowBtn.addEventListener('click', handleBorrowBook.bind(null, book));
+    // Fetch books from backend
+    try {
+        const response = await fetch('/api/books/');
+        if (!response.ok) {
+            throw new Error('Failed to fetch books');
+        }
+        const books = await response.json();
 
-        const starButton = bookItem.querySelector('.star-button');
+        books.forEach(book => {
+            const bookItem = addBookToDisplay(book);
+            bookGrid.appendChild(bookItem);
+        });
 
-        // Highlight if already favorite
-        if (userData.favorite_books?.some(fav => fav.title === book.title)) {
-            starButton.classList.add('active');
+        if (books.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'No books found.';
+            bookGrid.appendChild(noResults);
         }
 
-        // Star button event
-        starButton.addEventListener('click', (event) => {
-            event.stopPropagation();
+    } catch (error) {
+        console.error('Error fetching books:', error);
+        showNotification("❌ Failed to load books");
+    }
 
-            const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-            const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
-            const userIndex = usersData.findIndex(u => u && u.username === currentUser?.username);
-
-            if (!currentUser.favorite_books) currentUser.favorite_books = [];
-
-            const isFavorite = currentUser.favorite_books.some(fav => fav.title === book.title);
-
-            if (isFavorite) {
-                currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.title !== book.title);
-                starButton.classList.remove('active');
-            } else {
-                currentUser.favorite_books.push({
-                    id: book.id,
-                    title: book.title,
-                    author: book.author,
-                    coverPath: book.coverPath,
-                    format : book.format
-                });
-                starButton.classList.add('active');
-            }
-
-            localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
-
-            if (userIndex !== -1) {
-                usersData[userIndex].favorite_books = currentUser.favorite_books;
-                localStorage.setItem('users_data', JSON.stringify(usersData));
-            }
-        });
-    });
-
+    // Search and filter functionality
     const searchForm = document.querySelector('.search-form');
     const searchInput = document.querySelector('.search-input');
     const filterSelects = document.querySelectorAll('.filter-select');
@@ -278,95 +242,43 @@ document.addEventListener('DOMContentLoaded', function () {
         select.addEventListener('change', filterBooks);
     });
 
-    function filterBooks() {
-        const searchTerm = searchInput.value.toLowerCase();
+    async function filterBooks() {
+        const searchTerm = searchInput.value;
         const genreFilter = filterSelects[0].value;
-        const formatFilter = filterSelects[1].value;
-        const sortBy = filterSelects[2].value;
-        const availabilityFilter = filterSelects[3].value;
+        const sortBy = filterSelects[1].value;
+        const availabilityFilter = filterSelects[2].value;
 
-        bookGrid.innerHTML = '';
+        try {
+            const params = new URLSearchParams({
+                q: searchTerm,
+                genre: genreFilter,
+                sort: sortBy,
+                availability: availabilityFilter
+            });
 
-        let filteredBooks = books.filter(book => {
-            const matchesSearch = book.title.toLowerCase().includes(searchTerm) ||
-                book.author.toLowerCase().includes(searchTerm);
-            const matchesGenre = genreFilter === '' || book.genre === genreFilter;
-            const matchesFormat = formatFilter === '' || book.format === formatFilter;
-            const matchesAvailability = availabilityFilter === '' ||
-                availabilityFilter === 'all' ||
-                book.availability === availabilityFilter;
-
-            return matchesSearch && matchesGenre && matchesFormat && matchesAvailability;
-        });
-
-        if (sortBy === 'newest') {
-            filteredBooks.sort((a, b) => b.pubYear - a.pubYear);
-        } else if (sortBy === 'oldest') {
-            filteredBooks.sort((a, b) => a.pubYear - b.pubYear);
-        } else if (sortBy === 'title-asc') {
-            filteredBooks.sort((a, b) => a.title.localeCompare(b.title));
-        } else if (sortBy === 'title-desc') {
-            filteredBooks.sort((a, b) => b.title.localeCompare(a.title));
-        } else if (sortBy === 'author-asc') {
-            filteredBooks.sort((a, b) => a.author.localeCompare(b.author));
-        } else if (sortBy === 'author-desc') {
-            filteredBooks.sort((a, b) => b.author.localeCompare(a.author));
-        } else if (sortBy === 'popular') {
-            filteredBooks.sort((a, b) => b.borrowNum - a.borrowNum);
-        }
-
-        filteredBooks.forEach(book => {
-            const bookItem = addBookToDisplay(book);
-            bookGrid.appendChild(bookItem);
-
-            const borrowBtn = bookItem.querySelector('.borrow-btn');
-            borrowBtn.addEventListener('click', handleBorrowBook.bind(null, book));
-
-            const starButton = bookItem.querySelector('.star-button');
-
-            if (userData.favorite_books?.some(fav => fav.title === book.title)) {
-                starButton.classList.add('active');
+            const response = await fetch(`/api/books/?${params}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch filtered books');
             }
 
-            starButton.addEventListener('click', (event) => {
-                event.stopPropagation();
+            const books = await response.json();
+            bookGrid.innerHTML = '';
 
-                const currentUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-                const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
-                const userIndex = usersData.findIndex(u => u && u.username === currentUser?.username);
-
-                if (!currentUser.favorite_books) currentUser.favorite_books = [];
-
-                const isFavorite = currentUser.favorite_books.some(fav => fav.title === book.title);
-
-                if (isFavorite) {
-                    currentUser.favorite_books = currentUser.favorite_books.filter(fav => fav.title !== book.title);
-                    starButton.classList.remove('active');
-                } else {
-                    currentUser.favorite_books.push({
-                        id: book.id,
-                        title: book.title,
-                        author: book.author,
-                        coverPath: book.coverPath,
-                        format : book.format
-                    });
-                    starButton.classList.add('active');
-                }
-
-                localStorage.setItem('loggedIn_user', JSON.stringify(currentUser));
-
-                if (userIndex !== -1) {
-                    usersData[userIndex].favorite_books = currentUser.favorite_books;
-                    localStorage.setItem('users_data', JSON.stringify(usersData));
-                }
+            books.forEach(book => {
+                const bookItem = addBookToDisplay(book);
+                bookGrid.appendChild(bookItem);
             });
-        });
 
-        if (filteredBooks.length === 0) {
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
-            noResults.textContent = 'No books found matching your criteria.';
-            bookGrid.appendChild(noResults);
+            if (books.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = 'No books found matching your criteria.';
+                bookGrid.appendChild(noResults);
+            }
+
+        } catch (error) {
+            console.error('Error filtering books:', error);
+            showNotification("❌ Failed to filter books");
         }
     }
 });

@@ -183,17 +183,17 @@ SELECT
     b.description,
     b.added_date,
     COALESCE(ROUND(AVG(r.value), 1), 0.0) AS average_rating,
-    GROUP_CONCAT(DISTINCT a.name, ', ') AS authors,
-    GROUP_CONCAT(DISTINCT g.name, ', ') AS genres,
+    GROUP_CONCAT(a.name, ', ') AS authors, 
+    GROUP_CONCAT(g.name, ', ') AS genres, 
     COUNT(DISTINCT br.borrowing_id) AS total_borrows,
-    GROUP_CONCAT(DISTINCT CASE WHEN br.return_date IS NULL THEN br.user_id ELSE NULL END) AS active_borrowers,
+    GROUP_CONCAT(CASE WHEN br.return_date IS NULL THEN br.user_id ELSE NULL END, ', ') AS active_borrowers,
     COUNT(CASE WHEN bc.is_borrowed = 0 AND bc.format IN ('Hardcover', 'Paperback') THEN 1 END) AS available_copies,
     CASE
         WHEN COUNT(CASE WHEN bc.is_borrowed = 0 AND bc.format IN ('Hardcover', 'Paperback') THEN 1 END) = 0 THEN 'unavailable'
         WHEN COUNT(CASE WHEN bc.is_borrowed = 0 AND bc.format IN ('Hardcover', 'Paperback') THEN 1 END) <= 10 THEN 'low stock'
         ELSE 'available'
-        END AS availability_status,
-    GROUP_CONCAT(DISTINCT bc.format, ', ') AS available_formats
+    END AS availability_status,
+    GROUP_CONCAT(bc.format, ', ') AS available_formats 
 FROM Books b
          LEFT JOIN Publisher p USING (publisher_id)
          LEFT JOIN Ratings r USING (book_id)
@@ -204,6 +204,7 @@ FROM Books b
          LEFT JOIN BookCopies bc USING (book_id)
          LEFT JOIN Borrowings br ON bc.copy_id = br.copy_id
 GROUP BY b.book_id;
+
 
 
 CREATE VIEW BookBorrowers AS

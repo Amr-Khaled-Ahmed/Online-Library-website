@@ -12,10 +12,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="{% static 'CSS/admin_dashboard.css' %}">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-
-    <script src="{% static 'Script/admin_dashboard.js' %}"></script>
-    <script src="{% static 'Script/header.js' %}"></script>
-    <script src="{% static 'Script/footer.js' %}"></script>
+        <link rel="stylesheet" href={% static 'CSS/index.css' %}>
 
     <title>Admin Dashboard</title>
 </head>
@@ -32,7 +29,12 @@
                     <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                     <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
                             Dashboard</a></li>
-                    <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                    <li>
+                          <form action="{% url 'logout' %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+                          </form>
+                   </li>
                 </ul>
             </nav>
             <!-- Mobile menu toggle -->
@@ -48,7 +50,12 @@
             <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
             <li><a href="{% url 'admin_dashboard' %}" class="active"><i class="fa-solid fa-table-columns"></i>
                             Dashboard</a></li>
-            <li><a href="{% url 'home' %}" id="login-link"><i class="fas fa-sign-in-alt"></i> Log Out</a></li>
+                    <li>
+                          <form action="{% url 'logout' %}" method="post">
+                          {% csrf_token %}
+                          <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+                          </form>
+                   </li>
         </ul>
     </div>
 
@@ -58,14 +65,14 @@
         <div class="confirmation hide">
             <h4>Are you sure to delete this book?</h4>
             <div class="book-details">
-                
+
                 <div class="img-holder">
                     <img src="{% static 'assets/ChildOfTheKindred_ebook1.jpg' %}" alt="Book Cover" class="book-cover">
                 </div>
                 <div class="info">
-                    <label for="confirmation" class="id"></label>
-                    <label for="confirmation" class="book-title"></label>
-                    <label for="confirmation" class="author"></label>
+                    <label for="confirmation" class="isbn"></label>
+                    <label for="confirmation" class="book-title" style="padding-left: 0px;padding-bottom: 0px;"></label>
+                    <label for="confirmation" class="author" style="padding-left: 0px;padding-bottom: 0px;"></label>
                 </div>
             </div>
             <div class="confirm-btns">
@@ -76,19 +83,67 @@
         <div class="loading hide">
             <i class="fa-solid fa-spinner"></i>
         </div>
-        <div class="borrowers-list hide">
+        <div class="list hide">
             <span class="close-btn"><i class="fa-solid fa-xmark"></i></span>
             <div class="book-details">
                 <div class="img-holder">
                     <img src="{% static 'assets/ChildOfTheKindred_ebook1.jpg' %}" alt="Book Cover" class="book-cover">
                 </div>
                 <div class="info">
-                    <label for="borrowers-list" class="id"></label>
-                    <label for="borrowers-list" class="book-title"></label>
-                    <label for="borrowers-list" class="author"></label>
+                    <label for="list" class="isbn" style="padding-left: 0px;padding-bottom: 0px;"></label>
+                    <label for="list" class="book-title" style="padding-left: 0px;padding-bottom: 0px;"></label>
+                    <label for="list" class="author" style="padding-left: 0px;padding-bottom: 0px;"></label>
                 </div>
             </div>
-            <div class="users">
+            <div class="copies-list hide">
+                <h4>Copies</h4>
+                <form class="formats-form">
+                    <div>
+                        <div class="Hardcover">
+                            <div class="input-header">
+                                <i class="fa-solid fa-book"></i>
+                                <label for="hardcover-copies">Hardcover Copies Number</label>
+                            </div>
+                            <input type="number" id="hardcover-copies" autocomplete="off"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Hardcover Copies"
+                                min="0"
+                                name="hardcover-copies">
+                        </div>
+                        <div class="Paperback">
+                            <div class="input-header">
+                                <i class="fa-brands fa-readme"></i>
+                                <label for="paperback-copies">Paperback Copies Number</label>
+                            </div>
+                            <input type="number" id="paperback-copies" autocomplete="off"
+                                oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Paperback Copies"
+                                min="0"
+                                name="paperback-copies">
+                        </div>
+                        <div class="E-book">
+                            <div class="input-header">
+                                <i class="fa-solid fa-file-pdf"></i>
+                                <label for="ebook-copies">E-book Copies Availability</label>
+                            </div>
+                            <div class="availability">
+                                <label for="ebook-availability">E-book Availability: </label>
+                                <input type="checkbox" id="ebook-availability" name="ebook-availability">
+                            </div>
+                        </div>
+                        <div class="Audiobook">
+                            <div class="input-header">
+                                <i class="fa-solid fa-volume-high"></i>
+                                <label for="audiobook-copies">Audiobook Availability</label>
+                            </div>
+                            <div class="availability">
+                                <label for="audiobook-availability">Audiobook Availability: </label>
+                                <input type="checkbox" id="audiobook-availability" name="ebook-availability">
+                            </div>
+                        </div>
+                    </div>
+                    <button type="submit" class="save-copies">Save</button>
+                </form>
+            </div>
+            <div class="users hide">
                 <h4>Borrowers List</h4>
                 <div class="no-users hide">
                     <h3>No users found!</h3>
@@ -116,8 +171,8 @@
         <section class="search-container">
             <form class="search-form" method="GET" action="{% url 'admin_dashboard' %}">
                 <div class="search-box">
-                    <input type="search" name="q" class="search-input" placeholder="Search by title, author ..." value="{{ request.GET.q }}">
-                    <!-- <button type="submit" class="search-btn"><i class="fas fa-search"></i></button> -->
+                    <input type="search" name="q" class="search-input" placeholder="Search by title, author or ISBN ..." value="{{ request.GET.q }}">
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
                 </div>
 
                 <div class="filter-group">
@@ -133,14 +188,6 @@
                         <option value="history" {% if request.GET.genre == 'history' %}selected{% endif %}>History</option>
                         <option value="self-help" {% if request.GET.genre == 'self-help' %}selected{% endif %}>Self-Help</option>
                     </select>
-
-                    {% comment %} <select class="filter-select format-selector" name="format">
-                        <option value="">All Formats</option>
-                        <option value="hardcover" {% if request.GET.format == 'hardcover' %}selected{% endif %}>Hardcover</option>
-                        <option value="paperback" {% if request.GET.format == 'paperback' %}selected{% endif %}>Paperback</option>
-                        <option value="ebook" {% if request.GET.format == 'ebook' %}selected{% endif %}>E-Book</option>
-                        <option value="audiobook" {% if request.GET.format == 'audiobook' %}selected{% endif %}>Audiobook</option>
-                    </select> {% endcomment %}
 
                     <select class="filter-select sort-selector" name="sort">
                         <option value="">Sort By</option>
@@ -171,27 +218,54 @@
         </div>
 
         <div class="books-container" id="books-container">
-            {% for book in books %}
-            <div class="book-card" data-id="{{ book.id }}">
-                <div class="book-cover-container">
-                    <img src="{{ book.cover_image.url }}" alt="Book Cover" class="book-cover">
-                    <div class="book-actions">
-                        <button class="edit-btn" data-id="{{ book.id }}"><i class="fas fa-edit"></i></button>
-                        <button class="delete-btn" data-id="{{ book.id }}"><i class="fas fa-trash"></i></button>
-                        <button class="borrowers-btn" data-id="{{ book.id }}"><i class="fas fa-users"></i></button>
-                    </div>
+            {% for item in books %}
+            <div class="book">
+                <div class="img-holder">
+                    <img class="book-cover" src="{{item.book.cover_image_url}}" alt="Book Cover">
                 </div>
-                <div class="book-info">
-                    <h3 class="book-title">{{ book.title }}</h3>
-                    <p class="book-author">{{ book.author }}</p>
-                    <p class="book-id">ID: {{ book.id }}</p>
-                    <p class="book-status {% if book.available_copies > 0 %}available{% else %}unavailable{% endif %}">
-                        {% if book.available_copies > 0 %}
-                            Available ({{ book.available_copies }})
-                        {% else %}
+                <p class="book-title">{{item.book.title}}</p>
+                <p class="author">By {{item.authors.0.name}}</p>
+                <div class="book-information">
+                    <label class="isbn" for="book">ISBN: {{item.book.isbn}}</label>
+                    <label class="book-genre {{item.genres.0.name}}" for="book">{{item.genres.0.name}}</label>
+                    {% comment %} <label class="book-format ebook" for="book">Ebook</label> {% endcomment %}
+                    <label class="book-year-pub" for="book">{{item.book.publication_year}}</label>
+                </div>
+                <div class="book-status">
+                    <label for="book" class="available
+                                        {% if item.copies_count == 0 %}
+                                            unavailable
+                                        {% elif item.copies_count <= 10 %}
+                                            low-stock
+                                        {% else %}
+                                            available
+                                        {% endif %}">
+                        {% if item.copies_count == 0 %}
                             Unavailable
+                        {% elif item.copies_count <= 10 %}
+                            Low Stock
+                        {% else %}
+                            Available
                         {% endif %}
-                    </p>
+                    </label>
+                    <label for="book" class="{% if item.borrowers_count <= 5 %}
+                                                lvl1-borrow
+                                            {% elif item.borrowers_count <= 15 %}
+                                                lvl2-borrow
+                                            {% elif item.borrowers_count <= 30 %}
+                                                lvl3-borrow
+                                            {% elif item.borrowers_count <= 50 %}
+                                                lvl4-borrow
+                                            {% else %}
+                                                lvl5-borrow
+                                            {% endif %}">
+                        {{item.borrowers_count}} Borrows</label>
+                </div>
+                <div class="buttons">
+                    <button class="edit add-edit" data-id="{{ item.book.book_id }}">Edit</button>
+                    <button class="delete" data-id="{{ item.book.book_id }}">Delete</button>
+                    <button class="copies" data-id="{{ item.book.book_id }}"><i class="fa-solid fa-copy"></i>&nbsp;Add Copies</button>
+                    <button class="borrowers-list-btn" data-id="{{ item.book.book_id }}"><i class="fa-solid fa-user-group"></i>&nbsp;Borrowers</button>
                 </div>
             </div>
             {% empty %}
@@ -236,6 +310,9 @@
         <i class="fas fa-arrow-up"></i>
     </button>
 
+    <script src="{% static 'Script/admin_dashboard.js' %}"></script>
+    <script src="{% static 'Script/header.js' %}"></script>
+    <script src="{% static 'Script/footer.js' %}"></script>
     <script src="{% static 'Script/theme.js' %}"></script>
 </body>
 

@@ -1,551 +1,270 @@
-const imgInput = document.getElementById('img-input');
-const preview = document.getElementById('profilePreview');
-const msg = document.getElementById('msg');
-const uploadBox = document.getElementById('uploadBox');
-const profileActions = document.getElementById('profileActions');
+// Remove all localStorage related code for user data and editing
+// The profile data is now loaded by Django templates.
+
+// Get the profile image element and the modal elements
+const profilePreview = document.getElementById('profilePreview');
 const modal = document.getElementById('modal');
-const modalImg = document.getElementById('modalImage');
+const modalImage = document.getElementById('modalImage');
 
-// Profile Info Elements
-const username = document.getElementById('username');
-const fullName = document.getElementById('fullName');
-const email = document.getElementById('email');
-const userType = document.getElementById('userType');
-const bio = document.getElementById('bio');
-const booksBorrowed = document.getElementById('booksBorrowed');
-const booksFavorited = document.getElementById('booksFavorited');
-const memberSince = document.getElementById('memberSince');
+// Get profile picture related elements
+const imgInput = document.getElementById('img-input');
+// Removed uploadBox
+const profileActions = document.getElementById('profileActions'); // Container for remove button
+const removeBtn = document.getElementById('removeBtn');
+// Replaced updateBtn with uploadChangeBtn
+const uploadChangeBtn = document.getElementById('uploadChangeBtn');
+const uploadChangeBtnText = document.getElementById('uploadChangeBtnText'); // Span inside the button
+const profilePictureForm = document.getElementById('profilePictureForm'); // Get the form
 
-// Load logged in user
-let loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+// URLs and data passed from the Django template (defined in a <script> tag in the HTML)
+// const updatePictureUrl = "{% url 'update_profile_picture' %}"; // Defined globally in HTML
+// const defaultImageUrl = "{% static 'CSS/assets/blue.avif' %}"; // Defined globally in HTML
+// const initialProfilePictureUrl = "{{ customer.profile_picture_url|default:'' }}"; // Defined globally in HTML
 
-// Keep just logged in user in users data
-// let usersData = JSON.parse(localStorage.getItem('users_data'));
-// usersData = usersData.filter(u => u.username == loggedInUser.username);
-// localStorage.setItem('users_data',JSON.stringify(usersData));
 
-// Initialize profile page
-function loadUserData() {
-  if (!loggedInUser) {
-    window.location.href = 'sign-in.html';
-    return;
-  }
-
-  // Set user data
-  username.value = loggedInUser.username || '';
-  fullName.value = loggedInUser.fullName || '';
-  email.value = loggedInUser.email || '';
-  userType.value = loggedInUser.role === 'admin' ? 'Admin' : 'User';
-  bio.value = loggedInUser.bio || '';
-  booksBorrowed.textContent = loggedInUser.borrowed_books?.length || 0;
-  booksFavorited.textContent = loggedInUser.favorite_books?.length || 0;
-  const book_maximized = document.querySelector('a[href="./books.html"]');
-  const book_minimized = document.querySelector('.mobile-nav a[href="./books.html"]');
-   if (loggedInUser.role === 'admin') {
-    booksBorrowed.parentElement.style.display = 'none';
-    booksFavorited.parentElement.style.display = 'none';
-    book_maximized.style.display = 'none';
-    book_minimized.style.display = 'none';
-  }
-  
-  // Set member since date
-  if (loggedInUser.memberSince) {
-    const date = new Date(loggedInUser.memberSince);
-    memberSince.textContent = date.getFullYear();
-  } else {
-    memberSince.textContent = new Date().getFullYear();
-  }
-
-  // Set profile picture
-  if (loggedInUser.profilePicture) {
-    preview.src = loggedInUser.profilePicture;
-    preview.classList.remove('hide');
-    uploadBox.classList.add('hide');
-    profileActions.classList.remove('hide');
-    msg.textContent = "Click to change profile picture";
-  } else {
-    preview.src = '';
-    preview.classList.add('hide');
-    uploadBox.classList.remove('hide');
-    profileActions.classList.add('hide');
-    msg.textContent = "Click to upload profile picture";
-  }
+// Helper function to get CSRF cookie
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            // Does this cookie string begin with the name we want?
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
-// Initialize page
-loadUserData();
-
-// Update attribute in borrowed books
-function editAttrBrl(attribute, newValue) {
-  const booksID = loggedInUser.borrowed_books.map(b => {
-    return b.id;
-  });
-  const books = JSON.parse(localStorage.getItem('books'));
-  books.forEach(b => {
-    if(booksID.includes(b.id)) {
-      b.borrowersList.forEach(u => {
-        if(u.username == loggedInUser.username) {
-          u[attribute] = newValue;
-        }
-      });
+// Profile picture preview in modal
+if (profilePreview) {
+  profilePreview.addEventListener('click', function() {
+    // Only open modal if there is an image source and it's visible
+    if (this.src && !this.classList.contains('hide')) {
+        modalImage.src = this.src;
+        modal.classList.remove('hide');
     }
   });
-  localStorage.setItem('books', JSON.stringify(books));
 }
 
-// Profile picture upload
-imgInput.addEventListener('change', function() {
-  const file = this.files[0];
-  if (!file) return;
-
-  // Validate file
-  const validTypes = ['image/jpeg', 'image/png', 'image/gif'];
-  const maxSize = 2 * 1024 * 1024; // 2MB
-  
-  if (!validTypes.includes(file.type)) {
-    alert('Please select a valid image file (JPEG, PNG, GIF)');
-    return;
-  }
-  
-  if (file.size > maxSize) {
-    alert('Image size should not exceed 2MB');
-    return;
-  }
-
-  const reader = new FileReader();
-  reader.onload = function(e) {
-    // Update the logged in user's profile picture
-    loggedInUser.profilePicture = e.target.result;
-    localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-
-    // Update profile picture in borrowed books
-    editAttrBrl('profilePic', e.target.result);
-    
-    // Update the users_data array
-    const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
-    const updatedUsers = usersData.map(user => {
-      if (user.username === loggedInUser.username) {
-        user.profilePicture = e.target.result;
-      }
-      return user;
-    });
-    
-    localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-    
-    // Update UI
-    preview.src = e.target.result;
-    preview.classList.remove('hide');
-    uploadBox.classList.add('hide');
-    profileActions.classList.remove('hide');
-    msg.textContent = "Click to change profile picture";
-  };
-  reader.readAsDataURL(file);
-});
-
-// Preview profile picture in modal
-preview.addEventListener('click', function() {
-  if (loggedInUser.profilePicture) {
-    modalImg.src = preview.src;
-    modal.classList.remove('hide');
-  }
-});
-
+// Function to close the profile picture preview modal
 function closeModal() {
   modal.classList.add('hide');
 }
 
-function removeProfilePicture() {
-  // Remove profile picture from logged in user
-  delete loggedInUser.profilePicture;
-  localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
+// --- Profile Picture Update Functionality ---
 
-  // Update profile picture in borrowed books
-  editAttrBrl('profilePic', './../CSS/assets/blue.avif');
-
-  // Remove from users_data
-  const usersData = JSON.parse(localStorage.getItem('users_data') || '[]');
-  const updatedUsers = usersData.map(user => {
-    if (user.username === loggedInUser.username) {
-      delete user.profilePicture;
-    }
-    return user;
-  });
-  
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  
-  // Update UI
-  preview.src = '';
-  preview.classList.add('hide');
-  uploadBox.classList.remove('hide');
-  profileActions.classList.add('hide');
-  msg.textContent = "Click to upload profile picture";
-  imgInput.value = '';
-}
-
-
-// Password modal functions
-function openPasswordModal() {
-  document.getElementById('passwordModal').classList.remove('hide');
-  // Clear any previous errors
-  document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-}
-
-function updatePassword() {
-  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-
-  const currentPassword = document.getElementById('currentPassword').value.trim();
-  const newPassword = document.getElementById('newPassword').value.trim();
-  const confirmPassword = document.getElementById('confirmPassword').value.trim();
-
-  // Clear previous errors
-  document.querySelectorAll('.error-message').forEach(el => el.textContent = '');
-  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-
-  let hasError = false;
-
-  // Validate current password
-  if (currentPassword === '') {
-    setError(document.getElementById('currentPassword'), 'Current password is required');
-    hasError = true;
-  } else if (currentPassword !== loggedInUser.password) {
-    setError(document.getElementById('currentPassword'), 'Current password is incorrect');
-    hasError = true;
-  }
-
-  // Validate new password
-  if (newPassword === '') {
-    setError(document.getElementById('newPassword'), 'New password is required');
-    hasError = true;
-  } else {
-    if (newPassword.length < 8) {
-      setError(document.getElementById('newPassword'), 'Password must have at least 8 characters');
-      hasError = true;
-    }
-    if (!/[A-Z]/.test(newPassword)) {
-      setError(document.getElementById('newPassword'), 'Password must include at least one uppercase letter');
-      hasError = true;
-    }
-    if (!/[!@#$%^&*(),.?":{}|<>]/.test(newPassword)) {
-      setError(document.getElementById('newPassword'), 'Password must include at least one special character');
-      hasError = true;
-    }
-    if (newPassword === currentPassword) {
-      setError(document.getElementById('newPassword'), 'New password must be different from current password');
-      hasError = true;
-    }
-  }
-
-  
-  // Validate confirm password
-  if (confirmPassword === '') {
-    setError(document.getElementById('confirmPassword'), 'Please confirm your new password');
-    hasError = true;
-  } else if (newPassword !== confirmPassword) {
-    setError(document.getElementById('confirmPassword'), 'Passwords do not match');
-    hasError = true;
-  }
-
-  if (hasError) {
-    return;
-  }
-
-  // Update password for the logged-in user
-  const updatedUsers = usersData.map(user => {
-    if (user.username === loggedInUser.username) {
-      user.password = newPassword;
-      // Update local session
-      loggedInUser.password = newPassword;
-      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    return user;
-  });
-
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  
-  // Show success message
-  const successMessage = document.createElement('div');
-  successMessage.className = 'success-message';
-  successMessage.innerHTML = '<i class="fas fa-check-circle"></i> Password updated successfully!';
-  document.querySelector('.modal-buttons').before(successMessage);
-  
-  // Clear fields and hide modal after delay
-  setTimeout(() => {
-    document.getElementById('currentPassword').value = '';
-    document.getElementById('newPassword').value = '';
-    document.getElementById('confirmPassword').value = '';
-    document.querySelector('.success-message')?.remove();
-    closePasswordModal();
-  }, 2000);
-}
-
-function setError(input, message) {
-  input.classList.add('error');
-  const errorElement = document.createElement('div');
-  errorElement.className = 'error-message';
-  errorElement.textContent = message;
-  errorElement.style.color = 'var(--error-color)';
-  errorElement.style.marginTop = '5px';
-  errorElement.style.fontSize = '0.8rem';
-  
-  // Insert error message after the input
-  input.parentNode.insertBefore(errorElement, input.nextSibling);
-}
-
-function closePasswordModal() {
-  document.getElementById('passwordModal').classList.add('hide');
-  document.getElementById('currentPassword').value = '';
-  document.getElementById('newPassword').value = '';
-  document.getElementById('confirmPassword').value = '';
-  // Clear any error messages
-  document.querySelectorAll('.error-message').forEach(el => el.remove());
-  document.querySelectorAll('.error').forEach(el => el.classList.remove('error'));
-}
-
-function togglePasswordVisibility(fieldId, iconElement) {
-  const field = document.getElementById(fieldId);
-  if (field.type === 'password') {
-    field.type = 'text';
-    iconElement.classList.replace('fa-eye', 'fa-eye-slash');
-  } else {
-    field.type = 'password';
-    iconElement.classList.replace('fa-eye-slash', 'fa-eye');
-  }
-}
-
-// Delete account functionality
-function confirmDeleteAccount() {
-  document.getElementById('deleteModal').classList.remove('hide');
-}
-
-function closeDeleteModal() {
-  document.getElementById('deleteModal').classList.add('hide');
-  document.getElementById('deletePassword').value = '';
-}
-
-function deleteAccount() {
-  const password = document.getElementById('deletePassword').value.trim();
-  
-  if (!password) {
-    alert('Please enter your password to confirm account deletion.');
-    return;
-  }
-  
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-  if (password !== loggedInUser.password) {
-    alert('Incorrect password. Please try again.');
-    return;
-  }
-
-  // Remove user from borrowers lists
-  const books = JSON.parse(localStorage.getItem('books'));
-  books.forEach(b => {
-      b.borrowersList = b.borrowersList.filter(u => u.username !== loggedInUser.username);
-      b.borrowNum = String(b.borrowersList.length);
-  });
-  localStorage.setItem('books', JSON.stringify(books));
-  
-  // Remove user from users_data
-  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  const updatedUsers = usersData.filter(user => user.username !== loggedInUser.username);
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  
-  // Remove loggedIn_user
-  localStorage.removeItem('loggedIn_user');
-  
-  alert('Your account has been deleted successfully. You will be redirected to the home page.');
-  
-  setTimeout(() => {
-    window.location.href = './../../index.html';
-  }, 1500);
-}
-
-// Form edit functionality
-function enableEdit(fieldId) {
-  const field = document.getElementById(fieldId);
-  field.readOnly = false;
-  field.focus();
-  field.style.cursor = 'text';
-  field.style.opacity = '1';
-  
-  // Add event listener for Enter key to save changes
-  field.addEventListener('keydown', function(e) {
-    if (e.key === 'Enter') {
-      saveField(fieldId);
-    }
-  });
-  
-  // Add blur event to save when focus is lost
-  field.addEventListener('blur', function() {
-    saveField(fieldId);
-  });
-}
-
-function saveField(fieldId) {
-  const field = document.getElementById(fieldId);
-  const newValue = field.value.trim();
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-
-  if (newValue === '') {
-    alert('Field cannot be empty');
-    return;
-  }
-  
-  // Special validation for email
-  if (fieldId === 'email' && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(newValue)) {
-    alert('Please enter a valid email address');
-    return;
-  }
-  
-  // Check if username is already taken (except for current user)
-  if (fieldId === 'username') {
-    const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-    const usernameTaken = usersData.some(user => 
-      user.username === newValue && user.username !== loggedInUser.username
-    );
-    
-    if (usernameTaken) {
-      alert('Username is already taken');
-      return;
-    }
-  }
-  
-  // Update localStorage
-  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  
-  
-  const updatedUsers = usersData.map(user => {
-    if (user.username === loggedInUser.username) {
-
-      // Update username, email in borrowed books
-      if(fieldId == 'email' || fieldId == 'username') {
-        editAttrBrl(fieldId, newValue);
-      }
-
-      user[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
-      loggedInUser[fieldId === 'fullName' ? 'fullName' : fieldId] = newValue;
-      localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    }
-    return user;
-  });
-  
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  
-  // Reset field state
-  field.readOnly = true;
-  field.style.cursor = 'default';
-  field.style.opacity = '0.8';
-}
-
-// Password strength indicator
-document.getElementById('newPassword').addEventListener('input', function() {
-  const strengthBars = document.querySelectorAll('.strength-bar');
-  const strengthText = document.querySelector('.strength-text');
-  const password = this.value;
-  
-  // Clear previous error messages
-  const existingError = this.nextElementSibling;
-  if (existingError && existingError.classList.contains('error-message')) {
-    existingError.remove();
-  }
-  
-  strengthBars.forEach(bar => bar.style.backgroundColor = 'var(--border-color)');
-  
-  if (password.length === 0) {
-    strengthText.textContent = 'Password strength';
-    return;
-  }
-  
-  let strength = 0;
-  if (password.length >= 8) strength++;
-  if (/[A-Z]/.test(password)) strength++;
-  if (/[0-9]/.test(password)) strength++;
-  if (/[^A-Za-z0-9]/.test(password)) strength++;
-  
-  for (let i = 0; i < strength; i++) {
-    strengthBars[i].style.backgroundColor = i < 2 ? '#ff5555' : i === 2 ? '#ffb86c' : '#50fa7b';
-  }
-  
-  strengthText.textContent = 
-    strength < 2 ? 'Weak' : 
-    strength === 2 ? 'Medium' : 
-    strength === 3 ? 'Strong' : 'Very strong';
-});
-
-// Form submission
-document.querySelector('.profile-form').addEventListener('submit', function(e) {
-  e.preventDefault();
-  
-  // Update user data in localStorage
-  const usersData = JSON.parse(localStorage.getItem('users_data') || []);
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-  
-  const updatedUsers = usersData.map(user => {
-    if (user.username === loggedInUser.username) {
-      user.fullName = document.getElementById('fullName').value;
-      user.bio = document.getElementById('bio').value;
-      // Update theme preferences if needed
-    }
-    return user;
-  });
-  
-  localStorage.setItem('users_data', JSON.stringify(updatedUsers));
-  
-  // Update loggedIn_user
-  loggedInUser.fullName = document.getElementById('fullName').value;
-  loggedInUser.bio = document.getElementById('bio').value;
-  localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-  
-  alert('Profile changes saved successfully!');
-});
-
-document.addEventListener('DOMContentLoaded', function () {
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-
-  if (loggedInUser) {
-    const adminHiddenLinks = document.querySelectorAll('#AdminHidden');
-
-    // Show or hide links based on user role
-    if (loggedInUser.role === 'admin') {
-      adminHiddenLinks.forEach(link => link.classList.add('hide'));
+// Function to update the UI based on whether a profile picture exists
+function updateProfilePictureUI(imageUrl) {
+    if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('/media/')) { // Check if it's a valid uploaded image URL
+        profilePreview.src = imageUrl;
+        profilePreview.classList.remove('hide'); // Show the image
+        uploadChangeBtnText.textContent = 'Change Picture'; // Change button text
+        uploadChangeBtn.classList.add('hide'); // Hide the upload button
+        profileActions.classList.remove('hide'); // Show remove button container
+        removeBtn.classList.remove('hide'); // Show remove button
     } else {
-      adminHiddenLinks.forEach(link => link.classList.remove('hide'));
+        profilePreview.src = ''; // Clear the image source
+        profilePreview.classList.add('hide'); // Hide the image
+        uploadChangeBtnText.textContent = 'Upload Picture'; // Change button text
+        uploadChangeBtn.classList.remove('hide'); // Show the upload button
+        profileActions.classList.add('hide'); // Hide remove button container
+        removeBtn.classList.add('hide'); // Hide remove button
     }
+     // Clear the file input value
+     imgInput.value = '';
+}
 
-    // Redirect "Home" link based on user role
-    const homeLink = document.getElementById('homeLink');
-    const mobileHomeLink = document.getElementById('mobileHomeLink');
+// Event listener for the combined "Upload/Change" button
+if (uploadChangeBtn && imgInput) {
+    uploadChangeBtn.addEventListener('click', function() {
+        // Trigger the hidden file input when the button is clicked
+        imgInput.click();
+    });
+}
 
-    if (loggedInUser.role === 'admin') {
-      homeLink.href = './admin_dashboard.html';
-      mobileHomeLink.href = './admin_dashboard.html';
-    } else {
-      homeLink.href = './user_dashboard.html';
-      mobileHomeLink.href = './user_dashboard.html';
-    }
-  }
-});
+// Event listener for when a file is selected (triggered by button click)
+if (imgInput && typeof updatePictureUrl !== 'undefined') { // Check if element and URL exist
+    imgInput.addEventListener('change', function() {
+        if (this.files && this.files[0]) {
+            const formData = new FormData();
+            formData.append('profile_picture', this.files[0]);
 
-document.addEventListener('DOMContentLoaded', function () {
-  const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+            const csrftoken = getCookie('csrftoken');
 
-  if (loggedInUser) {
-    const bookLink = document.getElementById('bookLink');
+            // Indicate loading state if desired
+            // uploadChangeBtnText.textContent = 'Uploading...';
+            // uploadChangeBtn.disabled = true;
 
-    if (loggedInUser.role === 'admin') {
-      bookLink.href = './admin_dashboard.html#books-container';
-    } else {
-      bookLink.href = './user_dashboard.html';
-    }
-  }
-});
+            fetch(updatePictureUrl, {
+                method: 'POST',
+                body: formData,
+                headers: {
+                    'X-CSRFToken': csrftoken
+                }
+            })
+            .then(response => {
+                // Re-enable button and reset text regardless of success/failure if you added loading state
+                // uploadChangeBtn.disabled = false;
+                // updateProfilePictureUI(profilePreview.src); // This would reset text prematurely if upload failed
 
-// redirect profile-links
+                if (!response.ok) {
+                    // Handle non-2xx responses
+                    return response.json().then(err => { throw new Error(err.message || 'Failed to upload profile picture'); });
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update the displayed profile picture using the URL from the backend
+                    updateProfilePictureUI(data.profile_picture_url);
+                    // Removed the line below:
+                    // window.location.reload();
+                    // Optionally, display a success message here using JavaScript if you prefer not to reload.
+                    // For now, rely on Django's messages framework if the user reloads or navigates.
+                    console.log("Profile picture updated successfully!");
+                } else {
+                    // Handle error
+                     console.error("Failed to upload profile picture:", data.message);
+                     alert("Failed to upload profile picture: " + data.message);
+                     // Clear the file input on error
+                    imgInput.value = '';
+                    // Update UI to reflect no new picture was set based on the *current* displayed image
+                    updateProfilePictureUI(profilePreview.src === window.location.origin + "/" || profilePreview.classList.contains('hide') ? null : profilePreview.src); // Check if current src is empty or hidden
+                }
+            })
+            .catch(error => {
+                console.error('Error uploading profile picture:', error);
+                alert('An error occurred while uploading the profile picture: ' + error.message);
+                 // Clear the file input on error
+                imgInput.value = '';
+                 // Update UI to reflect no new picture was set based on the *current* displayed image
+                updateProfilePictureUI(profilePreview.src === window.location.origin + "/" || profilePreview.classList.contains('hide') ? null : profilePreview.src); // Check if current src is empty or hidden
+                 // Re-enable button and reset text on error if you added loading state
+                // uploadChangeBtn.disabled = false;
+                // updateProfilePictureUI(profilePreview.src);
+            });
+        } else {
+            // If user cancelled file selection, just clear the input
+            imgInput.value = '';
+        }
+    });
+}
 
 
-// Delete edit
+// Event listener for the "Remove" button
+if (removeBtn && typeof updatePictureUrl !== 'undefined') { // Check if element and URL exist
+    removeBtn.addEventListener('click', function() {
+        if (confirm("Are you sure you want to remove your profile picture?")) {
+            const formData = new FormData();
+            formData.append('clear_picture', 'true'); // Indicate that we want to clear the picture
+
+            const csrftoken = getCookie('csrftoken');
+
+            fetch(updatePictureUrl, {
+                method: 'POST',
+                body: formData,
+                 headers: {
+                    'X-CSRFToken': csrftoken // Include the CSRF token in the headers
+                }
+            })
+            .then(response => {
+                 if (!response.ok) {
+                    // Handle non-2xx responses
+                    return response.json().then(err => { throw new Error(err.message || 'Failed to remove profile picture'); });
+                 }
+                 return response.json();
+            })
+            .then(data => {
+                if (data.success) {
+                    // Update the UI to show the default state (no picture)
+                    updateProfilePictureUI(null); // Pass null to show default/empty state
+                    // Removed the line below:
+                    // window.location.reload();
+                     // Optionally, display a success message here using JavaScript.
+                     console.log("Profile picture removed successfully!");
+                } else {
+                    // Handle error
+                    console.error("Failed to remove profile picture:", data.message);
+                    alert("Failed to remove profile picture: " + data.message);
+                }
+            })
+            .catch(error => {
+                console.error('Error removing profile picture:', error);
+                alert('An error occurred while removing the profile picture: ' + error.message);
+            });
+        }
+    });
+}
+
+
+// --- Removed Account Deletion Functionality ---
+// Removed:
+// - confirmDeleteAccount function
+// - closeDeleteModal function
+// - Variables related to the delete modal (deleteModal, deletePasswordInput)
+
+
+// --- Removed Functionality ---
+// Removed:
+// - All localStorage interactions (getItem, setItem, removeItem) for user data.
+// - loadUserData function (data loaded by Django template).
+// - editAttrBrl function (related to localStorage and borrowed books).
+// - Password change modal and related functions (openPasswordModal, updatePassword, setError, closePasswordModal, togglePasswordVisibility, password strength indicator).
+// - Form editing functionality (enableEdit, saveField).
+// - The DOMContentLoaded logic that adjusted links based on localStorage roles (now handled by Django template).
+
+// Keep session storage cleanup if these items are used elsewhere in your app
 window.sessionStorage.removeItem('edit');
 window.sessionStorage.removeItem('editedBook');
 window.sessionStorage.removeItem('coverPath');
 window.sessionStorage.removeItem('description');
+
+// Ensure other scripts like header.js, footer.js, theme.js are correctly linked and handle UI independently.
+
+// Note: The Borrowed/Favorited counts are now loaded directly by the Django view.
+// The JavaScript variables booksBorrowed and booksFavorited are no longer updated by JS in this version.
+// Theme preference handling should be in theme.js
+
+
+// Re-initialize UI state based on the image displayed by the template on page load
+document.addEventListener('DOMContentLoaded', function() {
+    const profilePreview = document.getElementById('profilePreview');
+    const uploadChangeBtn = document.getElementById('uploadChangeBtn');
+    const uploadChangeBtnText = document.getElementById('uploadChangeBtnText');
+    const profileActions = document.getElementById('profileActions'); // Container for remove button
+    const removeBtn = document.getElementById('removeBtn'); // Get remove button here too
+    // Get the initial profile picture URL passed from the template
+    // const initialProfilePictureUrl = "{{ customer.profile_picture_url|default:'' }}"; // Defined globally in HTML
+
+
+    if (profilePreview && uploadChangeBtn && uploadChangeBtnText && profileActions && removeBtn && typeof initialProfilePictureUrl !== 'undefined') {
+        // Check if the initialProfilePictureUrl has a value
+        const hasProfilePicture = initialProfilePictureUrl !== '';
+
+        if (hasProfilePicture) {
+            // Set the image source from the initial URL
+            profilePreview.src = initialProfilePictureUrl;
+            profilePreview.classList.remove('hide'); // Show the image
+            // If a picture exists, hide upload button and show remove button
+            uploadChangeBtn.classList.add('hide');
+            profileActions.classList.remove('hide'); // Show remove button container
+            removeBtn.classList.remove('hide'); // Ensure remove button is visible
+            // Set initial text for the change button (though it's hidden)
+            uploadChangeBtnText.textContent = 'Change Picture';
+
+        } else {
+            // If no picture, hide the image and show upload button
+            profilePreview.src = ''; // Explicitly set to empty
+            profilePreview.classList.add('hide'); // Hide the image
+            uploadChangeBtn.classList.remove('hide'); // Show the upload button
+            profileActions.classList.add('hide'); // Hide remove button container
+            removeBtn.classList.add('hide'); // Ensure remove button is hidden
+             // Set initial text for the upload button
+             uploadChangeBtnText.textContent = 'Upload Picture';
+        }
+    }
+});

@@ -1,139 +1,62 @@
+# This is an auto-generated Django model module, fixed for Django management and relationships.
 from django.db import models
+from django.utils import timezone
+from django.contrib.auth.models import User # Import Django's built-in User model
+from datetime import timedelta
+import random
+import string
 
+# Helper function for default datetime string if needed, but DateTimeField is better.
+# However, using auto_now_add/auto_now is the idiomatic Django way.
+# If you truly need a string, you'd handle conversion on save or in properties.
+# We'll use DateTimeField below.
+
+# --- Application Specific Models (Managed by Django) ---
 
 class Authors(models.Model):
+    # No need to specify primary_key=True, Django adds an 'id' AutoField by default.
+    # However, keeping author_id if it matches an existing DB column.
     author_id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=255) # Changed from TextField
     biography = models.TextField(blank=True, null=True)
-    photo_url = models.TextField(blank=True, null=True)
+    photo_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
 
     class Meta:
-        managed = False
-        db_table = 'Authors'
+        managed = True # Let Django manage this table
+        db_table = 'Authors' # Keep existing table name if migrating from old DB
 
-
-class Bookauthor(models.Model):
-    book = models.ForeignKey('Books', models.DO_NOTHING)
-    author = models.ForeignKey(Authors, models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'BookAuthor'
-        unique_together = (('book', 'author'),)
-
-
-class Bookcopies(models.Model):
-    copy_id = models.AutoField(primary_key=True)
-    book = models.ForeignKey('Books', models.DO_NOTHING, blank=True, null=True)
-    format = models.TextField()
-    is_borrowed = models.IntegerField(blank=True, null=True)
-    borrower = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    in_inventory = models.IntegerField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'BookCopies'
-
-
-class Bookgenre(models.Model):
-    book = models.ForeignKey('Books', models.DO_NOTHING)
-    genre = models.ForeignKey('Genres', models.DO_NOTHING)
-
-    class Meta:
-        managed = False
-        db_table = 'BookGenre'
-        unique_together = (('book', 'genre'),)
-
-
-class Books(models.Model):
-    book_id = models.AutoField(primary_key=True)
-    title = models.TextField()
-    isbn = models.TextField(unique=True)
-    publication_year = models.IntegerField(blank=True, null=True)
-    publisher = models.ForeignKey('Publisher', models.DO_NOTHING, blank=True, null=True)
-    cover_image_url = models.TextField(blank=True, null=True)
-    page_count = models.IntegerField(blank=True, null=True)
-    language = models.TextField(blank=True, null=True)
-    description = models.TextField(blank=True, null=True)
-    added_date = models.TextField()
-    is_deleted = models.IntegerField()
-    deleted_at = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Books'
-
-
-class Borrowings(models.Model):
-    borrowing_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    copy = models.OneToOneField(Bookcopies, models.DO_NOTHING, blank=True, null=True)
-    book = models.ForeignKey(Books, models.DO_NOTHING, blank=True, null=True)
-    format = models.TextField()
-    borrow_date = models.TextField()
-    return_date = models.TextField(blank=True, null=True)
-    current_renew_count = models.IntegerField(blank=True, null=True)
-    last_renewal_date = models.TextField(blank=True, null=True)
-    notes = models.TextField(blank=True, null=True)
-
-    class Meta:
-        managed = False
-        db_table = 'Borrowings'
-
-
-class Credentials(models.Model):
-    user = models.OneToOneField('Users', models.DO_NOTHING, primary_key=True)
-    password_hash = models.BinaryField()
-
-    class Meta:
-        managed = False
-        db_table = 'Credentials'
-
-
-class Favorites(models.Model):
-    favorite_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    book = models.ForeignKey(Books, models.DO_NOTHING, blank=True, null=True)
-    created_at = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'Favorites'
-
-
-class Friendships(models.Model):
-    friendship_id = models.AutoField(primary_key=True)
-    user_1 = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    user_2 = models.ForeignKey('Users', models.DO_NOTHING, related_name='friendships_user_2_set', blank=True, null=True)
-    status = models.TextField()
-    created_at = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'Friendships'
+    def __str__(self):
+        return self.name
 
 
 class Genres(models.Model):
     genre_id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(unique=True, max_length=100) # Changed from TextField
     description = models.TextField(blank=True, null=True)
 
     class Meta:
-        managed = False
-        db_table = 'Genres'
+        managed = True # Let Django manage this table
+        db_table = 'Genres' # Keep existing table name
+
+    def __str__(self):
+        return self.name
 
 
-class Globalparameters(models.Model):
-    user_id = models.IntegerField(blank=True, null=True)
+class Publisher(models.Model):
+    publisher_id = models.AutoField(primary_key=True)
+    name = models.CharField(max_length=255) # Changed from TextField
 
     class Meta:
-        managed = False
-        db_table = 'GlobalParameters'
+        managed = True # Let Django manage this table
+        db_table = 'Publisher' # Keep existing table name
+
+    def __str__(self):
+        return self.name
 
 
 class Membershiptypes(models.Model):
     membership_type_id = models.AutoField(primary_key=True)
-    name = models.TextField()
+    name = models.CharField(max_length=100) # Changed from TextField
     description = models.TextField(blank=True, null=True)
     borrow_duration_in_days = models.IntegerField()
     same_book_borrow_count_limit = models.IntegerField()
@@ -142,74 +65,268 @@ class Membershiptypes(models.Model):
     overdue_fee_in_dollars = models.FloatField()
 
     class Meta:
-        managed = False
-        db_table = 'MembershipTypes'
+        managed = True # Let Django manage this table
+        db_table = 'MembershipTypes' # Keep existing table name
+
+    def __str__(self):
+        return self.name
 
 
 class Notificationcategories(models.Model):
     notification_category_id = models.AutoField(primary_key=True)
-    name = models.TextField(unique=True)
-    priority = models.IntegerField(blank=True, null=True)
+    name = models.CharField(unique=True, max_length=100) # Changed from TextField
+    priority = models.IntegerField(blank=True, null=True) # Integer is fine for priority
 
     class Meta:
-        managed = False
-        db_table = 'NotificationCategories'
+        managed = True # Let Django manage this table
+        db_table = 'NotificationCategories' # Keep existing table name
+
+    def __str__(self):
+        return self.name
+
+
+class Books(models.Model):
+    book_id = models.AutoField(primary_key=True)
+    title = models.CharField(max_length=255) # Changed from TextField
+    isbn = models.CharField(unique=True, max_length=20) # Changed from TextField, added max_length
+    publication_year = models.IntegerField(blank=True, null=True)
+    publisher = models.ForeignKey(Publisher, on_delete=models.SET_NULL, blank=True, null=True) # Added on_delete
+    cover_image_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
+    page_count = models.IntegerField(blank=True, null=True)
+    language = models.CharField(max_length=50, blank=True, null=True) # Changed from TextField
+    description = models.TextField(blank=True, null=True) # Keep as TextField
+    added_date = models.DateTimeField(auto_now_add=True, null=True) # Changed from TextField, use DateTimeField and auto_now_add
+    is_deleted = models.BooleanField(default=False) # Changed from IntegerField
+    deleted_at = models.DateTimeField(blank=True, null=True) # Changed from TextField
+    ebook_availability = models.IntegerField(default=0, blank=True, null=True)
+    audiobook_availability = models.IntegerField(default=0, blank=True, null=True)
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'Books' # Keep existing table name
+
+    def __str__(self):
+        return self.title
+
+
+class Bookauthor(models.Model):
+    # Django automatically adds 'id' as primary key unless you specify primary_key=True on another field.
+    # Keeping bookauthor_id if it exists in the old schema.
+    bookauthor_id = models.AutoField(primary_key=True)
+    book = models.ForeignKey(Books, on_delete=models.CASCADE, blank=True, null=True) # Added on_delete
+    author = models.ForeignKey(Authors, on_delete=models.CASCADE, blank=True, null=True) # Added on_delete
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'BookAuthor' # Keep existing table name
+        # Add unique_together if a book can only have an author listed once in this table
+        # unique_together = (('book', 'author'),)
+
+
+class Bookgenre(models.Model):
+    # Keeping bookgenre_id if it exists in the old schema.
+    bookgenre_id = models.AutoField(primary_key=True)
+    book = models.ForeignKey(Books, on_delete=models.CASCADE, blank=True, null=True) # Added on_delete
+    genre = models.ForeignKey(Genres, on_delete=models.CASCADE, blank=True, null=True) # Added on_delete
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'BookGenre' # Keep existing table name
+        # Add unique_together if a book can only have a genre listed once in this table
+        # unique_together = (('book', 'genre'),)
+
+
+class Bookcopies(models.Model):
+    copy_id = models.AutoField(primary_key=True)
+    book = models.ForeignKey(Books, on_delete=models.CASCADE, blank=True, null=True) # Added on_delete
+    format = models.CharField(max_length=50) # Changed from TextField (e.g., 'Hardcover', 'Paperback', 'eBook')
+    is_borrowed = models.BooleanField(default=False) # Changed from IntegerField
+    # borrower refers to the Customer profile linked to the auth.User
+    borrower = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True) # Corrected FK reference to Customer
+    in_inventory = models.BooleanField(default=True) # Changed from IntegerField, assuming it's in inventory by default
+
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'BookCopies' # Keep existing table name
+
+
+class Customer(models.Model):
+    # Links to Django's built-in User model
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE, # If a User is deleted, delete the Customer profile
+        primary_key=True, # Use the User's primary key as the primary key for Customer
+        related_name='customer_profile' # Allows accessing Customer from User: user_instance.customer_profile
+    )
+    # Consider using choices for roles if they are fixed values
+    role = models.IntegerField(default=0)
+    profile_picture_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
+
+    # Fields from the old Users model that might be relevant to a customer profile:
+    is_a_member = models.BooleanField(default=False)
+    membership_last_renewed = models.DateTimeField(blank=True, null=True)
+    # Assuming MembershipTypes is still relevant
+    membership_type = models.ForeignKey(Membershiptypes, on_delete=models.SET_NULL, blank=True, null=True) # Added on_delete
+    bio = models.TextField(blank=True, null=True)
+    # created_at is covered by User.date_joined
+    # last_login is covered by User.last_login
+    last_seen = models.DateTimeField(blank=True, null=True)
+    is_subbed_to_newsletter = models.BooleanField(default=False)
+    theme_preference = models.CharField(max_length=50, blank=True, null=True) # Changed from TextField
+    # is_deleted and deleted_at could be handled here or rely on auth.User's is_active if that suffices
+    is_deleted = models.BooleanField(default=False) # Keep if separate soft delete is needed
+    deleted_at = models.DateTimeField(blank=True, null=True) # Keep if separate soft delete is needed
+
+
+    class Meta:
+        managed = True # Let Django manage this table
+        # If you are migrating from an existing 'Users' table, keep db_table.
+        # Otherwise, remove db_table to let Django name it 'yourapp_customer'.
+        db_table = 'Users'
+
+    def __str__(self):
+        # Use the related User's username
+        return self.user.username if self.user else f"Customer (ID: {self.pk})"
+
+
+class Admin(models.Model):
+    # Links to Django's built-in User model
+    user = models.OneToOneField(
+        User,
+        on_delete=models.CASCADE, # If a User is deleted, delete the Admin profile
+        primary_key=True, # Use the User's primary key as the primary key for Admin
+        related_name='admin_profile' # Allows accessing Admin from User: user_instance.admin_profile
+    )
+    # Add any admin-specific fields here
+
+    class Meta:
+        managed = True # Let Django manage this table
+        # If you are migrating from an existing 'Admins' table, keep db_table.
+        # Otherwise, remove db_table to let Django name it 'yourapp_admin'.
+        db_table = 'Admins'
+
+    def __str__(self):
+        # Use the related User's username
+        return f"Admin: {self.user.username}" if self.user else f"Admin (ID: {self.pk})"
+
+
+class Borrowings(models.Model):
+    borrowing_id = models.AutoField(primary_key=True)
+    # User who borrowed
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE) # Changed to Customer, added on_delete
+    # Specific copy borrowed (OneToOne means a copy can only be in ONE active borrowing at a time)
+    copy = models.OneToOneField(Bookcopies, on_delete=models.PROTECT) # Changed from DO_NOTHING, use PROTECT as copy must exist
+    # format is already on Bookcopies, might be redundant here unless this indicates borrow format.
+    # Keeping for now based on original schema, but consider if needed.
+    format = models.CharField(max_length=50) # Changed from TextField, should match copy format
+    borrow_date = models.DateTimeField(default=timezone.now) # Changed from TextField, use DateTimeField with a default
+    return_date = models.DateTimeField(blank=True, null=True) # Changed from TextField
+    current_renew_count = models.IntegerField(default=0) # Added default
+    last_renewal_date = models.DateTimeField(blank=True, null=True) # Changed from TextField
+    notes = models.TextField(blank=True, null=True)
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'Borrowings' # Keep existing table name
+
+
+class Favorites(models.Model):
+    favorite_id = models.AutoField(primary_key=True)
+    # User who favorited
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE) # Changed to Customer, added on_delete
+    book = models.ForeignKey(Books, on_delete=models.CASCADE) # Added on_delete
+    created_at = models.DateTimeField(auto_now_add=True) # Changed from TextField, use DateTimeField and auto_now_add
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'Favorites' # Keep existing table name
+        # A user can only favorite a book once
+        unique_together = (('user', 'book'),)
+
+
+class Friendships(models.Model):
+    friendship_id = models.AutoField(primary_key=True)
+    # Users involved in the friendship
+    user_1 = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='friendships_initiated') # Changed to Customer, added on_delete and related_name
+    user_2 = models.ForeignKey(Customer, on_delete=models.CASCADE, related_name='friendships_received') # Changed to Customer, added on_delete
+    status = models.CharField(max_length=20) # Changed from TextField (e.g., 'pending', 'accepted', 'declined')
+    created_at = models.DateTimeField(auto_now_add=True) # Changed from TextField, use DateTimeField and auto_now_add
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'Friendships' # Keep existing table name
+        # Ensure uniqueness and prevent (user1, user2) and (user2, user1) being different rows
+        # Consider adding a constraint or handling this in application logic
+        unique_together = (('user_1', 'user_2'),)
+
+
+class Globalparameters(models.Model):
+    # Standard Django primary key
+    id = models.AutoField(primary_key=True)
+    # user_id seems out of place for 'GlobalParameters', removed it.
+    # Add actual global parameters fields here, e.g.:
+    # site_name = models.CharField(max_length=255)
+    # items_per_page = models.IntegerField(default=10)
+    # If this is meant to store *user-specific* parameters,
+    # rename it (e.g., UserParameters) and link to Customer:
+    # user = models.OneToOneField(Customer, on_delete=models.CASCADE, primary_key=True)
+    # parameter_name = models.CharField(...)
+    # parameter_value = models.TextField(...)
+    # ... or fields for each parameter directly on the Customer model if they are few.
+
+    class Meta:
+        managed = True # Let Django manage this table
+        db_table = 'GlobalParameters' # Keep existing table name
 
 
 class Notifications(models.Model):
     notification_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    notification_category = models.ForeignKey(Notificationcategories, models.DO_NOTHING)
-    message = models.TextField()
-    timestamp = models.TextField()
-    is_read = models.IntegerField()
+    # User receiving the notification
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE, blank=True, null=True) # Changed to Customer, added on_delete
+    notification_category = models.ForeignKey(Notificationcategories, on_delete=models.CASCADE) # Added on_delete
+    message = models.TextField() # Keep as TextField
+    timestamp = models.DateTimeField(auto_now_add=True) # Changed from TextField, use DateTimeField and auto_now_add
+    is_read = models.BooleanField(default=False) # Changed from IntegerField
 
     class Meta:
-        managed = False
-        db_table = 'Notifications'
-
-
-class Publisher(models.Model):
-    publisher_id = models.AutoField(primary_key=True)
-    name = models.TextField()
-
-    class Meta:
-        managed = False
-        db_table = 'Publisher'
+        managed = True # Let Django manage this table
+        db_table = 'Notifications' # Keep existing table name
 
 
 class Ratings(models.Model):
     rating_id = models.AutoField(primary_key=True)
-    user = models.ForeignKey('Users', models.DO_NOTHING, blank=True, null=True)
-    book = models.ForeignKey(Books, models.DO_NOTHING, blank=True, null=True)
-    value = models.IntegerField()
-    timestamp = models.TextField()
+    # User giving the rating
+    user = models.ForeignKey(Customer, on_delete=models.CASCADE) # Changed to Customer, added on_delete
+    book = models.ForeignKey(Books, on_delete=models.CASCADE) # Added on_delete
+    value = models.IntegerField() # Integer is fine for the rating value (e.g., 1-5)
+    timestamp = models.DateTimeField(auto_now_add=True) # Changed from TextField, use DateTimeField and auto_now_add
 
     class Meta:
-        managed = False
-        db_table = 'Ratings'
+        managed = True # Let Django manage this table
+        db_table = 'Ratings' # Keep existing table name
+        # A user can only rate a book once
+        unique_together = (('user', 'book'),)
 
 
-class Users(models.Model):
-    user_id = models.AutoField(primary_key=True)
-    username = models.TextField()
-    email = models.TextField(unique=True)
-    first_name = models.TextField(blank=True, null=True)
-    last_name = models.TextField(blank=True, null=True)
-    role = models.IntegerField()
-    is_a_member = models.IntegerField()
-    membership_last_renewed = models.TextField(blank=True, null=True)
-    membership_type = models.ForeignKey(Membershiptypes, models.DO_NOTHING, blank=True, null=True)
-    bio = models.TextField(blank=True, null=True)
-    created_at = models.TextField()
-    last_login = models.TextField(blank=True, null=True)
-    profile_image_url = models.TextField(blank=True, null=True)
-    last_seen = models.TextField(blank=True, null=True)
-    is_subbed_to_newsletter = models.IntegerField(blank=True, null=True)
-    theme_preference = models.TextField(blank=True, null=True)
-    is_deleted = models.IntegerField()
-    deleted_at = models.TextField(blank=True, null=True)
 
-    class Meta:
-        managed = False
-        db_table = 'Users'
+#  password reset
+
+class PasswordResetToken(models.Model):
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    token = models.CharField(max_length=6, unique=True) # Store the 6-digit code
+    created_at = models.DateTimeField(auto_now_add=True)
+    expires_at = models.DateTimeField() # Will be calculated in save method
+    is_used = models.BooleanField(default=False)
+
+    def save(self, *args, **kwargs):
+        # Calculate expires_at before saving if it's not set
+        if not self.expires_at:
+            self.expires_at = timezone.now() + timedelta(minutes=15) # Code expires in 15 minutes
+        super().save(*args, **kwargs)
+
+    def is_valid(self):
+        """Checks if the token is not used and not expired."""
+        return not self.is_used and self.expires_at > timezone.now()
+
+    def __str__(self):
+        return f"Token for {self.user.username}: {self.token}"

@@ -5,8 +5,11 @@
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link rel="stylesheet" href="{% static 'CSS/user_dashboard.css' %}">
+        <link rel="stylesheet" href="{% static 'CSS/index.css' %}">
         <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/js/all.min.js"></script>
         <link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+        <link rel="stylesheet" href="{% static 'CSS/index.css' %}">
+
         <title>Dashboard | Online Library</title>
     </head>
     <body>
@@ -22,7 +25,12 @@
                             <i class="fas fa-user"></i>Profile</a></li>
                         <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
-                        <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
+          <li>
+              <form action="{% url 'logout' %}" method="post">
+              {% csrf_token %}
+              <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+              </form>
+          </li>
                     </ul>
                 </nav>
                 <button class="menu-toggle">
@@ -36,8 +44,12 @@
                     <i class="fas fa-user"></i>Profile</a></li>
                 <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
                 <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
-                <li><a href="{% url 'logout' %}"><i class="fas fa-sign-out-alt"></i> Log Out</a></li>
-            </ul>
+                <li>
+                    <form action="{% url 'logout' %}" method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+                    </form>
+                </li>
         </div>
         <div class="overlay"></div>
 
