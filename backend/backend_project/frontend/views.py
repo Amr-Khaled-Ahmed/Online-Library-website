@@ -24,7 +24,7 @@ from django.db import IntegrityError, transaction
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Customer, Admin, Membershiptypes, Borrowings, Favorites, Authors, Genres, \
-    Books, Bookauthor, Bookgenre, Bookcopies  # Import necessary models
+    Books, Bookauthor, Bookgenre, Bookcopies, PasswordResetToken  # Import necessary models
 from django.urls import reverse
 from django.views.decorators.http import require_POST  # Import require_POST
 from django.contrib.auth.decorators import login_required
