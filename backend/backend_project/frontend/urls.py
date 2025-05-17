@@ -19,22 +19,17 @@ urlpatterns = [
     path('forgot-password', views.forgot_password, name='forgot_password'),
     path('user-dashboard', views.user_dashboard, name='user_dashboard'),
     path('logout/', views.logout_user, name='logout'),
-<<<<<<< Updated upstream
     path('add-book', views.add_book, name='add_book'),
-    path('delete-book', views.delete_book, name='delete_book'),
-    path('get-book/<int:book_id>', views.get_book, name='get_book'),
     path('edit-book/<int:book_id>', views.edit_book, name='edit_book'),
     path('api/copies/add-copies', views.add_copies, name='add_copies'),
     path('api/copies/get-copies/<int:book_id>', views.get_copies, name='get_copies'),
     path('api/users/borrowers/<int:book_id>', views.get_borrowers, name='get_borrowers'),
     path('api/books/check-isbn/<int:isbn>', views.check_isbn, name='check_isbn'),
-=======
->>>>>>> Stashed changes
+
 
 
     # API Endpoints
     path('profile/update_picture/', views.update_profile_picture, name='update_profile_picture'), # API for profile pic
-    path('add-book', views.add_book, name='add_book'), # API to add book
     path('delete-book', views.delete_book, name='delete_book'), # API to delete book
     path('get-book/<int:book_id>', views.get_book, name='get_book'), # API to get single book
     path('edit-book/<int:book_id>', views.edit_book, name='edit_book'), # API to edit book

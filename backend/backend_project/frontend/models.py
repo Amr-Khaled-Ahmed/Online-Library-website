@@ -199,10 +199,7 @@ class Admin(models.Model):
     )
     # Add any admin-specific fields here
     profile_picture_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
-<<<<<<< Updated upstream
 
-=======
->>>>>>> Stashed changes
 
     class Meta:
         managed = True # Let Django manage this table

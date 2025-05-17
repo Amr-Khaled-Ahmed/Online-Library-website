@@ -173,7 +173,7 @@ form {
     transform: scale(1.02);
 }
 
-#id-validation,
+#isbn-validation,
 #book-cover-validation {
     margin: 1%;
     padding-left: 10px;

@@ -153,15 +153,7 @@ def admin_dashboard(request):
         print(book.ebook_availability)
         print(book.audiobook_availability)
 
-<<<<<<< Updated upstream
-    if availability == 'available':
-        enriched_books = [book for book in enriched_books if book['copies_count'] > 10]
-    elif availability == 'unavailable':
-        enriched_books = [book for book in enriched_books if book['copies_count'] == 0 and not book['book'].ebook_availability and not book['book'].audiobook_availability]
-    elif availability == 'low-stock':
-        enriched_books = [book for book in enriched_books if (book['copies_count'] <= 10 and (book['copies_count'] > 0 or book['book'].ebook_availability or book['book'].audiobook_availability))]
-    
-=======
+
     # Apply availability filter to the enriched list
     if availability == 'unavailable':
         enriched_books = [book for book in enriched_books if book['available_copies_count'] == 0]
@@ -170,7 +162,6 @@ def admin_dashboard(request):
     elif availability == 'available':
         enriched_books = [book for book in enriched_books if book['available_copies_count'] > 10]
     # 'all' is the default and requires no filtering here
->>>>>>> Stashed changes
 
 
     # Apply sorting to the enriched list
@@ -210,19 +201,13 @@ def profile(request):
             # Fetch counts from the database using the Customer object
             # Wrap in try/except to handle missing tables temporarily
             try:
-                # Ensure Borrowings and Favorites models are imported at the top
-<<<<<<< Updated upstream
-                books_borrowed_count = Borrowings.objects.filter(user=customer,
-                                                                 return_date__isnull=True).count()  # Count currently borrowed books
-                books_favorited_count = Favorites.objects.filter(user=customer).count()  # Count favorite books
-=======
+
                 # Count currently borrowed books (return_date is null)
                 books_borrowed_count = Borrowings.objects.filter(user=customer,
                                                                  return_date__isnull=True).count()
                 # Count favorite books
                 favorites_count = Favorites.objects.filter(user=customer).count()
                 books_favorited_count = favorites_count # Assign to the correct variable name
->>>>>>> Stashed changes
             except OperationalError:
                 # Log a warning or handle the error gracefully if tables are missing
                 logger.warning(
@@ -480,11 +465,7 @@ def logout_user(request):
 
 
 @login_required
-<<<<<<< Updated upstream
-@require_POST  
-=======
 @require_POST
->>>>>>> Stashed changes
 def update_profile_picture(request):
     """Handles uploading or clearing the user's profile picture for both Admin and Customer."""
     user = request.user
@@ -518,14 +499,9 @@ def update_profile_picture(request):
         # Optional: Delete the old file if it exists
         if profile_obj.profile_picture_url:
             try:
-<<<<<<< Updated upstream
-                old_file_path = os.path.join(settings.MEDIA_ROOT,
-                                             profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
-=======
                 # Extract the file name from the URL and join it with MEDIA_ROOT
                 old_file_name = profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1)
                 old_file_path = os.path.join(settings.MEDIA_ROOT, old_file_name)
->>>>>>> Stashed changes
                 if os.path.exists(old_file_path):
                     os.remove(old_file_path)
                     logger.info(f"Deleted old profile picture: {old_file_path}")
@@ -536,10 +512,6 @@ def update_profile_picture(request):
         # You might want a more robust naming strategy (e.g., using user ID)
         # Construct a subdirectory based on user type (admin or customer)
         subdirectory = 'profile_pictures/admins' if is_admin else 'profile_pictures/customers'
-<<<<<<< Updated upstream
-=======
-        # Ensure filename is safe, potentially prepend user id/timestamp
->>>>>>> Stashed changes
         filename = fs.save(os.path.join(subdirectory, uploaded_file.name), uploaded_file)
 
 
@@ -574,13 +546,8 @@ def update_profile_picture(request):
             # Optional: Delete the old file from storage
             try:
                 # Get the path from the URL and delete the file
-<<<<<<< Updated upstream
-                file_path = os.path.join(settings.MEDIA_ROOT,
-                                         profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
-=======
                 file_name = profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1)
                 file_path = os.path.join(settings.MEDIA_ROOT, file_name)
->>>>>>> Stashed changes
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     logger.info(f"Deleted profile picture: {file_path}")
@@ -808,17 +775,11 @@ def add_copies(request):
             data = json.loads(request.body)
 
             bookId = data.get('bookId')
-<<<<<<< Updated upstream
-            hardcover = int(data.get('hardcover'))
-            paperback = int(data.get('paperback'))
-            ebook = data.get('ebook')
-            audiobook = data.get('audiobook')
-=======
+
             hardcover = int(data.get('hardcover', 0)) # Default to 0 if not provided
             paperback = int(data.get('paperback', 0)) # Default to 0 if not provided
             ebook = data.get('ebook', False)
             audiobook = data.get('audiobook', False)
->>>>>>> Stashed changes
 
             # Use get_object_or_404 for cleaner handling of not found
             book = get_object_or_404(Books, book_id=bookId, is_deleted=False)
@@ -839,15 +800,10 @@ def add_copies(request):
                         # is_borrowed and in_inventory default to False/True respectively
                     )
 
-<<<<<<< Updated upstream
 
-            book.ebook_availability = ebook
-            book.audiobook_availability = audiobook
-=======
             # Update ebook/audiobook availability directly on the Book model
             book.ebook_availability = 1 if ebook else 0
             book.audiobook_availability = 1 if audiobook else 0
->>>>>>> Stashed changes
             book.save()
 
             # You might want to return updated copy counts in the response
@@ -900,7 +856,7 @@ def get_borrowers(request,book_id):
 
         for borrow in borrowings:
             borrows.append({
-                'username': borrow.user.name,
+                'username': borrow.user.user.first_name,
                 'profilePic': borrow.user.profile_picture_url,
                 'format': borrow.format,
                 'borrow_date': borrow.borrow_date.strftime("%Y-%m-%dT%H:%M"),
