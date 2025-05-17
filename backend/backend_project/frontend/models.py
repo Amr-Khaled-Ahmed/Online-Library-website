@@ -141,7 +141,7 @@ class Bookcopies(models.Model):
     format = models.CharField(max_length=50) # Changed from TextField (e.g., 'Hardcover', 'Paperback', 'eBook')
     is_borrowed = models.BooleanField(default=False) # Changed from IntegerField
     # borrower refers to the Customer profile linked to the auth.User
-    borrower = models.ForeignKey('self', on_delete=models.SET_NULL, blank=True, null=True) # Corrected FK reference to Customer
+    borrower = models.ForeignKey('Customer', on_delete=models.SET_NULL, blank=True, null=True) # Corrected ForeignKey to Customer
     in_inventory = models.BooleanField(default=True) # Changed from IntegerField, assuming it's in inventory by default
 
 
@@ -199,7 +199,10 @@ class Admin(models.Model):
     )
     # Add any admin-specific fields here
     profile_picture_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
+<<<<<<< Updated upstream
 
+=======
+>>>>>>> Stashed changes
 
     class Meta:
         managed = True # Let Django manage this table
@@ -217,11 +220,12 @@ class Borrowings(models.Model):
     # User who borrowed
     user = models.ForeignKey(Customer, on_delete=models.CASCADE) # Changed to Customer, added on_delete
     # Specific copy borrowed (OneToOne means a copy can only be in ONE active borrowing at a time)
-    copy = models.OneToOneField(Bookcopies, on_delete=models.PROTECT) # Changed from DO_NOTHING, use PROTECT as copy must exist
+    copy = models.ForeignKey(Bookcopies, on_delete=models.PROTECT)
     # format is already on Bookcopies, might be redundant here unless this indicates borrow format.
     # Keeping for now based on original schema, but consider if needed.
     format = models.CharField(max_length=50) # Changed from TextField, should match copy format
     borrow_date = models.DateTimeField(default=timezone.now) # Changed from TextField, use DateTimeField with a default
+    due_date = models.DateTimeField(blank=True, null=True) # Changed from TextField
     return_date = models.DateTimeField(blank=True, null=True) # Changed from TextField
     current_renew_count = models.IntegerField(default=0) # Added default
     last_renewal_date = models.DateTimeField(blank=True, null=True) # Changed from TextField

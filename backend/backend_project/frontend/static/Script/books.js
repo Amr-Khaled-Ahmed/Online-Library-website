@@ -1,86 +1,38 @@
-const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
-const userIndex = usersData.findIndex(u => u && u.username === loggedInUser?.username);
+// Remove localStorage related to user data at the top, as favorites are now handled by the backend.
+// const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
+// const usersData = JSON.parse(localStorage.getItem('users_data')) || [];
+// const userIndex = usersData.findIndex(u => u && u.username === loggedInUser?.username);
 
+// Remove initializeUserData function as it's no longer needed for favorites/borrows state.
+// function initializeUserData() { ... }
+// const userData = initializeUserData();
 
-function initializeUserData() {
-    if (!loggedInUser) {
-        const defaultUser = {
-            username: 'guest',
-            profile_info: 'Guest User',
-            profile_image_url: '../CSS/assets/default_profile.png',
-            borrowed_books: [],
-            borrowing_history: [],
-            favorite_books: []
-        };
-        localStorage.setItem('loggedIn_user', JSON.stringify(defaultUser));
-        return defaultUser;
-    }
+// Remove sampleBooks as books are fetched from the backend.
+// const sampleBooks = [...];
 
-    if (!loggedInUser.borrowed_books) loggedInUser.borrowed_books = [];
-    if (!loggedInUser.borrowing_history) loggedInUser.borrowing_history = [];
-    if (!loggedInUser.favorite_books) loggedInUser.favorite_books = [];
-
-    localStorage.setItem('loggedIn_user', JSON.stringify(loggedInUser));
-    return loggedInUser;
-}
-
-const userData = initializeUserData();
-
-const sampleBooks = [
-    {
-        id: '1',
-        title: 'A Song of Ice and Fire',
-        author: 'R.R. Martin',
-        coverPath: './../CSS/assets/book_cover.jpg',
-        genre: 'fantasy',
-        format: 'hardcover',
-        pubYear: '2018',
-        availability: 'available',
-        borrowNum: '25',
-        lateFees: '5',
-        description: 'A Song of Ice and Fire is Martin\'s epic fantasy saga...',
-        borrowersList: []
-    },
-    {
-        id: '2',
-        title: 'The Great Gatsby',
-        author: 'F. Scott Fitzgerald',
-        coverPath: './../CSS/assets/The_Great_Gatsby_Cover.jpg',
-        genre: 'classic',
-        format: 'paperback',
-        pubYear: '1925',
-        availability: 'low-stock',
-        borrowNum: '42',
-        lateFees: '3',
-        description: 'The novel was inspired by a youthful romance Fitzgerald had...',
-        borrowersList: []
-    },
-    {
-        id: '3',
-        title: 'To Kill a Mockingbird',
-        author: 'Harper Lee',
-        coverPath: './../CSS/assets/cover3.jpg',
-        genre: 'fiction',
-        format: 'hardcover',
-        pubYear: '1960',
-        availability: 'unavailable',
-        borrowNum: '37',
-        lateFees: '4',
-        description: 'The story unfolds as her father, Atticus Finch...',
-        borrowersList: []
-    }
-];
+let currentUserFavorites = []; // Array to store IDs of books the current user has favorited
 
 function addBookToDisplay(book) {
     const bookItem = document.createElement('div');
     bookItem.className = 'book-item';
-    bookItem.id = `_${book.book_id}`;
+    bookItem.id = `book_${book.book_id}`; // Use a more descriptive ID
+
+    // Check if the current book is in the user's favorites
+    const isFavorite = currentUserFavorites.includes(book.book_id);
+    const starClass = isFavorite ? 'active' : '';
+
+    // Determine if the borrow button should be enabled
+    const canBorrow = book.is_available; // Use the overall availability from the backend
+    const borrowButtonText = canBorrow ? 'Borrow' : 'Not Available';
+    const borrowButtonDisabled = !canBorrow ? 'disabled' : '';
 
     bookItem.innerHTML = `
-        <button class="star-button"><i class="fas fa-star"></i></button>
+        <button class="star-button ${starClass}" data-book-id="${book.book_id}"><i class="fas fa-star"></i></button>
         <div class="book-cover">
-            <img src="${book.cover_image_url}" alt="${book.title} book cover">
+            ${book.cover_image_url ?
+                `<img src="${book.cover_image_url}" alt="${book.title} book cover">` :
+                `<i class="fas fa-book-open"></i>` // Placeholder icon if no cover
+            }
         </div>
         <div class="book-details">
             <h3 class="book-title">${book.title}</h3>
@@ -90,16 +42,16 @@ function addBookToDisplay(book) {
                 <span class="meta-item">${book.publication_year || 'Unknown'}</span>
             </div>
             <div class="availability">
-                <span class="availability-badge ${book.is_available ? 'available' : 'unavailable'}">
-                    ${book.is_available ? 'Available' : 'Not Available'}
+                <span class="availability-badge ${canBorrow ? 'available' : 'unavailable'}">
+                    ${borrowButtonText}
                 </span>
+                ${book.available_physical_copies > 0 ? `<span class="copies-count">${book.available_physical_copies} copies</span>` : ''}
+                ${book.ebook_available ? `<span class="format-indicator">eBook</span>` : ''}
+                ${book.audiobook_available ? `<span class="format-indicator">Audiobook</span>` : ''}
             </div>
             <div class="book-actions">
                 <a href="/book-details?id=${book.book_id}" class="book-btn details-btn">Details</a>
-                ${book.is_available ? 
-                    `<button class="book-btn borrow-btn" data-book-id="${book.book_id}">Borrow</button>` :
-                    `<button class="book-btn borrow-btn" disabled>Not Available</button>`
-                }
+                <button class="book-btn borrow-btn" data-book-id="${book.book_id}" ${borrowButtonDisabled}>${borrowButtonText}</button>
             </div>
         </div>
     `;
@@ -108,8 +60,21 @@ function addBookToDisplay(book) {
     const borrowBtn = bookItem.querySelector('.borrow-btn');
     if (!borrowBtn.disabled) {
         borrowBtn.addEventListener('click', async () => {
+            const bookIdToBorrow = borrowBtn.getAttribute('data-book-id');
+            if (!bookIdToBorrow) {
+                console.error('Borrow button is missing data-book-id');
+                showNotification("❌ Error: Could not borrow book.");
+                return;
+            }
+
             try {
-                const response = await fetch(`/api/books/${book.book_id}/borrow/`, {
+                // Disable the button immediately to prevent double clicks
+                borrowBtn.disabled = true;
+                borrowBtn.classList.add('disabled');
+                borrowBtn.textContent = 'Processing...';
+
+
+                const response = await fetch(`/api/books/${bookIdToBorrow}/borrow/`, {
                     method: 'POST',
                     headers: {
                         'X-CSRFToken': getCookie('csrftoken')
@@ -119,32 +84,137 @@ function addBookToDisplay(book) {
                 const data = await response.json();
 
                 if (!response.ok) {
-                    throw new Error(data.error || 'Failed to borrow book');
+                     // Re-enable the button and revert text on failure
+                     borrowBtn.disabled = false;
+                     borrowBtn.classList.remove('disabled');
+                     borrowBtn.textContent = borrowButtonText; // Revert to original text
+
+                    // Display specific error message from the backend
+                    showNotification(`❌ ${data.error || 'Failed to borrow book'}`);
+                    console.error('Error:', data.error);
+                } else {
+                    showNotification("✅ Book borrowed successfully!");
+
+                    // Update the UI after successful borrowing
+                    borrowBtn.textContent = 'Borrowed';
+                    // Keep disabled as the user has now borrowed a copy
+
+                    // Update the availability badge
+                    const availabilityBadge = bookItem.querySelector('.availability-badge');
+                    if (availabilityBadge) {
+                        availabilityBadge.textContent = 'Not Available';
+                        availabilityBadge.classList.remove('available');
+                        availabilityBadge.classList.add('unavailable');
+                    }
+
+                    // You might want to update the copies count displayed on the card too
+                    // This would require fetching the updated book details or getting the count in the borrow response
+                    // For simplicity, we'll just update the badge and button.
+                    // A more robust solution might re-fetch the books list after a successful borrow.
+
+                     // Optional: Add a slight delay and then re-fetch the book list to ensure counts are accurate
+                     setTimeout(() => {
+                         filterBooks(); // Re-fetch with current filters
+                     }, 500); // Delay by 500ms
                 }
 
-                showNotification("✅ Book borrowed successfully!");
-
-                // Refresh the page after a short delay
-                setTimeout(() => {
-                    window.location.reload();
-                }, 1500);
-
             } catch (error) {
-                showNotification(error.message || "❌ An error occurred while borrowing the book");
-                console.error('Error:', error);
+                 // Re-enable the button and revert text on fetch error
+                 borrowBtn.disabled = false;
+                 borrowBtn.classList.remove('disabled');
+                 borrowBtn.textContent = borrowButtonText; // Revert to original text
+
+                showNotification(`❌ An error occurred: ${error.message || 'Failed to borrow book'}`);
+                console.error('Fetch Error:', error);
             }
         });
     }
 
+    // Add star button event listener
+    const starButton = bookItem.querySelector('.star-button');
+    starButton.addEventListener('click', async () => {
+        const bookIdToFavorite = starButton.getAttribute('data-book-id');
+        if (!bookIdToFavorite) {
+            console.error('Star button is missing data-book-id');
+            showNotification("❌ Error: Could not favorite book.");
+            return;
+        }
+
+        try {
+            const response = await fetch(`/api/books/${bookIdToFavorite}/favorite/`, {
+                method: 'POST', // Use POST for toggling favorite status
+                headers: {
+                    'X-CSRFToken': getCookie('csrftoken')
+                }
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // Handle cases where user is not logged in for favoriting
+                if (response.status === 401) {
+                     showNotification("❌ You must be logged in to favorite books.");
+                } else {
+                     showNotification(`❌ ${data.error || 'Failed to update favorites'}`);
+                     console.error('Error:', data.error);
+                }
+            } else {
+                if (data.favorited) {
+                    starButton.classList.add('active');
+                    showNotification("⭐ Added to favorites!");
+                    // Add to current user favorites list
+                    if (!currentUserFavorites.includes(parseInt(bookIdToFavorite))) {
+                         currentUserFavorites.push(parseInt(bookIdToFavorite));
+                    }
+                } else {
+                    starButton.classList.remove('active');
+                    showNotification("⭐ Removed from favorites!");
+                    // Remove from current user favorites list
+                    currentUserFavorites = currentUserFavorites.filter(id => id !== parseInt(bookIdToFavorite));
+                }
+            }
+        } catch (error) {
+            showNotification(`❌ An error occurred: ${error.message || 'Failed to update favorites'}`);
+            console.error('Fetch Error:', error);
+        }
+    });
+
     return bookItem;
 }
 
-function isBookBorrowed(bookId) {
-    if (!userData.borrowed_books) return false;
-    return userData.borrowed_books.some(borrowedBook => borrowedBook.id === bookId);
+// Function to show notifications
+function showNotification(message) {
+    const notif = document.createElement('div');
+    notif.className = 'custom-notification';
+    notif.textContent = message;
+    document.body.appendChild(notif);
+    // Add animation classes
+    notif.style.animation = 'slide-in 0.5s forwards, fade-out 0.5s 2.5s forwards';
+
+    // Remove the notification after the animation ends
+    setTimeout(() => {
+        notif.remove();
+    }, 3000); // Matches total animation duration (0.5s slide-in + 2.5s display + 0.5s fade-out)
+}
+
+// Helper function to get CSRF token
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
 }
 
 document.addEventListener('DOMContentLoaded', async function () {
+    // Add custom notification styles if they don't exist
     if (!document.getElementById('custom-notification-styles')) {
         const notificationStyles = document.createElement('style');
         notificationStyles.id = 'custom-notification-styles';
@@ -159,7 +229,7 @@ document.addEventListener('DOMContentLoaded', async function () {
                 border-radius: 5px;
                 box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
                 z-index: 9999;
-                animation: slide-in 0.5s forwards, fade-out 0.5s 2.5s forwards;
+                /* Animation defined in showNotification function */
             }
 
             @keyframes slide-in {
@@ -171,62 +241,126 @@ document.addEventListener('DOMContentLoaded', async function () {
                 from { opacity: 1; }
                 to { opacity: 0; }
             }
+             /* Style for disabled borrow button */
+            .book-btn.borrow-btn:disabled {
+                background-color: #ccc; /* Grey out */
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+             .book-btn.borrow-btn:disabled:hover {
+                background-color: #ccc; /* Keep grey on hover */
+                box-shadow: none;
+             }
+
+             /* Optional: Styles for availability badges */
+             .availability-badge.available {
+                 background-color: #4CAF50; /* Green */
+             }
+             .availability-badge.unavailable {
+                 background-color: #F44336; /* Red */
+             }
+              .availability-badge {
+                 display: inline-block;
+                 padding: 4px 8px;
+                 border-radius: 4px;
+                 color: white;
+                 font-size: 0.8em;
+                 margin-right: 5px;
+                 margin-bottom: 5px; /* Add margin for better spacing with other indicators */
+             }
+             .format-indicator {
+                 display: inline-block;
+                 padding: 2px 6px;
+                 border: 1px solid #ccc;
+                 border-radius: 4px;
+                 font-size: 0.7em;
+                 margin-right: 5px;
+                 margin-bottom: 5px;
+             }
+              .copies-count {
+                display: inline-block;
+                padding: 2px 6px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 0.7em;
+                margin-right: 5px;
+                margin-bottom: 5px;
+            }
+             .availability {
+                margin-top: 10px; /* Space above availability info */
+             }
+             .book-details p {
+                 margin-bottom: 5px; /* Space below author */
+             }
+             .book-details h3 {
+                 margin-bottom: 5px; /* Space below title */
+             }
+
         `;
         document.head.appendChild(notificationStyles);
     }
 
+
     const bookGrid = document.querySelector('.book-grid');
+    // Clear loading message or initial content
     bookGrid.innerHTML = '';
 
-    // Function to show notifications
-    function showNotification(message) {
-        const notif = document.createElement('div');
-        notif.className = 'custom-notification';
-        notif.textContent = message;
-        document.body.appendChild(notif);
-        setTimeout(() => notif.remove(), 3000);
-    }
-
-    // Helper function to get CSRF token
-    function getCookie(name) {
-        let cookieValue = null;
-        if (document.cookie && document.cookie !== '') {
-            const cookies = document.cookie.split(';');
-            for (let i = 0; i < cookies.length; i++) {
-                const cookie = cookies[i].trim();
-                if (cookie.substring(0, name.length + 1) === (name + '=')) {
-                    cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
-                    break;
-                }
-            }
-        }
-        return cookieValue;
-    }
-
-    // Fetch books from backend
+    // --- Fetch User's Favorite Book IDs ---
+    // This should ideally happen only if the user is authenticated.
+    // Assuming your Django views handle authentication and return 401 if not logged in.
     try {
-        const response = await fetch('/api/books/');
-        if (!response.ok) {
-            throw new Error('Failed to fetch books');
+        const response = await fetch('/api/user/favorites/');
+        if (response.ok) {
+            const favorites = await response.json();
+            // Store just the book IDs for quick lookup
+            currentUserFavorites = favorites.map(fav => fav.book_id);
+        } else {
+             // If not authenticated or error, currentUserFavorites remains empty, which is fine.
+             console.warn('Could not fetch user favorites. User might not be logged in or an error occurred.');
+             // No need to show a user-facing notification for this unless it's critical
         }
-        const books = await response.json();
-
-        books.forEach(book => {
-            const bookItem = addBookToDisplay(book);
-            bookGrid.appendChild(bookItem);
-        });
-
-        if (books.length === 0) {
-            const noResults = document.createElement('div');
-            noResults.className = 'no-results';
-            noResults.textContent = 'No books found.';
-            bookGrid.appendChild(noResults);
-        }
-
     } catch (error) {
-        console.error('Error fetching books:', error);
-        showNotification("❌ Failed to load books");
+        console.error('Error fetching user favorites:', error);
+         // No need to show a user-facing notification for this unless it's critical
     }
+
+
+    // --- Fetch Books and Display ---
+    async function fetchAndDisplayBooks(params = new URLSearchParams()) {
+        bookGrid.innerHTML = '<div class="loading-message">Loading books...</div>'; // Show loading message
+
+        try {
+            const response = await fetch(`/api/books/?${params.toString()}`);
+            if (!response.ok) {
+                throw new Error('Failed to fetch books');
+            }
+            const books = await response.json();
+
+            bookGrid.innerHTML = ''; // Clear loading message and previous books
+
+            if (books.length === 0) {
+                const noResults = document.createElement('div');
+                noResults.className = 'no-results';
+                noResults.textContent = params.has('q') || params.has('genre') || params.has('sort') || params.has('availability') || params.has('format')
+                    ? 'No books found matching your criteria.'
+                    : 'No books available in the catalog.';
+                bookGrid.appendChild(noResults);
+            } else {
+                 books.forEach(book => {
+                     const bookItem = addBookToDisplay(book);
+                     bookGrid.appendChild(bookItem);
+                 });
+            }
+
+        } catch (error) {
+            console.error('Error fetching books:', error);
+            bookGrid.innerHTML = '<div class="error-message">Failed to load books. Please try again later.</div>'; // Display error message
+            showNotification("❌ Failed to load books");
+        }
+    }
+
+    // Initial fetch and display of books
+    fetchAndDisplayBooks();
 
     // Search and filter functionality
     const searchForm = document.querySelector('.search-form');
@@ -242,43 +376,21 @@ document.addEventListener('DOMContentLoaded', async function () {
         select.addEventListener('change', filterBooks);
     });
 
-    async function filterBooks() {
-        const searchTerm = searchInput.value;
-        const genreFilter = filterSelects[0].value;
-        const sortBy = filterSelects[1].value;
-        const availabilityFilter = filterSelects[2].value;
+    function filterBooks() {
+        const searchTerm = searchInput.value.trim(); // Trim whitespace
+        const genreFilter = document.querySelector('.filter-group select:nth-child(1)').value;
+        const formatFilter = document.querySelector('.filter-group select:nth-child(2)').value;
+        const sortBy = document.querySelector('.filter-group select:nth-child(3)').value;
+        const availabilityFilter = document.querySelector('.filter-group select:nth-child(4)').value;
 
-        try {
-            const params = new URLSearchParams({
-                q: searchTerm,
-                genre: genreFilter,
-                sort: sortBy,
-                availability: availabilityFilter
-            });
 
-            const response = await fetch(`/api/books/?${params}`);
-            if (!response.ok) {
-                throw new Error('Failed to fetch filtered books');
-            }
+        const params = new URLSearchParams();
+        if (searchTerm) params.append('q', searchTerm);
+        if (genreFilter) params.append('genre', genreFilter);
+        if (formatFilter) params.append('format', formatFilter);
+        if (sortBy) params.append('sort', sortBy);
+        if (availabilityFilter) params.append('availability', availabilityFilter);
 
-            const books = await response.json();
-            bookGrid.innerHTML = '';
-
-            books.forEach(book => {
-                const bookItem = addBookToDisplay(book);
-                bookGrid.appendChild(bookItem);
-            });
-
-            if (books.length === 0) {
-                const noResults = document.createElement('div');
-                noResults.className = 'no-results';
-                noResults.textContent = 'No books found matching your criteria.';
-                bookGrid.appendChild(noResults);
-            }
-
-        } catch (error) {
-            console.error('Error filtering books:', error);
-            showNotification("❌ Failed to filter books");
-        }
+        fetchAndDisplayBooks(params);
     }
 });

@@ -35,14 +35,15 @@
                         <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-home"></i> Home</a></li>
                         <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                         <li><a href="{% url 'books' %}" class="active"><i class="fas fa-book"></i> Books</a></li>
-                          <li>
+
+                        <li><a href="{% url 'borrowed' %}#features"><i class="fas fa-bookmark"></i> borrow list</a></li>
+                        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                        <li>
                               <form action="{% url 'logout' %}" method="post">
                               {% csrf_token %}
                               <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
                               </form>
-                          </li>
-                        <li><a href="{% url 'borrowed' %}#features"><i class="fas fa-bookmark"></i> borrow list</a></li>
-                        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                        </li>
                     </ul>
                 </nav>
                 <button class="menu-toggle">
@@ -53,15 +54,18 @@
 
         <div class="mobile-menu">
             <ul class="mobile-nav">
-                <li><a href="#hero"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-home"></i> Home</a></li>
+                <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
                 <li><a href="{% url 'books' %}" class="active"><i class="fas fa-book"></i> Books</a></li>
-                  <li>
+
+                <li><a href="{% url 'borrowed' %}#features"><i class="fas fa-bookmark"></i> borrow list</a></li>
+                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                <li>
                       <form action="{% url 'logout' %}" method="post">
                       {% csrf_token %}
                       <button type="submit" class="btn primary-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
                       </form>
-                  </li>
-                <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+                </li>
             </ul>
         </div>
 

@@ -32,13 +32,14 @@ ALLOWED_HOSTS = []
 # Application definition
 
 INSTALLED_APPS = [
-    'frontend.apps.FrontendConfig',
+    'frontend.apps.FrontendConfig', # Make sure this is correct
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    # Add any other apps here
 ]
 
 MIDDLEWARE = [
@@ -49,15 +50,16 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    # Add any other middleware here
 ]
 
-ROOT_URLCONF = 'backend_project.urls'
+ROOT_URLCONF = 'backend_project.urls' # Make sure this points to your project's main urls.py
 
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
         'DIRS': [
-            os.path.join(BASE_DIR, 'frontend', 'templates'),
+            os.path.join(BASE_DIR, 'frontend', 'templates'), # Adjust path if needed
         ],
         'APP_DIRS': True,
         'OPTIONS': {
@@ -70,7 +72,7 @@ TEMPLATES = [
     },
 ]
 
-WSGI_APPLICATION = 'backend_project.wsgi.application'
+WSGI_APPLICATION = 'backend_project.wsgi.application' # Adjust if your project name is different
 
 
 # Database
@@ -117,16 +119,11 @@ USE_TZ = True
 
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/5.2/howto/static-files/
-# STATIC_ROOT = os.path.join(BASE_DIR, 'static')
-# STATIC_URL = 'static/'
-# STATICFILES_DIRS = [
-#     BASE_DIR / os.path.join(BASE_DIR, 'project/static'),
-# ]
 
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 STATIC_URL = 'static/'
 STATICFILES_DIRS = [
-    BASE_DIR / os.path.join(BASE_DIR, 'frontend/static'),
+    os.path.join(BASE_DIR, 'frontend', 'static'), # Adjust path if needed
 ]
 
 
@@ -136,11 +133,11 @@ STATICFILES_DIRS = [
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
 
 
-# AUTH_USER_MODEL = 'frontend.User'
-
+# AUTH_USER_MODEL = 'frontend.User' # Uncomment and adjust if you have a custom User model
 
 
 # email verfication
+# Ensure these settings are correct for your Gmail account and you've generated an App Password
 EMAIL_BACKEND = 'django.core.mail.backends.smtp.EmailBackend'
 EMAIL_HOST = 'smtp.gmail.com'
 EMAIL_PORT = 587
@@ -150,3 +147,8 @@ EMAIL_HOST_USER = 'amr171516@gmail.com' # Your Gmail address
 EMAIL_HOST_PASSWORD = 'emdb nrvw unpa edoq' # Your Gmail password or App Password
 DEFAULT_FROM_EMAIL = 'amr171516@gmail.com' # Emails will appear to be from this address
 SERVER_EMAIL = 'amr171516@gmail.com' # For server error notifications
+
+# Optional: Redirect after login/logout
+LOGIN_REDIRECT_URL = '/user-dashboard/' # Where to redirect after successful login
+LOGOUT_REDIRECT_URL = '/' # Where to redirect after successful logout
+LOGIN_URL = '/sign-in/' # URL for login page (used by @login_required)

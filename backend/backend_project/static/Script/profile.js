@@ -1,3 +1,4 @@
+// profile.js
 // Remove all localStorage related code for user data and editing
 // The profile data is now loaded by Django templates.
 
@@ -59,7 +60,11 @@ function closeModal() {
 
 // Function to update the UI based on whether a profile picture exists
 function updateProfilePictureUI(imageUrl) {
-    if (imageUrl && typeof imageUrl === 'string' && imageUrl.startsWith('/media/')) { // Check if it's a valid uploaded image URL
+    // Check if the imageUrl is a non-empty string. Using a simple check here;
+    // a more robust check might verify it's a valid URL format or starts with MEDIA_URL.
+    const hasPicture = imageUrl && typeof imageUrl === 'string';
+
+    if (hasPicture) {
         profilePreview.src = imageUrl;
         profilePreview.classList.remove('hide'); // Show the image
         uploadChangeBtnText.textContent = 'Change Picture'; // Change button text
@@ -133,7 +138,8 @@ if (imgInput && typeof updatePictureUrl !== 'undefined') { // Check if element a
                      // Clear the file input on error
                     imgInput.value = '';
                     // Update UI to reflect no new picture was set based on the *current* displayed image
-                    updateProfilePictureUI(profilePreview.src === window.location.origin + "/" || profilePreview.classList.contains('hide') ? null : profilePreview.src); // Check if current src is empty or hidden
+                    // Check if current src is empty or hidden - simplified the check
+                    updateProfilePictureUI(profilePreview.classList.contains('hide') ? null : profilePreview.src);
                 }
             })
             .catch(error => {
@@ -142,7 +148,8 @@ if (imgInput && typeof updatePictureUrl !== 'undefined') { // Check if element a
                  // Clear the file input on error
                 imgInput.value = '';
                  // Update UI to reflect no new picture was set based on the *current* displayed image
-                updateProfilePictureUI(profilePreview.src === window.location.origin + "/" || profilePreview.classList.contains('hide') ? null : profilePreview.src); // Check if current src is empty or hidden
+                 // Check if current src is empty or hidden - simplified the check
+                updateProfilePictureUI(profilePreview.classList.contains('hide') ? null : profilePreview.src);
                  // Re-enable button and reset text on error if you added loading state
                 // uploadChangeBtn.disabled = false;
                 // updateProfilePictureUI(profilePreview.src);

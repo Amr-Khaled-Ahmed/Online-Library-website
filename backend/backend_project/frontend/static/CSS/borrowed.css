@@ -645,3 +645,44 @@
     font-weight: bold;
     font-size: 1.2rem;
 }
+
+
+/* Styles for buttons within the Favorites section (#favorites) */
+#favorites .favorite-item .action-buttons .book-btn {
+    /* Styles for the Borrow button in Favorites */
+    background-color: var(--primary-color); /* Use primary color variable for background */
+    color: var(--white); /* Use white variable for text color */
+    font-family: var(--font-primary); /* Use the primary font variable */
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    margin-right: 10px; /* Space between buttons */
+    transition: background-color 0.3s ease;
+    font-size: 0.9em; /* Adjust font size */
+}
+
+#favorites .favorite-item .action-buttons .book-btn:hover:not(:disabled) {
+    background-color: var(--primary-hover); /* Use primary hover color variable */
+}
+
+#favorites .favorite-item .action-buttons .book-btn:disabled {
+    background-color: var(--button-color); /* Use a general button color or grey for disabled */
+    color: var(--text-secondary); /* Use a secondary text color for disabled text */
+    cursor: not-allowed;
+    opacity: 0.7; /* Make it slightly transparent */
+}
+
+
+#favorites .favorite-item .action-buttons .remove-favorite-btn {
+    /* Styles for the Remove button in Favorites */
+    background-color: var(--form-bg-color); /* Use a red variable if defined, fallback to default red */
+    color: var(--white); /* Use white variable for text color */
+    font-family: var(--font-primary); /* Use the primary font variable */
+    border: none;
+    padding: 8px 15px;
+    border-radius: 4px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+    font-size: 0.9em; /* Adjust font size */
+}

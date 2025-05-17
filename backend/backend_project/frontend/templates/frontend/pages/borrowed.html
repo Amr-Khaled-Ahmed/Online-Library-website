@@ -41,8 +41,8 @@
                         <li><a href="{% url 'borrowed' %}" class="active"><i
                                     class="fas fa-bookmark"></i> My
                                 Borrows</a></li>
-                        <li><a href="{% url 'profile' %}"><i
-                                    class="fas fa-user"></i> Account</a></li>
+                        <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+
                         <li><a href="#contact"><i class="fas fa-envelope"></i>
                                 Contact</a></li>
                           <li>
@@ -67,8 +67,8 @@
                         Books</a></li>
                 <li><a href="{% url 'borrowed' %}" class="active"><i
                             class="fas fa-bookmark"></i> My Borrows</a></li>
-                <li><a href="{% url 'user_dashboard' %}"><i class="fas fa-user"></i>
-                        Account</a></li>
+                        <li><a href="{% url 'profile' %}"><i class="fas fa-user"></i> Profile</a></li>
+
                 <li><a href="#contact"><i class="fas fa-envelope"></i>
                         Contact</a></li>
                           <li>
@@ -85,10 +85,6 @@
         <h1>My Books</h1>
         <p>Manage your current borrows, returns, favorites, and borrowing history</p>
 
-        <div class="borrowed-actions">
-            <a href="#" class="action-btn export-btn"><i class="fas fa-file-export"></i> Export History (PDF)</a>
-            <a href="#" class="action-btn export-btn"><i class="fas fa-file-csv"></i> Export History (CSV)</a>
-        </div>
     </section>
 
     <div class="tab-container">
@@ -166,14 +162,14 @@
                         {% endif %}
 
                         <div class="action-buttons">
+                            {# The return button is present within the loop, but needs to be outside the can_renew check #}
+                            <button class="return-btn" data-borrowing-id="{{ borrow.id }}">Return</button>
                             {% if borrow.can_renew %}
-                            <button class="renew-btn" data-borrow-id="{{ borrow.id }}">Renew</button>
+                                <button class="renew-btn" data-borrowing-id="{{ borrow.id }}">Renew</button>
                             {% else %}
-                            <button class="renew-btn" disabled>Renew</button>
+                                <button class="renew-btn" disabled>Renew</button>
                             {% endif %}
-                            <button class="return-btn" data-borrow-id="{{ borrow.id }}">Return</button>
                         </div>
-                    </div>
                 </div>
                 {% empty %}
                 <p class="no-books">You currently have no borrowed books.</p>
@@ -316,13 +312,24 @@
                         <p id="modal-description">This book is currently borrowed from the library.</p>
                         <div class="modal-details-grid">
                             <div class="detail-item">
-                                <strong>Borrowed Date:</strong>
+                                <strong>Borrowed On:</strong>
                                 <span id="modal-borrowed-date"></span>
                             </div>
                             <div class="detail-item">
                                 <strong>Due Date:</strong>
                                 <span id="modal-due-date"></span>
                             </div>
+                            {# Added for history items #}
+                            <div class="detail-item" id="modal-returned-date-item" style="display: none;">
+                                <strong>Returned On:</strong>
+                                <span id="modal-returned-date"></span>
+                            </div>
+                             {# Added for history items with fines #}
+                             <div class="detail-item" id="modal-fine-item" style="display: none;">
+                                 <strong>Fine:</strong>
+                                 <span id="modal-fine-amount"></span>
+                             </div>
+                             {# End of added items #}
                             <div class="detail-item">
                                 <strong>Status:</strong>
                                 <span id="modal-status"></span>
@@ -331,7 +338,7 @@
                                 <strong>Format:</strong>
                                 <span id="modal-format"></span>
                             </div>
-                            <div class="detail-item">
+                            <div class="detail-item" id="modal-renewals-item"> {# Added id for easy selection #}
                                 <strong>Renewals:</strong>
                                 <span id="modal-renewals"></span>
                             </div>

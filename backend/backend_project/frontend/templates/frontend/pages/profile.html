@@ -26,9 +26,14 @@
           <li><a href="{% if is_admin %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
           {% if not is_admin %}
           <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
+          <li><a href="{% url 'borrowed' %}"><i class="fas fa-bookmark"></i> My Borrows</a></li>
           {% endif %}
           {% comment %} Conditionally display Profile link {% endcomment %}
           <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
+<<<<<<< Updated upstream
+=======
+          <li><a href="#contact"><i class="fas fa-envelope"></i>Contact</a></li>
+>>>>>>> Stashed changes
           <li>
             <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
@@ -50,6 +55,7 @@
 
   <div class="mobile-menu">
     <ul class="mobile-nav">
+<<<<<<< Updated upstream
       {% comment %} Link to dashboard based on role {% endcomment %}
       <li><a href="{% if is_admin %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}" id="mobileHomeLink"><i class="fas fa-home"></i> Home</a></li>
       {% if not is_admin %}
@@ -60,14 +66,27 @@
       <li>
         <form action="{% url 'logout' %}" method="post">
           {% csrf_token %}
+=======
+        <li><a href="{% if is_admin %}{% url 'admin_dashboard' %}{% else %}{% url 'user_dashboard' %}{% endif %}" id="homeLink"><i class="fas fa-home"></i> Home</a></li>
+          {% if not is_admin %}
+          <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
+          <li><a href="{% url 'borrowed' %}"><i class="fas fa-bookmark"></i> My Borrows</a></li>
+          {% endif %}
+          {% comment %} Conditionally display Profile link {% endcomment %}
+          <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
+          <li><a href="#contact"><i class="fas fa-envelope"></i>Contact</a></li>
+>>>>>>> Stashed changes
           <li>
-              <form action="{% url 'logout' %}" method="post">
+            <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
-              <button type="submit" class="profile-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
-              </form>
+              <li>
+                  <form action="{% url 'logout' %}" method="post">
+                  {% csrf_token %}
+                  <button type="submit" class="profile-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
+                  </form>
+              </li>
+            </form>
           </li>
-        </form>
-      </li>
     </ul>
   </div>
 
@@ -239,12 +258,15 @@
                 {% endif %}
                  {% comment %} Conditionally display Profile link in footer {% endcomment %}
                  <li><a href="{% url 'profile' %}">Profile</a></li>
+<<<<<<< Updated upstream
                   <li>
                       <form action="{% url 'logout' %}" method="post">
                       {% csrf_token %}
                       <button type="submit" class="profile-btn" ><i class="fas fa-sign-out-alt"></i> Logout</button>
                       </form>
                   </li>
+=======
+>>>>>>> Stashed changes
               </ul>
           </div>
           <div class="footer-section">
@@ -270,7 +292,11 @@
         // We don't need to pass defaultImageUrl if we don't display it initially
         // const defaultImageUrl = "{% static 'CSS/assets/blue.avif' %}";
          // Pass the initial profile picture URL from Django context
+<<<<<<< Updated upstream
         const initialProfilePictureUrl = "{{ profile_picture_url|default:'' }}"; // Use the unified profile_picture_url
+=======
+        const initialProfilePictureUrl = "{{ profile_picture_url|default:''}}"; // Use the unified profile_picture_url
+>>>>>>> Stashed changes
     </script>
     <script src="{% static 'Script/profile.js' %}"></script> {% comment %} Keep profile.js for modal and other UI {% endcomment %}
     <script src="{% static 'Script/header.js' %}"></script>
