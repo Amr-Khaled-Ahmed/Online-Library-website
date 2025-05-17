@@ -29,7 +29,9 @@ urlpatterns = [
     path('delete-book', views.delete_book, name='delete_book'),
     path('get-book/<int:book_id>', views.get_book, name='get_book'),
     path('edit-book/<int:book_id>', views.edit_book, name='edit_book'),
-    path('add-copies', views.add_copies, name='add_copies'),
+    path('api/copies/add-copies', views.add_copies, name='add_copies'),
+    path('api/copies/get-copies/<int:book_id>', views.get_copies, name='get_copies'),
+    path('api/users/borrowers/<int:book_id>', views.get_borrowers, name='get_borrowers'),
 
     #  Password Reset URL Patterns
     path('send-verification-email/', views.send_verification_email_view, name='send_verification_email'),

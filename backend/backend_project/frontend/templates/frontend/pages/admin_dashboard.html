@@ -108,6 +108,9 @@
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Hardcover Copies"
                                 min="0"
                                 name="hardcover-copies">
+                            <div class="availability">
+                                <label for="" id="available-hardcover-copies">Available: </label>
+                            </div>
                         </div>
                         <div class="Paperback">
                             <div class="input-header">
@@ -118,6 +121,9 @@
                                 oninput="this.value = this.value.replace(/[^0-9]/g, '');" placeholder="Enter Number of Paperback Copies"
                                 min="0"
                                 name="paperback-copies">
+                            <div class="availability">
+                                <label for="" id="available-paperback-copies">Available: </label>
+                            </div>
                         </div>
                         <div class="E-book">
                             <div class="input-header">
@@ -232,20 +238,19 @@
                     <label class="book-year-pub" for="book">{{item.book.publication_year}}</label>
                 </div>
                 <div class="book-status">
-                    <label for="book" class="available
-                                        {% if item.copies_count == 0 %}
-                                            unavailable
-                                        {% elif item.copies_count <= 10 %}
-                                            low-stock
-                                        {% else %}
-                                            available
-                                        {% endif %}">
-                        {% if item.copies_count == 0 %}
-                            Unavailable
-                        {% elif item.copies_count <= 10 %}
-                            Low Stock
-                        {% else %}
+                    <label for="book" class="{% if item.copies_count > 10 %}
+                                                available
+                                            {% elif item.copies_count == 0 and not item.book.ebook_availability and not item.book.audiobook_availability%}
+                                                unavailable
+                                            {% else %}
+                                                low-stock
+                                            {% endif %}">
+                        {% if item.copies_count > 10 %}
                             Available
+                        {% elif item.copies_count == 0 and not item.book.ebook_availability and not item.book.audiobook_availability%}
+                            Unavailable
+                        {% else %}
+                            Low Stock
                         {% endif %}
                     </label>
                     <label for="book" class="{% if item.borrowers_count <= 5 %}

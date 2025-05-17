@@ -98,8 +98,8 @@ class Books(models.Model):
     added_date = models.DateTimeField(auto_now_add=True, null=True) # Changed from TextField, use DateTimeField and auto_now_add
     is_deleted = models.BooleanField(default=False) # Changed from IntegerField
     deleted_at = models.DateTimeField(blank=True, null=True) # Changed from TextField
-    ebook_availability = models.IntegerField(default=0, blank=True, null=True)
-    audiobook_availability = models.IntegerField(default=0, blank=True, null=True)
+    ebook_availability = models.BooleanField(default=False, blank=True, null=True)
+    audiobook_availability = models.BooleanField(default=False, blank=True, null=True)
     class Meta:
         managed = True # Let Django manage this table
         db_table = 'Books' # Keep existing table name
@@ -198,6 +198,8 @@ class Admin(models.Model):
         related_name='admin_profile' # Allows accessing Admin from User: user_instance.admin_profile
     )
     # Add any admin-specific fields here
+    profile_picture_url = models.URLField(max_length=500, blank=True, null=True) # Changed from TextField
+
 
     class Meta:
         managed = True # Let Django manage this table

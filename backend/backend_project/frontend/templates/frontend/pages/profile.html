@@ -27,10 +27,8 @@
           {% if not is_admin %}
           <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
           {% endif %}
-          {% comment %} Conditionally display Profile link for non-admins {% endcomment %}
-          {% if not is_admin %}
+          {% comment %} Conditionally display Profile link {% endcomment %}
           <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
-          {% endif %}
           <li>
             <form action="{% url 'logout' %}" method="post">
               {% csrf_token %}
@@ -57,10 +55,8 @@
       {% if not is_admin %}
       <li><a href="{% url 'books' %}"><i class="fas fa-book"></i> Books</a></li>
       {% endif %}
-      {% comment %} Conditionally display Profile link for non-admins in mobile menu {% endcomment %}
-      {% if not is_admin %}
+      {% comment %} Conditionally display Profile link in mobile menu {% endcomment %}
       <li><a href="{% url 'profile' %}" class="active"><i class="fas fa-user"></i> Profile</a></li>
-      {% endif %}
       <li>
         <form action="{% url 'logout' %}" method="post">
           {% csrf_token %}
@@ -100,7 +96,7 @@
               {% csrf_token %}
               <div class="img-holder">
                   {# Display the uploaded image if available, otherwise hide the img tag #}
-                  <img src="{{ customer.profile_picture_url|default:'' }}" alt="Profile Picture" id="profilePreview" class="profile-picture {% if not customer.profile_picture_url %}hide{% endif %}">
+                  <img src="{{ profile_picture_url|default:'' }}" alt="Profile Picture" id="profilePreview" class="profile-picture {% if not profile_picture_url %}hide{% endif %}">
 
                   {% comment %} Button to trigger file upload/change {% endcomment %}
                   <button type="button" id="uploadChangeBtn" class="profile-btn">
@@ -241,10 +237,8 @@
                 {% if not is_admin %}
                 <li><a href="{% url 'books' %}" id="bookLink">Books</a></li>
                 {% endif %}
-                 {% comment %} Conditionally display Profile link for non-admins in footer {% endcomment %}
-                 {% if not is_admin %}
+                 {% comment %} Conditionally display Profile link in footer {% endcomment %}
                  <li><a href="{% url 'profile' %}">Profile</a></li>
-                 {% endif %}
                   <li>
                       <form action="{% url 'logout' %}" method="post">
                       {% csrf_token %}
@@ -276,7 +270,7 @@
         // We don't need to pass defaultImageUrl if we don't display it initially
         // const defaultImageUrl = "{% static 'CSS/assets/blue.avif' %}";
          // Pass the initial profile picture URL from Django context
-        const initialProfilePictureUrl = "{{ customer.profile_picture_url|default:'' }}";
+        const initialProfilePictureUrl = "{{ profile_picture_url|default:'' }}"; // Use the unified profile_picture_url
     </script>
     <script src="{% static 'Script/profile.js' %}"></script> {% comment %} Keep profile.js for modal and other UI {% endcomment %}
     <script src="{% static 'Script/header.js' %}"></script>

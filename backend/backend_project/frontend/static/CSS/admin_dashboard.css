@@ -115,7 +115,7 @@ body {
     color: var(--text-color);
     font-size: 12px;
     padding: 5px;
-    margin-bottom: 15px;
+    margin-bottom: 5px;
     background-color: var(--bg-color);
     outline: none;
     transition: all 0.3s ease;
@@ -124,20 +124,22 @@ body {
 .availability {
     display: flex;
     font-size: 12px;
-    margin-bottom: 15px;
+    margin-bottom: 10px;
 }
 
 /* For Checkbox */
 .availability input {
+    color: var(--primary-color);
     position: absolute;
     left: 45%;
     transform: scale(1.4);
 }
 
 .availability label {
+    color: var(--primary-active);
     text-align: left;
     width: 100%;
-    padding-left: 25px;
+    padding-left: 20px;
 }
 
 .formats-form input:focus {
@@ -167,6 +169,7 @@ body {
     display: flex;
     width: 100%;
     height: 80%;
+    margin: 50% 0% 60%;
     text-align: center;
     align-items: center;
     justify-content: center;
@@ -686,7 +689,7 @@ a {
 
 .copies {
     background-color: var(--primary-color);
-    color: var(--text-color);
+    color: whitesmoke;
     border: none;
     position: absolute;
     width: fit-content;
@@ -699,7 +702,7 @@ a {
     display: flex;
     align-items: center;
     background-color: var(--primary-color);
-    color: var(--font-primary);
+    color: whitesmoke;
     border: none;
     position: absolute;
     padding: 3px;
@@ -717,7 +720,6 @@ a {
 .copies:hover,
 .books-pages button:hover {
     background-color: var(--primary-hover);
-    color: var(--text-color);
     border: none;
     outline: none;
 }

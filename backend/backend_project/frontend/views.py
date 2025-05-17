@@ -29,6 +29,7 @@ from django.urls import reverse
 from django.views.decorators.http import require_POST  # Import require_POST
 from django.contrib.auth.decorators import login_required
 from django.utils import timezone  # Import timezone
+from datetime import timedelta
 import json
 # Import FileSystemStorage for saving files and OperationalError
 from django.core.files.storage import FileSystemStorage
@@ -144,13 +145,16 @@ def admin_dashboard(request):
             'copies_count': book_copies_count,
             'borrowers_count': len(borrowers)
         })
+        print(book.ebook_availability)
+        print(book.audiobook_availability)
 
-    if availability == 'unavailable':
-        enriched_books = [book for book in enriched_books if book['copies_count'] == 0]
-    elif availability == 'low-stock':
-        enriched_books = [book for book in enriched_books if book['copies_count'] <= 10 and book['copies_count'] > 0]
-    elif availability == 'available':
+    if availability == 'available':
         enriched_books = [book for book in enriched_books if book['copies_count'] > 10]
+    elif availability == 'unavailable':
+        enriched_books = [book for book in enriched_books if book['copies_count'] == 0 and not book['book'].ebook_availability and not book['book'].audiobook_availability]
+    elif availability == 'low-stock':
+        enriched_books = [book for book in enriched_books if (book['copies_count'] <= 10 and (book['copies_count'] > 0 or book['book'].ebook_availability or book['book'].audiobook_availability))]
+    
 
     if sort == 'popular':
         enriched_books = sorted(enriched_books, key=lambda x: x['borrowers_count'], reverse=True)
@@ -162,42 +166,55 @@ def admin_dashboard(request):
 def profile(request):
     user = request.user
     customer = None
+    admin = None
     books_borrowed_count = 0
     books_favorited_count = 0
+    profile_picture_url = None # Initialize profile picture URL
+
     # Get join year safely, defaulting if user.date_joined is None
     member_since_year = user.date_joined.year if user.date_joined else 'N/A'
 
-    if hasattr(user, 'customer_profile'):
-        customer = user.customer_profile
-        # Fetch counts from the database using the Customer object
-        # Wrap in try/except to handle missing tables temporarily
-        try:
-            # Ensure Borrowings and Favorites models are imported at the top
-            books_borrowed_count = Borrowings.objects.filter(user=customer,
-                                                             return_date__isnull=True).count()  # Count currently borrowed books
-            books_favorited_count = Favorites.objects.filter(user=customer).count()  # Count favorite books
-        except OperationalError:
-            # Log a warning or handle the error gracefully if tables are missing
-            logger.warning(
-                "OperationalError: Borrowings or Favorites table not found. Counts set to 0. Please run migrations.")
-            books_borrowed_count = 0
-            books_favorited_count = 0
-        except Exception as e:
-            # Catch other potential database errors during query
-            logger.error(f"An unexpected database error occurred in profile view: {e}", exc_info=True)
-            books_borrowed_count = 0
-            books_favorited_count = 0
-
-    # Determine if the user is an admin
     is_admin = hasattr(user, 'admin_profile') or user.is_superuser
+
+    if is_admin:
+        # Fetch admin profile and set profile picture URL
+        if hasattr(user, 'admin_profile'):
+            admin = user.admin_profile
+            profile_picture_url = admin.profile_picture_url
+    else:
+        # Fetch customer profile and set profile picture URL
+        if hasattr(user, 'customer_profile'):
+            customer = user.customer_profile
+            profile_picture_url = customer.profile_picture_url
+            # Fetch counts from the database using the Customer object
+            # Wrap in try/except to handle missing tables temporarily
+            try:
+                # Ensure Borrowings and Favorites models are imported at the top
+                books_borrowed_count = Borrowings.objects.filter(user=customer,
+                                                                 return_date__isnull=True).count()  # Count currently borrowed books
+                books_favorited_count = Favorites.objects.filter(user=customer).count()  # Count favorite books
+            except OperationalError:
+                # Log a warning or handle the error gracefully if tables are missing
+                logger.warning(
+                    "OperationalError: Borrowings or Favorites table not found. Counts set to 0. Please run migrations.")
+                books_borrowed_count = 0
+                books_favorited_count = 0
+            except Exception as e:
+                # Catch other potential database errors during query
+                logger.error(f"An unexpected database error occurred in profile view: {e}", exc_info=True)
+                books_borrowed_count = 0
+                books_favorited_count = 0
+
 
     context = {
         'user': user,  # Django's built-in User object
         'customer': customer,  # Our custom Customer profile object
+        'admin': admin, # Our custom Admin profile object
         'books_borrowed_count': books_borrowed_count,
         'books_favorited_count': books_favorited_count,
         'member_since_year': member_since_year,
         'is_admin': is_admin,  # Pass the admin status to the template
+        'profile_picture_url': profile_picture_url, # Pass the correct profile picture URL
     }
     return render(request, 'frontend/pages/profile.html', context)
 
@@ -380,6 +397,8 @@ def sign_in(request):
             return render(request, "frontend/pages/sign-in.html", context)
 
     return render(request, "frontend/pages/sign-in.html", context)
+
+
 def user_dashboard(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access the user dashboard')
@@ -412,17 +431,31 @@ def logout_user(request):
 
 
 @login_required
-@require_POST  # Only allow POST requests for updating picture
+@require_POST  
 def update_profile_picture(request):
-    """Handles uploading or clearing the user's profile picture."""
+    """Handles uploading or clearing the user's profile picture for both Admin and Customer."""
     user = request.user
 
-    # Ensure the user has a customer profile before proceeding
-    if not hasattr(user, 'customer_profile'):
+    # Determine if the user is an admin or customer
+    is_admin = hasattr(user, 'admin_profile') or user.is_superuser
+    profile_obj = None
+
+    if is_admin:
+        if hasattr(user, 'admin_profile'):
+            profile_obj = user.admin_profile
+        else:
+             # This case should ideally not happen if user is superuser but lacks admin_profile
+             # Log a warning or handle appropriately
+             logger.warning(f"Superuser {user.username} attempting profile update without admin_profile.")
+             messages.error(request, 'Admin profile not found.')
+             return JsonResponse({'success': False, 'message': 'Admin profile not found'}, status=400)
+
+    elif hasattr(user, 'customer_profile'):
+        profile_obj = user.customer_profile
+    else:
         messages.error(request, 'User profile not found.')
         return JsonResponse({'success': False, 'message': 'User profile not found'}, status=400)
 
-    customer = user.customer_profile  # Get the related Customer object
 
     if 'profile_picture' in request.FILES:
         # Handle uploading a new profile picture
@@ -430,10 +463,10 @@ def update_profile_picture(request):
         fs = FileSystemStorage()
 
         # Optional: Delete the old file if it exists
-        if customer.profile_picture_url:
+        if profile_obj.profile_picture_url:
             try:
                 old_file_path = os.path.join(settings.MEDIA_ROOT,
-                                             customer.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
+                                             profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
                 if os.path.exists(old_file_path):
                     os.remove(old_file_path)
             except Exception as e:
@@ -441,15 +474,18 @@ def update_profile_picture(request):
 
         # Save the new file
         # You might want a more robust naming strategy (e.g., using user ID)
-        filename = fs.save(os.path.join('profile_pictures', uploaded_file.name), uploaded_file)
+        # Construct a subdirectory based on user type (admin or customer)
+        subdirectory = 'profile_pictures/admins' if is_admin else 'profile_pictures/customers'
+        filename = fs.save(os.path.join(subdirectory, uploaded_file.name), uploaded_file)
+
 
         # Get the URL to the saved file
         file_url = fs.url(filename)
 
-        # Update the profile_picture_url in the Customer model
-        customer.profile_picture_url = file_url
+        # Update the profile_picture_url in the respective model
+        profile_obj.profile_picture_url = file_url
         try:
-            customer.save()
+            profile_obj.save()
             messages.success(request, 'Profile picture updated successfully!')
             return JsonResponse({'success': True, 'profile_picture_url': file_url})  # Return JSON for AJAX
         except Exception as e:
@@ -461,20 +497,20 @@ def update_profile_picture(request):
 
     elif request.POST.get('clear_picture') == 'true':
         # Handle clearing the profile picture
-        if customer.profile_picture_url:
+        if profile_obj.profile_picture_url:
             # Optional: Delete the old file from storage
             try:
                 # Get the path from the URL and delete the file
                 file_path = os.path.join(settings.MEDIA_ROOT,
-                                         customer.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
+                                         profile_obj.profile_picture_url.replace(settings.MEDIA_URL, '', 1))
                 if os.path.exists(file_path):
                     os.remove(file_path)
             except Exception as e:
                 logger.error(f"Error deleting old profile picture file for user {user.username}: {e}")
 
-            customer.profile_picture_url = None
+            profile_obj.profile_picture_url = None
             try:
-                customer.save()
+                profile_obj.save()
                 messages.success(request, 'Profile picture removed successfully!')
                 return JsonResponse({'success': True, 'cleared': True})  # Return JSON for AJAX
             except Exception as e:
@@ -545,7 +581,6 @@ def add_book(request):
     else:
         print(traceback.format_exc())
         return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
 
 
@@ -667,8 +702,8 @@ def add_copies(request):
             bookId = data.get('bookId')
             hardcover = int(data.get('hardcover'))
             paperback = int(data.get('paperback'))
-            ebook = data.get('ebook', False)
-            audiobook = data.get('audiobook', False)
+            ebook = data.get('ebook')
+            audiobook = data.get('audiobook')
 
             book = Books.objects.get(book_id=bookId)
 
@@ -687,8 +722,8 @@ def add_copies(request):
                 )
 
 
-            book.ebook_available = ebook
-            book.audiobook_available = audiobook
+            book.ebook_availability = ebook
+            book.audiobook_availability = audiobook
             book.save()
 
             return JsonResponse({'message': 'Copies and availability updated successfully'})
@@ -700,6 +735,51 @@ def add_copies(request):
     else:
         print(traceback.format_exc())
         return JsonResponse({'error': 'Invalid request method'}, status=405)
+
+
+def get_copies(request,book_id):
+    try:
+        book = Books.objects.get(book_id=book_id)
+
+        copies = {
+            'hardcover': Bookcopies.objects.filter(book=book, format='Hardcover').count(),
+            'paperback': Bookcopies.objects.filter(book=book, format='Paperback').count(),
+            'ebook': book.ebook_availability,
+            'audiobook': book.audiobook_availability
+        }
+
+        return JsonResponse(copies)
+    except Books.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404)
+    except Exception as e:
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=400)
+
+
+def get_borrowers(request,book_id):
+    try:
+        book = Books.objects.get(book_id=book_id)
+
+        borrowings = Borrowings.objects.filter(copy__book=book)
+
+        borrows = []
+
+        for borrow in borrowings:
+            borrows.append({
+                'username': borrow.user.name,
+                'profilePic': borrow.user.profile_picture_url,
+                'format': borrow.format,
+                'borrow_date': borrow.borrow_date.strftime("%Y-%m-%dT%H:%M"),
+                'return_date': borrow.return_date.strftime("%Y-%m-%dT%H:%M") if borrow.return_date
+                else (borrow.borrow_date + timedelta(days=30)).strftime("%Y-%m-%dT%H:%M")
+            })
+
+        return JsonResponse({'borrowers': borrows})
+    except Books.DoesNotExist:
+        return JsonResponse({'error': 'Book not found'}, status=404)
+    except Exception as e:
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=400)
 
 
 @csrf_exempt
