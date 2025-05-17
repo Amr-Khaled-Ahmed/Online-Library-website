@@ -527,6 +527,18 @@ def update_profile_picture(request):
     return JsonResponse({'success': False, 'message': 'No image file provided'}, status=400)
 
 
+def check_isbn(request, isbn):
+    try:
+        book = Books.objects.filter(isbn=isbn)
+        data = {
+            'exist': book.exists()
+        }
+        return JsonResponse(data)
+    except Exception as e:
+        print(traceback.format_exc())
+        return JsonResponse({'error': str(e)}, status=400)
+
+
 def add_book(request):
     if request.method == 'POST':
         try:

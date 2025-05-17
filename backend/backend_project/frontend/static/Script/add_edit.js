@@ -6,8 +6,19 @@ document.addEventListener('DOMContentLoaded', function() {
         window.location.href = "./admin-dashboard";
     });
 
-    document.querySelector('form').addEventListener('submit',(e) => {
+    document.getElementById('isbn').addEventListener('input',() => {
+        document.getElementById('isbn-validation').classList.add('hide');
+    });
+
+    document.querySelector('form').addEventListener('submit',async (e) => {
         e.preventDefault();
+
+        const exists = await existISBN();
+
+        if(exists) {
+            document.getElementById('isbn-validation').classList.remove('hide');
+            return;
+        }
 
         // Check not empty book cover
         let img = document.querySelector('.book-cover');
@@ -65,10 +76,26 @@ document.addEventListener('DOMContentLoaded', function() {
                 window.location.href = './admin-dashboard'
             });
         }
+    });
 
+    function existISBN() {
+        let isbn = document.getElementById('isbn').value;
 
-
+        return fetch(`api/books/check-isbn/${isbn}`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error("Book not found");
+            }
+            return response.json();
+        })
+        .then(data => {
+            return data.exist;
+        })
+        .catch(error => {
+            console.error("Error fetching book:", error);
+            return false;
         });
+    }
 
 
     // Upload book cover
