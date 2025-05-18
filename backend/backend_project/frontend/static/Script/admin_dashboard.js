@@ -172,7 +172,7 @@ document.addEventListener('click', function(event) {
                         profilePicHolder.classList.add('profile-pic-holder');
                 
                         let profilePic = document.createElement('img');
-                        profilePic.src = borrow.profilePic ? borrow.profilePic : './../CSS/assets/blue.avif';
+                        profilePic.src = borrow.profilePic ? borrow.profilePic : './../../static/assets/blue.avif';
                         profilePic.alt = 'Profile Picture';
                         profilePic.classList.add('profile-pic');
                 
