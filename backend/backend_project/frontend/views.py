@@ -220,8 +220,39 @@ def profile(request):
 
 
 def book_details(request):
-    return render(request, 'frontend/pages/book_details.html')
+    book_id = request.GET.get('id')
+    if not book_id:
+        return render(request, 'frontend/pages/book_details.html', {'error': 'No book ID provided.'})
 
+    try:
+        book = Books.objects.get(book_id=book_id, is_deleted=False)
+        # Get author and genre for display
+        book_author = Bookauthor.objects.filter(book=book, author__isnull=False).first()
+        book_genre = Bookgenre.objects.filter(book=book).first()
+        # Calculate available physical copies
+        available_physical_copies = Bookcopies.objects.filter(book=book, is_borrowed=False, in_inventory=True).count()
+        # Determine overall availability
+        is_available = available_physical_copies > 0 or book.ebook_availability or book.audiobook_availability
+
+        # Prepare a context dictionary for the template
+        context = {
+            'book': {
+                'id': book.book_id,
+                'title': book.title,
+                'author': book_author.author.name if book_author else "Unknown",
+                'cover_image': book.cover_image_url,
+                'description': book.description,
+                'average_rating': 0,  # Add your rating logic if needed
+                'genre': book_genre.genre.name if book_genre and book_genre.genre else "Unknown",
+                'publication_year': book.publication_year,
+                'pages': book.page_count,
+                'language': book.language,
+                'is_available': is_available,
+            }
+        }
+        return render(request, 'frontend/pages/book_details.html', context)
+    except Books.DoesNotExist:
+        return render(request, 'frontend/pages/book_details.html', {'error': 'Book not found.'})
 
 def borrowed(request):
     # The data for the borrowed page is now fetched via AJAX by borrowed.js

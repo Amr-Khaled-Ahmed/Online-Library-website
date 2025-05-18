@@ -21,10 +21,32 @@ function addBookToDisplay(book) {
     const isFavorite = currentUserFavorites.includes(book.book_id);
     const starClass = isFavorite ? 'active' : '';
 
-    // Determine if the borrow button should be enabled
-    const canBorrow = book.is_available; // Use the overall availability from the backend
-    const borrowButtonText = canBorrow ? 'Borrow' : 'Not Available';
-    const borrowButtonDisabled = !canBorrow ? 'disabled' : '';
+    // Determine if physical copies are available for borrowing
+    const canBorrowPhysical = book.available_physical_copies > 0;
+
+    // Determine the text for the physical borrow button
+    const borrowButtonText = canBorrowPhysical ? 'Borrow' : 'Not Available';
+
+    // Determine if the physical borrow button should be disabled
+    const borrowButtonDisabled = !canBorrowPhysical ? 'disabled' : '';
+
+    // Determine availability text and class for the badge
+    let badgeText;
+    let badgeClass;
+
+    if (book.available_physical_copies > 0) {
+        badgeText = 'Available'; // Or 'In Stock'
+        badgeClass = 'available';
+    } else { // physical copies are 0
+        if (book.is_available) { // overall available due to digital copies
+            badgeText = 'Unavailable'; // Indicate digital availability
+            badgeClass = 'low-stock'; // Use low-stock class or define a new one if needed
+        } else { // not available at all (no physical, no digital)
+            badgeText = 'Unavailable';
+            badgeClass = 'unavailable';
+        }
+    }
+
 
     bookItem.innerHTML = `
         <button class="star-button ${starClass}" data-book-id="${book.book_id}"><i class="fas fa-star"></i></button>
@@ -42,8 +64,8 @@ function addBookToDisplay(book) {
                 <span class="meta-item">${book.publication_year || 'Unknown'}</span>
             </div>
             <div class="availability">
-                <span class="availability-badge ${canBorrow ? 'available' : 'unavailable'}">
-                    ${borrowButtonText}
+                <span class="availability-badge ${badgeClass}">
+                    ${badgeText}
                 </span>
                 ${book.available_physical_copies > 0 ? `<span class="copies-count">${book.available_physical_copies} copies</span>` : ''}
                 ${book.ebook_available ? `<span class="format-indicator">eBook</span>` : ''}
@@ -58,6 +80,7 @@ function addBookToDisplay(book) {
 
     // Add borrow button event listener
     const borrowBtn = bookItem.querySelector('.borrow-btn');
+    // Only add listener if the button is not disabled (i.e., physical copies are available for this button's action)
     if (!borrowBtn.disabled) {
         borrowBtn.addEventListener('click', async () => {
             const bookIdToBorrow = borrowBtn.getAttribute('data-book-id');
@@ -67,13 +90,12 @@ function addBookToDisplay(book) {
                 return;
             }
 
+            // Keep the button enabled until the API response is received
+            // borrowBtn.disabled = true; // Removed as per request
+            // borrowBtn.classList.add('disabled'); // Removed as per request
+            // borrowBtn.textContent = 'Processing...'; // Removed as per request
+
             try {
-                // Disable the button immediately to prevent double clicks
-                borrowBtn.disabled = true;
-                borrowBtn.classList.add('disabled');
-                borrowBtn.textContent = 'Processing...';
-
-
                 const response = await fetch(`/api/books/${bookIdToBorrow}/borrow/`, {
                     method: 'POST',
                     headers: {
@@ -85,9 +107,9 @@ function addBookToDisplay(book) {
 
                 if (!response.ok) {
                      // Re-enable the button and revert text on failure
-                     borrowBtn.disabled = false;
-                     borrowBtn.classList.remove('disabled');
-                     borrowBtn.textContent = borrowButtonText; // Revert to original text
+                     // borrowBtn.disabled = false; // Not needed if not disabled initially
+                     // borrowBtn.classList.remove('disabled'); // Not needed if not disabled initially
+                     // borrowBtn.textContent = borrowButtonText; // Not needed if not changed initially
 
                     // Display specific error message from the backend
                     showNotification(`❌ ${data.error || 'Failed to borrow book'}`);
@@ -95,31 +117,53 @@ function addBookToDisplay(book) {
                 } else {
                     showNotification("✅ Book borrowed successfully!");
 
-                    // Update the UI after successful borrowing
-                    borrowBtn.textContent = 'Borrowed';
-                    // Keep disabled as the user has now borrowed a copy
+                    // Find the specific book item in the DOM
+                    const bookItem = document.getElementById(`book_${bookIdToBorrow}`);
+                    if (bookItem) {
+                        // Find the copies count element
+                        const copiesCountElement = bookItem.querySelector('.copies-count');
+                        if (copiesCountElement) {
+                            // If your backend returns the updated count, use it:
+                            // const newAvailableCopies = data.new_available_copies; // Adjust based on your actual backend response
+                            // copiesCountElement.textContent = `${newAvailableCopies} copies`;
 
-                    // Update the availability badge
-                    const availabilityBadge = bookItem.querySelector('.availability-badge');
-                    if (availabilityBadge) {
-                        availabilityBadge.textContent = 'Not Available';
-                        availabilityBadge.classList.remove('available');
-                        availabilityBadge.classList.add('unavailable');
+                            // If your backend doesn't return the new count, decrement the current one
+                            const currentCopiesText = copiesCountElement.textContent;
+                            const currentCopies = parseInt(currentCopiesText.split(' ')[0]);
+                            if (!isNaN(currentCopies) && currentCopies > 0) {
+                                 const newCopies = currentCopies - 1;
+                                 copiesCountElement.textContent = `${newCopies} copies`;
+
+                                 // Update availability badge if copies reach 0
+                                 if (newCopies === 0) {
+                                     const availabilityBadge = bookItem.querySelector('.availability-badge');
+                                     if (availabilityBadge) {
+                                         availabilityBadge.textContent = 'Unavailable';
+                                         availabilityBadge.classList.remove('available');
+                                         availabilityBadge.classList.add('unavailable');
+                                     }
+                                      // Also update the borrow button text and disable it permanently
+                                      borrowBtn.textContent = 'Not Available';
+                                      borrowBtn.disabled = true; // Disable the button
+                                      borrowBtn.classList.add('disabled'); // Add disabled class
+                                 }
+                            } else {
+                                 // If parsing fails or current count is not positive, re-fetch to be safe
+                                 setTimeout(() => {
+                                     filterBooks(); // Re-fetch with current filters
+                                 }, 500); // Delay by 500ms
+                            }
+                        }
                     }
 
-                    // You might want to update the copies count displayed on the card too
-                    // This would require fetching the updated book details or getting the count in the borrow response
-                    // For simplicity, we'll just update the badge and button.
-                    // A more robust solution might re-fetch the books list after a successful borrow.
-
-                     // Optional: Add a slight delay and then re-fetch the book list to ensure counts are accurate
+                    // Keep the re-fetch as a fallback to ensure consistency
                      setTimeout(() => {
                          filterBooks(); // Re-fetch with current filters
                      }, 500); // Delay by 500ms
                 }
 
             } catch (error) {
-                 // Re-enable the button and revert text on fetch error
+                 // Re-enable the button and revert text on fetch error (not strictly needed if not disabled initially, but good practice)
                  borrowBtn.disabled = false;
                  borrowBtn.classList.remove('disabled');
                  borrowBtn.textContent = borrowButtonText; // Revert to original text
@@ -294,6 +338,11 @@ document.addEventListener('DOMContentLoaded', async function () {
              }
              .book-details h3 {
                  margin-bottom: 5px; /* Space below title */
+             }
+             /* Style for the Low Stock badge, which we will now also use for "Digital Available" */
+             .availability-badge.low-stock {
+                 background-color: #f39c12; /* Orange */
+                 color: white;
              }
 
         `;

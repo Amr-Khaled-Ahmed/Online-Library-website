@@ -40,13 +40,17 @@ document.addEventListener('DOMContentLoaded', async function () {
             throw new Error('Book not found');
         }
         const book = await response.json();
+    // Determine if physical copies are available for borrowing
+    const canBorrowPhysical = book.available_physical_copies > 0;
 
+    // Determine the text for the physical borrow button
+    const borrowButtonText = canBorrowPhysical ? 'Borrow' : 'Not Available';
         // Display book info
         document.querySelector('.book-title').textContent = book.title || "No title";
         document.querySelector('.book-author').textContent = `By ${book.author || "Unknown"}`;
         document.querySelector('.book-cover img').src = book.cover_path;
         document.querySelector('.book-description').textContent = book.description || "No description.";
-        document.querySelector('.book-status').textContent = book.is_available ? "Available" : "Borrowed";
+        document.querySelector('.book-status').textContent = canBorrowPhysical ? 'Borrow' : 'Not Available';
         document.querySelector('.book-genre').textContent = book.genre || "Unknown";
         document.querySelector('.book-year').textContent = book.publication_year || "Unknown";
 
