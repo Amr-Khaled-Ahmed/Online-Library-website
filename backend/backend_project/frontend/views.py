@@ -95,8 +95,6 @@ def admin_dashboard(request):
         'bookcopies_set'
     )
 
-    print(books)
-
     query = request.GET.get('q')
     genre = GENRE_MAPPING.get(request.GET.get('genre'))
     sort = request.GET.get('sort')
@@ -105,73 +103,60 @@ def admin_dashboard(request):
     if query:
         books = books.filter(
             Q(title__icontains=query) |
-            Q(isbn__icontains=query) | # Changed to icontains for partial ISBN matches
+            Q(isbn=query) |
             Q(bookauthor__author__name__icontains=query)
-        ).distinct() # Use distinct to avoid duplicates if a book has multiple authors/genres
+        )
 
     if genre:
-        books = books.filter(bookgenre__genre__name__iexact=genre).distinct()
+        books = books.filter(bookgenre__genre__name__iexact=genre)
 
-    # Availability filtering - needs to be done after fetching related book_copies
+    if sort == 'newest':
+        books = books.order_by('-publication_year')
+    elif sort == 'oldest':
+        books = books.order_by('publication_year')
+    elif sort == 'title-asc':
+        books = books.order_by('title')
+    elif sort == 'title-desc':
+        books = books.order_by('-title')
+    elif sort == 'author-asc':
+        books = books.order_by('bookauthor__author__name')
+    elif sort == 'author-desc':
+        books = books.order_by('-bookauthor__author__name')
+
     enriched_books = []
 
     for book in books:
         authors = [ba.author for ba in book.bookauthor_set.all()]
         genres = [bg.genre for bg in book.bookgenre_set.all()]
-        # Only count copies that are in inventory and not borrowed
-        available_copies_count = book.bookcopies_set.filter(is_borrowed=False, in_inventory=True).count()
-        total_copies_count = book.bookcopies_set.count()
+        book_copies = book.bookcopies_set.all()
+        book_copies_count = book_copies.count()
 
-
-        borrowers = []
-        # This part is for admin dashboard to see who borrowed copies
-        for copy in book.bookcopies_set.all():
-            try:
-                # Look for active borrowings for this specific copy
-                borrowing = Borrowings.objects.get(copy=copy, return_date__isnull=True)
-                # Append the borrower's User object if they haven't been added yet
-                if borrowing.user and borrowing.user.user not in borrowers: # Access the underlying User object
-                    borrowers.append(borrowing.user.user) # Store the User object
-
-            except Borrowings.DoesNotExist:
-                # No active borrowing for this copy, skip
-                continue
-            except Exception as e:
-                 # Log any unexpected errors finding borrowers
-                 logger.error(f"Error finding borrower for copy {copy.copy_id}: {e}", exc_info=True)
-
+        borrowers_count = 0
+        for copy in book_copies:
+            borrowings = Borrowings.objects.filter(copy=copy)
+            for borrowing in borrowings:
+                borrowers_count += 1
 
         enriched_books.append({
             'book': book,
             'authors': authors,
             'genres': genres,
-            'available_copies_count': available_copies_count,
-            'total_copies_count': total_copies_count,
-            'borrowers_count': len(borrowers),
-            'borrowers': borrowers, # Include borrowers list for display if needed
+            'copies_count': book_copies_count,
+            'borrowers_count': borrowers_count
         })
-        print(book.ebook_availability)
-        print(book.audiobook_availability)
 
-
-    # Apply availability filter to the enriched list
-    if availability == 'unavailable':
-        enriched_books = [book for book in enriched_books if book['available_copies_count'] == 0]
+    if availability == 'available':
+        enriched_books = [book for book in enriched_books if book['copies_count'] > 10]
+    elif availability == 'unavailable':
+        enriched_books = [book for book in enriched_books if book['copies_count'] == 0 and not book['book'].ebook_availability and not book['book'].audiobook_availability]
     elif availability == 'low-stock':
-        enriched_books = [book for book in enriched_books if book['available_copies_count'] <= 10 and book['available_copies_count'] > 0]
-    elif availability == 'available':
-        enriched_books = [book for book in enriched_books if book['available_copies_count'] > 10]
-    # 'all' is the default and requires no filtering here
+        enriched_books = [book for book in enriched_books if (book['copies_count'] <= 10 and (book['copies_count'] > 0 or book['book'].ebook_availability or book['book'].audiobook_availability))]
+    
 
-
-    # Apply sorting to the enriched list
     if sort == 'popular':
-        # Sort by borrowers_count (most borrowed currently)
-        enriched_books.sort(key=lambda x: x['borrowers_count'], reverse=True)
-    # Note: Other sorts (title, author, year) were applied at the queryset level already
+        enriched_books = sorted(enriched_books, key=lambda x: x['borrowers_count'], reverse=True)
 
-
-    return render(request, 'frontend/pages/admin_dashboard.html', {'books': enriched_books, 'genre_mapping': GENRE_MAPPING_REV})
+    return render(request, 'frontend/pages/admin_dashboard.html', {'books': enriched_books})
 
 
 @login_required  # Ensure user is logged in to view profile
@@ -600,11 +585,6 @@ def add_book(request):
             pageCount = data.get('pageCount')
             description = data.get('description').strip().capitalize()
 
-            # Check for existing book with the same ISBN
-            if Books.objects.filter(isbn=isbn, is_deleted=False).exists():
-                 return JsonResponse({'error': 'A book with this ISBN already exists.'}, status=400)
-
-
             author, created = Authors.objects.get_or_create(
                 name=author_name,
                 defaults={'biography': '', 'photo_url': ''}
@@ -622,9 +602,9 @@ def add_book(request):
                 publication_year=pubYear,
                 cover_image_url=coverPath,
                 page_count=pageCount,
-                language='en', # Default language
+                language='en',
                 description=description,
-                # added_date is auto_now_add=True
+                added_date=timezone.now().strftime('%Y-%m-%d %H:%M:%S'),
             )
 
             Bookauthor.objects.create(
@@ -637,11 +617,12 @@ def add_book(request):
                 genre=genre
             )
 
-            return JsonResponse({'message': 'Book added successfully', 'book_id': new_book.book_id}) # Return book_id
+            return JsonResponse({'message': 'Book added successfully'})
         except Exception as e:
-            logger.error(f"Error adding book: {e}", exc_info=True)
+            print(traceback.format_exc())
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        print(traceback.format_exc())
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -653,23 +634,21 @@ def delete_book(request):
             data = json.loads(request.body)
             book_id = data.get('book_id')
 
-            # Use get_object_or_404 for cleaner handling of not found
-            book = get_object_or_404(Books, book_id=book_id, is_deleted=False)
+            book = Books.objects.get(book_id=book_id, is_deleted=0)
 
-            # Soft delete the book
-            book.is_deleted = True # Use True for BooleanField
+            # Consider using bulk_update or a more efficient way if deleting many related objects
+            Bookauthor.objects.filter(book=book).delete()
+            Bookgenre.objects.filter(book=book).delete()
+            # You might also need to handle Bookcopies and Borrowings related to this book
+
+            book.is_deleted = 1
             book.deleted_at = timezone.now()
             book.save()
-
-            # Consider adding logic to handle active borrowings for this book
-            # e.g., notify users, mark borrowings as cancelled, etc.
-            # For now, the book is just marked as deleted, and related objects remain.
 
             return JsonResponse({'message': 'Book deleted successfully'})
         except Books.DoesNotExist:
             return JsonResponse({'error': 'Book not found or already deleted'}, status=404)
         except Exception as e:
-            logger.error(f"Error deleting book {book_id}: {e}", exc_info=True)
             return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -677,8 +656,7 @@ def delete_book(request):
 
 def get_book(request, book_id):
     try:
-        # Use get_object_or_404 for cleaner handling of not found
-        book = get_object_or_404(Books, book_id=book_id, is_deleted=False)
+        book = Books.objects.get(book_id=book_id)
         # Use .first() safely as it returns None if no object is found
         book_author = Bookauthor.objects.filter(book=book, author__isnull=False).first()
         book_genre = Bookgenre.objects.filter(book=book).first()
@@ -696,19 +674,13 @@ def get_book(request, book_id):
             'pubYear': book.publication_year,
             'pageCount': book.page_count,
             'description': book.description,
-             # Include copy information for editing purposes if needed
-            'hardcover_copies': book.bookcopies_set.filter(format='Hardcover', in_inventory=True, is_borrowed=False).count(),
-            'paperback_copies': book.bookcopies_set.filter(format='Paperback', in_inventory=True, is_borrowed=False).count(),
-            'ebook_available': book.ebook_availability > 0,
-            'audiobook_available': book.audiobook_availability > 0,
-
         }
         return JsonResponse(data)
     except Books.DoesNotExist:
         return JsonResponse({'error': 'Book not found'}, status=404)
     except Exception as e:
         # Catch other potential errors during data retrieval
-        logger.error(f"Error getting book details for {book_id}: {e}", exc_info=True)
+        print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=400)
 
 
@@ -716,8 +688,9 @@ def get_book(request, book_id):
 def edit_book(request, book_id):
     if request.method == 'POST':
         try:
-            # Use get_object_or_404 for cleaner handling of not found
-            book = get_object_or_404(Books, book_id=book_id, is_deleted=False)
+            book = Books.objects.get(book_id=book_id)
+            book_author_obj = Bookauthor.objects.filter(book=book).first()
+            book_genre_obj = Bookgenre.objects.filter(book=book).first()
 
             new_book_data = json.loads(request.body)
 
@@ -725,43 +698,38 @@ def edit_book(request, book_id):
             book.title = new_book_data.get('title').strip().title()
 
             author_name = new_book_data.get('author').strip().title()
-            genre_name_mapped = GENRE_MAPPING.get(new_book_data.get('genre')) # Get mapped name
+            genre_name = GENRE_MAPPING.get(new_book_data.get('genre'))
 
-            # Update or create Author
-            author_obj, created = Authors.objects.get_or_create(name=author_name)
-            book_author_obj = Bookauthor.objects.filter(book=book).first()
             if book_author_obj:
+                author_obj, created = Authors.objects.get_or_create(name=author_name)
                 book_author_obj.author = author_obj
                 book_author_obj.save()
             else:
+                # Create a new BookAuthor if one didn't exist
+                author_obj, created = Authors.objects.get_or_create(name=author_name)
                 Bookauthor.objects.create(book=book, author=author_obj)
 
             book.cover_image_url = new_book_data.get('coverPath')
 
-            # Update or create Genre
-            genre_obj, created = Genres.objects.get_or_create(name=genre_name_mapped) # Use mapped name
-            book_genre_obj = Bookgenre.objects.filter(book=book).first()
             if book_genre_obj:
+                genre_obj, created = Genres.objects.get_or_create(name=genre_name)
                 book_genre_obj.genre = genre_obj
                 book_genre_obj.save()
             else:
+                # Create a new BookGenre if one didn't exist
+                genre_obj, created = Genres.objects.get_or_create(name=genre_name)
                 Bookgenre.objects.create(book=book, genre=genre_obj)
-
 
             book.publication_year = new_book_data.get('pubYear')
             book.page_count = new_book_data.get('pageCount')
             book.description = new_book_data.get('description').strip().capitalize()
-
-            # Update ebook/audiobook availability (assuming the frontend sends booleans)
-            book.ebook_availability = 1 if new_book_data.get('ebook', False) else 0
-            book.audiobook_availability = 1 if new_book_data.get('audiobook', False) else 0
 
             book.save()
             return JsonResponse({'message': 'Book updated successfully'})
         except Books.DoesNotExist:
             return JsonResponse({'error': 'Book not found or already deleted'}, status=404)
         except Exception as e:
-            logger.error(f"Error editing book {book_id}: {e}", exc_info=True)
+            print(traceback.format_exc())
             return JsonResponse({'error': str(e)}, status=400)
     else:
         return JsonResponse({'error': 'Invalid request method'}, status=405)
@@ -771,59 +739,44 @@ def edit_book(request, book_id):
 def add_copies(request):
     if request.method == 'POST':
         try:
-            # Retrieve book copies data from body of the request
+            # Retrieve book copies from body of the request
             data = json.loads(request.body)
 
             bookId = data.get('bookId')
+            hardcover = int(data.get('hardcover'))
+            paperback = int(data.get('paperback'))
+            ebook = data.get('ebook')
+            audiobook = data.get('audiobook')
 
-            hardcover = int(data.get('hardcover', 0)) # Default to 0 if not provided
-            paperback = int(data.get('paperback', 0)) # Default to 0 if not provided
-            ebook = data.get('ebook', False)
-            audiobook = data.get('audiobook', False)
+            book = Books.objects.get(book_id=bookId)
 
-            # Use get_object_or_404 for cleaner handling of not found
-            book = get_object_or_404(Books, book_id=bookId, is_deleted=False)
+            for i in range(hardcover):
+                Bookcopies.objects.create(
+                    book=book,
+                    format='Hardcover',
+                    # is_borrowed and in_inventory default to False/True respectively
+                )
 
-            # Add new physical copies
-            with transaction.atomic(): # Use transaction for adding multiple copies
-                for i in range(hardcover):
-                    Bookcopies.objects.create(
-                        book=book,
-                        format='Hardcover',
-                        # is_borrowed and in_inventory default to False/True respectively
-                    )
-
-                for i in range(paperback):
-                    Bookcopies.objects.create(
-                        book=book,
-                        format='Paperback',
-                        # is_borrowed and in_inventory default to False/True respectively
-                    )
+            for i in range(paperback):
+                Bookcopies.objects.create(
+                    book=book,
+                    format='Paperback',
+                    # is_borrowed and in_inventory default to False/True respectively
+                )
 
 
-            # Update ebook/audiobook availability directly on the Book model
-            book.ebook_availability = 1 if ebook else 0
-            book.audiobook_availability = 1 if audiobook else 0
+            book.ebook_availability = ebook
+            book.audiobook_availability = audiobook
             book.save()
 
-            # You might want to return updated copy counts in the response
-            updated_hardcover_count = Bookcopies.objects.filter(book=book, format='Hardcover').count()
-            updated_paperback_count = Bookcopies.objects.filter(book=book, format='Paperback').count()
-
-
-            return JsonResponse({
-                'message': 'Copies and availability updated successfully',
-                'hardcover_count': updated_hardcover_count,
-                'paperback_count': updated_paperback_count,
-                'ebook_available': book.ebook_availability > 0,
-                'audiobook_available': book.audiobook_availability > 0,
-            })
+            return JsonResponse({'message': 'Copies and availability updated successfully'})
         except Books.DoesNotExist:
             return JsonResponse({'error': 'Book not found'}, status=404)
         except Exception as e:
-            logger.error(f"Error adding copies for book {bookId}: {e}", exc_info=True)
+            print(traceback.format_exc())
             return JsonResponse({'error': str(e)}, status=400)
     else:
+        print(traceback.format_exc())
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
@@ -856,7 +809,7 @@ def get_borrowers(request,book_id):
 
         for borrow in borrowings:
             borrows.append({
-                'username': borrow.user.user.first_name,
+                'username': borrow.user.user.username,
                 'profilePic': borrow.user.profile_picture_url,
                 'format': borrow.format,
                 'borrow_date': borrow.borrow_date.strftime("%Y-%m-%dT%H:%M"),
@@ -985,13 +938,13 @@ def get_books(request):
 
         # Apply format filtering - this requires checking the related Bookcopies
         if format_filter:
-             if format_filter.lower() == 'ebook':
-                  books = books.filter(ebook_availability__gt=0).distinct()
-             elif format_filter.lower() == 'audiobook':
-                  books = books.filter(audiobook_availability__gt=0).distinct()
-             elif format_filter.lower() in ['hardcover', 'paperback']:
-                  # Filter books that have at least one copy of the specified physical format
-                  books = books.filter(bookcopies__format__iexact=format_filter).distinct()
+            if format_filter.lower() == 'ebook':
+                books = books.filter(ebook_availability__gt=0).distinct()
+            elif format_filter.lower() == 'audiobook':
+                books = books.filter(audiobook_availability__gt=0).distinct()
+            elif format_filter.lower() in ['hardcover', 'paperback']:
+                # Filter books that have at least one copy of the specified physical format
+                books = books.filter(bookcopies__format__iexact=format_filter).distinct()
 
 
         # Sorting - Popularity requires annotation/aggregation or sorting a pre-calculated list
@@ -1007,9 +960,9 @@ def get_books(request):
         # This might need annotation or sorting the final list
         # For now, relying on the distinct filter to avoid major issues, but true author sorting is complex here.
         elif sort == 'author-asc':
-             books = books.order_by('bookauthor__author__name').distinct()
+            books = books.order_by('bookauthor__author__name').distinct()
         elif sort == 'author-desc':
-             books = books.order_by('-bookauthor__author__name').distinct()
+            books = books.order_by('-bookauthor__author__name').distinct()
 
 
         # Prepare data and apply availability/popularity filtering after fetching related data
@@ -1030,9 +983,9 @@ def get_books(request):
 
             # Apply availability filter here
             if availability == 'unavailable' and is_available:
-                 continue # Skip if filtering for unavailable and book is available
+                continue # Skip if filtering for unavailable and book is available
             if availability == 'available' and not is_available:
-                 continue # Skip if filtering for available and book is not available
+                continue # Skip if filtering for available and book is not available
             # Note: 'low-stock' filtering would require checking available_physical_copies here
 
             books_data.append({
@@ -1052,12 +1005,12 @@ def get_books(request):
 
         # Apply 'low-stock' availability filter and 'popular' sort to the list after data preparation
         if availability == 'low-stock':
-             # Filter after calculating available physical copies
-             books_data = [book for book in books_data if book['available_physical_copies'] <= 10 and book['available_physical_copies'] > 0]
+            # Filter after calculating available physical copies
+            books_data = [book for book in books_data if book['available_physical_copies'] <= 10 and book['available_physical_copies'] > 0]
 
         if sort == 'popular':
-             # Sort the prepared list by popularity
-             books_data.sort(key=lambda x: x['popularity'], reverse=True)
+            # Sort the prepared list by popularity
+            books_data.sort(key=lambda x: x['popularity'], reverse=True)
 
 
         return JsonResponse(books_data, safe=False)
@@ -1094,8 +1047,8 @@ def send_verification_email_view(request):
                 ).first()
 
                 if user is None:
-                     # Generic message for security, don't reveal if user exists
-                     return JsonResponse({'success': False, 'error': 'If a user with that username or email exists, a verification email has been sent.'}, status=200)
+                    # Generic message for security, don't reveal if user exists
+                    return JsonResponse({'success': False, 'error': 'If a user with that username or email exists, a verification email has been sent.'}, status=200)
 
 
                 # --- Generate and Save Verification Token ---
@@ -1198,7 +1151,7 @@ def verify_reset_code_view(request):
                     return JsonResponse({'success': False, 'error': 'Invalid or expired verification code.'}, status=400)
 
             except User.DoesNotExist:
-                 # Should not happen if username is from session, but handle defensively
+                # Should not happen if username is from session, but handle defensively
                 logger.error(f"User not found during code verification for username from session: {username}", exc_info=True)
                 request.session.pop('password_reset_username', None) # Clear session data
                 request.session.pop('password_reset_code_verified', None)
@@ -1238,23 +1191,23 @@ def reset_password_confirm_view(request):
 
 
             if not new_password or not username or not code_verified:
-                 # Return appropriate error if prerequisites are not met
-                 error_message = 'New password is required.'
-                 if not username:
-                      error_message = 'Password reset flow not initiated or session expired. Please start again.'
-                 elif not code_verified:
-                     error_message = 'Code verification is required before setting a new password. Please go back and verify the code.'
+                # Return appropriate error if prerequisites are not met
+                error_message = 'New password is required.'
+                if not username:
+                    error_message = 'Password reset flow not initiated or session expired. Please start again.'
+                elif not code_verified:
+                    error_message = 'Code verification is required before setting a new password. Please go back and verify the code.'
 
-                 # Clear session data if prerequisites are not met unexpectedly
-                 request.session.pop('password_reset_username', None)
-                 request.session.pop('password_reset_code_verified', None)
+                # Clear session data if prerequisites are not met unexpectedly
+                request.session.pop('password_reset_username', None)
+                request.session.pop('password_reset_code_verified', None)
 
 
-                 return JsonResponse({'success': False, 'error': error_message}, status=400)
+                return JsonResponse({'success': False, 'error': error_message}, status=400)
 
             # Optional: Add password complexity validation here
             if len(new_password) < 8:
-                 return JsonResponse({'success': False, 'error': 'New password must be at least 8 characters long.'}, status=400)
+                return JsonResponse({'success': False, 'error': 'New password must be at least 8 characters long.'}, status=400)
 
 
             try:
@@ -1272,8 +1225,8 @@ def reset_password_confirm_view(request):
                 return JsonResponse({'success': True, 'message': 'Password has been reset successfully. You can now log in with your new password.'})
 
             except User.DoesNotExist:
-                 # This case should ideally not happen if username is from a verified session,
-                 # but handle defensively.
+                # This case should ideally not happen if username is from a verified session,
+                # but handle defensively.
                 logger.error(f"User not found during password reset confirmation for username from session: {username}", exc_info=True)
                 request.session.pop('password_reset_username', None) # Clear session data
                 request.session.pop('password_reset_code_verified', None)
@@ -1341,28 +1294,28 @@ def borrow_book(request, book_id):
 
         # Handle cases where no physical copy is available for borrowing
         if not available_copy:
-             # Log the reason for no available physical copy
-             total_copies = Bookcopies.objects.filter(book=book).count()
-             borrowed_copies = Bookcopies.objects.filter(book=book, is_borrowed=True).count()
-             not_in_inventory_copies = Bookcopies.objects.filter(book=book, in_inventory=False).count()
-             logger.warning(f"Borrow failed: No available physical copies for book \"{book.title}\" (ID: {book_id}). "
+            # Log the reason for no available physical copy
+            total_copies = Bookcopies.objects.filter(book=book).count()
+            borrowed_copies = Bookcopies.objects.filter(book=book, is_borrowed=True).count()
+            not_in_inventory_copies = Bookcopies.objects.filter(book=book, in_inventory=False).count()
+            logger.warning(f"Borrow failed: No available physical copies for book \"{book.title}\" (ID: {book_id}). "
                             f"Total copies: {total_copies}, Borrowed: {borrowed_copies}, Not in inventory: {not_in_inventory_copies}. "
                             f"Available physical copies count found: {Bookcopies.objects.filter(book=book, is_borrowed=False, in_inventory=True).count()}.")
 
-             # Check for digital format availability if no physical copies
-             if book.ebook_availability > 0:
-                  logger.info(f"Ebook available for book \"{book.title}\". Digital borrowing not fully implemented.")
-                  # --- Handle Ebook Borrowing Logic Here ---
-                  return JsonResponse({'error': 'No physical copies available. Ebook is available - digital borrowing coming soon!'}, status=400)
-             # Check for audiobook availability
-             elif book.audiobook_availability > 0:
-                  logger.info(f"Audiobook available for book \"{book.title}\". Digital borrowing not fully implemented.")
-                  # --- Handle Audiobook Borrowing Logic Here ---
-                  return JsonResponse({'error': 'No physical copies available. Audiobook is available - digital borrowing coming soon!'}, status=400)
-             else:
-                  # No copies (physical or digital via this method) available
-                  logger.warning(f"Borrow failed: No physical or digital copies marked as available for book \"{book.title}\" (ID: {book_id}).")
-                  return JsonResponse({'error': 'No available copies for borrowing'}, status=400)
+            # Check for digital format availability if no physical copies
+            if book.ebook_availability > 0:
+                logger.info(f"Ebook available for book \"{book.title}\". Digital borrowing not fully implemented.")
+                # --- Handle Ebook Borrowing Logic Here ---
+                return JsonResponse({'error': 'No physical copies available. Ebook is available - digital borrowing coming soon!'}, status=400)
+            # Check for audiobook availability
+            elif book.audiobook_availability > 0:
+                logger.info(f"Audiobook available for book \"{book.title}\". Digital borrowing not fully implemented.")
+                # --- Handle Audiobook Borrowing Logic Here ---
+                return JsonResponse({'error': 'No physical copies available. Audiobook is available - digital borrowing coming soon!'}, status=400)
+            else:
+                # No copies (physical or digital via this method) available
+                logger.warning(f"Borrow failed: No physical or digital copies marked as available for book \"{book.title}\" (ID: {book_id}).")
+                return JsonResponse({'error': 'No available copies for borrowing'}, status=400)
 
 
         # If an available physical copy is found:
@@ -1479,7 +1432,7 @@ def get_user_favorites(request):
     try:
         # Use select_related to fetch book and book__bookauthor__author in one query
         favorites = Favorites.objects.filter(user=customer).select_related('book').prefetch_related(
-             'book__bookauthor_set__author'
+            'book__bookauthor_set__author'
         )
 
         favorites_data = []
@@ -1491,9 +1444,9 @@ def get_user_favorites(request):
 
             # Check availability for the favorite book (physical copies)
             available_physical_copies = Bookcopies.objects.filter(
-                 book=book,
-                 is_borrowed=False,
-                 in_inventory=True
+                book=book,
+                is_borrowed=False,
+                in_inventory=True
             ).count()
             is_available = available_physical_copies > 0 or book.ebook_availability > 0 or book.audiobook_availability > 0
 
@@ -1511,7 +1464,7 @@ def get_user_favorites(request):
             })
         return JsonResponse(favorites_data, safe=False)
     except Customer.DoesNotExist:
-         return JsonResponse({'error': 'User profile not found.'}, status=404)
+        return JsonResponse({'error': 'User profile not found.'}, status=404)
     except Exception as e:
         logger.error(f"Error fetching user favorites for user {user.username}: {e}", exc_info=True)
         return JsonResponse({'error': f'An internal server error occurred: {e}'}, status=500)
@@ -1567,7 +1520,7 @@ def get_current_user_borrowings(request):
             # This is the actual date the book is due
             current_calculated_due_date = borrowing.borrow_date + timezone.timedelta(days=borrow_duration_days)
             if borrowing.last_renewal_date:
-                 current_calculated_due_date = borrowing.last_renewal_date + timezone.timedelta(days=renewal_duration_days)
+                current_calculated_due_date = borrowing.last_renewal_date + timezone.timedelta(days=renewal_duration_days)
 
 
             # Determine status relative to *today*
@@ -1614,8 +1567,8 @@ def get_current_user_borrowings(request):
         return JsonResponse(borrowings_data, safe=False)
 
     except Customer.DoesNotExist:
-         logger.error(f"Customer profile not found for authenticated user {user.username} while fetching current borrowings.", exc_info=True)
-         return JsonResponse({'error': 'User profile not found.'}, status=404)
+        logger.error(f"Customer profile not found for authenticated user {user.username} while fetching current borrowings.", exc_info=True)
+        return JsonResponse({'error': 'User profile not found.'}, status=404)
     except Exception as e:
         logger.error(f"Error fetching current borrowings for user {user.username}: {e}", exc_info=True)
         return JsonResponse({'error': f'An internal server error occurred while fetching borrowed books: {e}'}, status=500)
@@ -1681,13 +1634,13 @@ def get_user_borrowing_history(request):
             returned_late = False
             fine_amount = 0
             if borrowing.return_date and final_due_date:
-                 # Use .date() to compare just the date parts
-                 if borrowing.return_date.date() > final_due_date.date():
-                     returned_late = True
-                     days_overdue = (borrowing.return_date.date() - final_due_date.date()).days
-                     fine_amount = days_overdue * overdue_fee
-                     # Ensure fine is not negative
-                     fine_amount = max(0, fine_amount)
+                # Use .date() to compare just the date parts
+                if borrowing.return_date.date() > final_due_date.date():
+                    returned_late = True
+                    days_overdue = (borrowing.return_date.date() - final_due_date.date()).days
+                    fine_amount = days_overdue * overdue_fee
+                    # Ensure fine is not negative
+                    fine_amount = max(0, fine_amount)
 
 
             # Check if the book was renewed at least once for history display
@@ -1717,7 +1670,7 @@ def get_user_borrowing_history(request):
                 'renewed': was_renewed, # Pass boolean
                 'current_renew_count': borrowing.current_renew_count, # Include used count for history detail/modal
                 'max_renewal_count': getattr(membership_type, 'max_renewal_count', 2) if membership_type else 2, # Include max for history detail/modal
-                 # The last_renewal_date might be useful for modal display in history
+                # The last_renewal_date might be useful for modal display in history
                 'last_renewal_date': borrowing.last_renewal_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.last_renewal_date else None,
                 'is_favorited': is_favorited, # *** ADDED THIS FIELD ***
             })
@@ -1727,8 +1680,8 @@ def get_user_borrowing_history(request):
         return JsonResponse(history_data, safe=False)
 
     except Customer.DoesNotExist:
-         logger.error(f"Customer profile not found for authenticated user {user.username} while fetching borrowing history.", exc_info=True)
-         return JsonResponse({'error': 'User profile not found.'}, status=404)
+        logger.error(f"Customer profile not found for authenticated user {user.username} while fetching borrowing history.", exc_info=True)
+        return JsonResponse({'error': 'User profile not found.'}, status=404)
     except Exception as e:
         logger.error(f"Error fetching borrowing history for user {user.username}: {e}", exc_info=True)
         return JsonResponse({'error': f'An internal server error occurred while fetching borrowing history: {e}'}, status=500)
@@ -1820,8 +1773,8 @@ def renew_book(request, borrowing_id):
             'format': updated_borrowing.format,
             'is_overdue': updated_is_overdue,
             'due_soon': updated_due_soon,
-             'days_until_due': updated_days_left,
-             'can_renew': updated_borrowing.current_renew_count < updated_max_renewals and not updated_is_overdue, # Update can_renew status
+            'days_until_due': updated_days_left,
+            'can_renew': updated_borrowing.current_renew_count < updated_max_renewals and not updated_is_overdue, # Update can_renew status
         }
 
         return JsonResponse({'message': 'Book renewed successfully', 'borrowing': borrowings_data})
@@ -1874,18 +1827,18 @@ def return_book(request, borrowing_id):
 
             # Ensure both dates exist before comparing
             if borrowing.return_date and borrowing.due_date and borrowing.return_date > borrowing.due_date:
-                 returned_late = True
-                 # Calculate fine if needed
-                 membership_type = customer.membership_type
-                 if membership_type and membership_type.overdue_fee_in_dollars is not None:
-                      # Calculate days overdue
-                      # Use .date() to compare just the date part
-                      days_overdue = (borrowing.return_date.date() - borrowing.due_date.date()).days
-                      # Ensure days overdue is non-negative, although calculation should handle this if return_date > due_date
-                      days_overdue = max(0, days_overdue)
-                      fine_amount = days_overdue * membership_type.overdue_fee_in_dollars
-                      # You would typically save this fine amount somewhere, e.g., a Fines model
-                      # For now, just returning the information.
+                returned_late = True
+                # Calculate fine if needed
+                membership_type = customer.membership_type
+                if membership_type and membership_type.overdue_fee_in_dollars is not None:
+                    # Calculate days overdue
+                    # Use .date() to compare just the date part
+                    days_overdue = (borrowing.return_date.date() - borrowing.due_date.date()).days
+                    # Ensure days overdue is non-negative, although calculation should handle this if return_date > due_date
+                    days_overdue = max(0, days_overdue)
+                    fine_amount = days_overdue * membership_type.overdue_fee_in_dollars
+                    # You would typically save this fine amount somewhere, e.g., a Fines model
+                    # For now, just returning the information.
 
         # Log successful return
         logger.info(f"Book borrowing {borrowing_id} returned by user {user.username}. Returned late: {returned_late}, Fine: ${fine_amount:.2f}")

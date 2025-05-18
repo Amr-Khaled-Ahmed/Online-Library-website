@@ -98,8 +98,6 @@ document.addEventListener('click', function(event) {
     }
     else if(event.target.classList.contains('copies',) ||
             event.target.classList.contains('borrowers-list-btn')) {
-        document.querySelector('.overlayer').classList.remove('hide');
-        document.querySelector('.list').classList.remove('hide');
 
         const bookId = event.target.getAttribute('data-id');
         fetch(`get-book/${bookId}`)
@@ -119,6 +117,9 @@ document.addEventListener('click', function(event) {
         .catch(error => {
             console.error("Error fetching book:", error);
         });
+
+        document.querySelector('.overlayer').classList.remove('hide');
+        document.querySelector('.list').classList.remove('hide');
 
         if(event.target.classList.contains('copies')) {
             document.querySelector('.copies-list').classList.remove('hide');
@@ -152,12 +153,18 @@ document.addEventListener('click', function(event) {
                 return response.json();
             })
             .then(data => {
+                // Reset Borrowers list
+                Array.from(document.querySelector('.users').children).forEach(user => {
+                    if(user.tagName.toLowerCase() !== 'h4' && !user.classList.contains('no-users'))
+                        document.querySelector('.users').removeChild(user);
+                });
+
                 if(!data.borrowers || data.borrowers.length == 0) {
                     document.querySelector('.no-users').classList.remove('hide');
                 }
                 else {
                     let usersList = document.querySelector('.users');
-                    data.borrowers.foreach(borrow => {
+                    data.borrowers.forEach(borrow => {
                         let userDiv = document.createElement('div');
                         userDiv.classList.add('user');
                 
@@ -165,7 +172,7 @@ document.addEventListener('click', function(event) {
                         profilePicHolder.classList.add('profile-pic-holder');
                 
                         let profilePic = document.createElement('img');
-                        profilePic.src = user.profilePic ? user.profilePic : './../CSS/assets/blue.avif';
+                        profilePic.src = borrow.profilePic ? borrow.profilePic : './../CSS/assets/blue.avif';
                         profilePic.alt = 'Profile Picture';
                         profilePic.classList.add('profile-pic');
                 
@@ -173,20 +180,24 @@ document.addEventListener('click', function(event) {
                         info.classList.add('info');
                 
                         let username = document.createElement('p');
-                        username.textContent = 'Username: ' + user.username;
+                        username.textContent = 'Username: ' + borrow.username;
 
                         let format = document.createElement('p');
                         format.textContent = 'Format: ' + borrow.format;
 
                         let borrowDate = document.createElement('p');
+                        borrowDate.id = 'date';
                         borrowDate.textContent = 'Borrow Date: ' + new Date(borrow.borrow_date).toLocaleString('en-US', { month: 'long' }) 
                                                 + ' ' + new Date(borrow.borrow_date).getDate()
-                                                + ', ' + new Date(borrow.borrow_date).getFullYear();
+                                                + ', ' + new Date(borrow.borrow_date).getFullYear()
+                                                + ' ' + new Date(borrow.borrow_date).toLocaleTimeString('en-US');
 
                         let dueDate = document.createElement('p');
+                        dueDate.id = 'date';
                         dueDate.textContent = 'Due Date: ' + new Date(borrow.return_date).toLocaleString('en-US', { month: 'long' }) 
                                                 + ' ' + new Date(borrow.return_date).getDate()
-                                                + ', ' + new Date(borrow.return_date).getFullYear();
+                                                + ', ' + new Date(borrow.return_date).getFullYear()
+                                                + ' ' + new Date(borrow.return_date).toLocaleTimeString('en-US');
                         
                         info.appendChild(username);
                         info.append(format);
