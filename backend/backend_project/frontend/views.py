@@ -246,22 +246,52 @@ def sign_up(request):
 
         if not all([username, first_name, last_name, email, password, pass_confirm]):
             messages.error(request, "All fields are required.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
         if password != pass_confirm:
             messages.error(request, "Passwords do not match.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
         if User.objects.filter(username=username).exists():
             messages.error(request, "This username is already taken. Please choose another one.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
         if User.objects.filter(email=email).exists():
             messages.error(request, "This email address is already registered. Please use a different email or log in.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
         if len(password) < 8:
             messages.error(request, "Password must be at least 8 characters long.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
         try:
@@ -297,6 +327,7 @@ def sign_up(request):
                     logger.info(f"Customer account created: username={username}, user_id={user.id}")
                     messages.success(request, "Customer account created successfully! You can now log in.")
 
+                # Redirect on successful signup - messages set here are consumed on the next page
                 return redirect('sign_in')
 
         except IntegrityError as e:
@@ -310,6 +341,12 @@ def sign_up(request):
                 except Exception as cleanup_e:
                     logger.error(f"Failed to clean up user {user.username}: {cleanup_e}", exc_info=True)
 
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
         except Membershiptypes.DoesNotExist:
              logger.error("Default MembershipType with ID 1 not found during signup.", exc_info=True)
@@ -320,6 +357,12 @@ def sign_up(request):
                      logger.info(f"Cleaned up partially created user {user.username}")
                  except Exception as cleanup_e:
                       logger.error(f"Failed to clean up user {user.username}: {cleanup_e}", exc_info=True)
+             # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+             from django.contrib.messages import get_messages
+             storage = get_messages(request)
+             for _ in storage:
+                 pass  # Consume the error message added above
+             # --- END ADDITION ---
              return render(request, "frontend/pages/sign-up.html", context)
         except Exception as e:
             logger.error(f"Unexpected error during signup: {e}", exc_info=True)
@@ -331,11 +374,16 @@ def sign_up(request):
                     logger.info(f"Cleaned up partially created user {user.username}")
                 except Exception as cleanup_e:
                     logger.error(f"Failed to clean up user {user.username}: {cleanup_e}", exc_info=True)
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass  # Consume the error message added above
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-up.html", context)
 
     # Add this return statement to handle GET requests
     return render(request, "frontend/pages/sign-up.html", context)
-
 
 def sign_in(request):
     # Redirect authenticated users based on role
@@ -366,6 +414,12 @@ def sign_in(request):
         # This block generates an error message if fields are empty
         if not username_or_email or not password:
             messages.error(request, "Both username/email and password are required.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-in.html", context)
 
         # Authenticate using username or email
@@ -401,20 +455,37 @@ def sign_in(request):
                     messages.error(request,
                                    "Login successful, but no role (Admin/Customer) is assigned. Please contact support.")
                     auth_logout(request)
+                    # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+                    from django.contrib.messages import get_messages
+                    storage = get_messages(request)
+                    for _ in storage:
+                        pass  # Consume the error message added above
+                    # --- END ADDITION ---
                     return redirect('sign_in')
             else:
                 logger.warning(f"Attempted login for inactive user: {username_or_email}")
                 # This line generates an error message for inactive accounts
                 messages.error(request, "This account is inactive. Please contact support.")
+                # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+                from django.contrib.messages import get_messages
+                storage = get_messages(request)
+                for _ in storage:
+                    pass  # Consume the error message added above
+                # --- END ADDITION ---
                 return render(request, "frontend/pages/sign-in.html", context)
         else:
             logger.warning(f"Failed login attempt for: {username_or_email}")
             # This line generates the error message for invalid credentials
             messages.error(request, "Invalid username/email or password. Please try again.")
+            # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
+            from django.contrib.messages import get_messages
+            storage = get_messages(request)
+            for _ in storage:
+                pass # Iterate through messages to consume them
+            # --- END ADDITION ---
             return render(request, "frontend/pages/sign-in.html", context)
 
     return render(request, "frontend/pages/sign-in.html", context)
-
 
 def user_dashboard(request):
     if not request.user.is_authenticated:
