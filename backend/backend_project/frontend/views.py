@@ -2,8 +2,7 @@
 import random
 import string
 import traceback
-from datetime import date # Import date for comparisons
-
+from datetime import date  # Import date for comparisons
 
 from django.db.models import Q
 # from django.db.models.fields import json
@@ -19,13 +18,15 @@ import logging
 from django.http.response import HttpResponse
 from django.contrib.auth.models import User
 from django.contrib.auth import authenticate, login as auth_login, logout as auth_logout
+from django.views.decorators.http import require_GET, require_POST, require_http_methods
+
 # check_password is no longer needed if delete_account is removed
 # from django.contrib.auth.hashers import check_password
 from django.db import IntegrityError, transaction
 from django.views.decorators.csrf import csrf_exempt
 
 from .models import Customer, Admin, Membershiptypes, Borrowings, Favorites, Authors, Genres, \
-    Books, Bookauthor, Bookgenre, Bookcopies, PasswordResetToken  # Import necessary models
+    Books, Bookauthor, Bookgenre, Bookcopies, PasswordResetToken, Friendships, Notifications, Notificationcategories
 from django.urls import reverse
 from django.views.decorators.http import require_POST  # Import require_POST
 from django.contrib.auth.decorators import login_required
@@ -44,6 +45,7 @@ import traceback
 
 from django.shortcuts import get_object_or_404
 from django.db import transaction
+
 logger = logging.getLogger(__name__)
 # Initialize the library API (if needed globally)
 db_path = os.path.join(settings.BASE_DIR, 'library.db')
@@ -148,10 +150,13 @@ def admin_dashboard(request):
     if availability == 'available':
         enriched_books = [book for book in enriched_books if book['copies_count'] > 10]
     elif availability == 'unavailable':
-        enriched_books = [book for book in enriched_books if book['copies_count'] == 0 and not book['book'].ebook_availability and not book['book'].audiobook_availability]
+        enriched_books = [book for book in enriched_books if
+                          book['copies_count'] == 0 and not book['book'].ebook_availability and not book[
+                              'book'].audiobook_availability]
     elif availability == 'low-stock':
-        enriched_books = [book for book in enriched_books if (book['copies_count'] <= 10 and (book['copies_count'] > 0 or book['book'].ebook_availability or book['book'].audiobook_availability))]
-    
+        enriched_books = [book for book in enriched_books if (book['copies_count'] <= 10 and (
+                    book['copies_count'] > 0 or book['book'].ebook_availability or book[
+                'book'].audiobook_availability))]
 
     if sort == 'popular':
         enriched_books = sorted(enriched_books, key=lambda x: x['borrowers_count'], reverse=True)
@@ -166,7 +171,7 @@ def profile(request):
     admin = None
     books_borrowed_count = 0
     books_favorited_count = 0
-    profile_picture_url = None # Initialize profile picture URL
+    profile_picture_url = None  # Initialize profile picture URL
 
     # Get join year safely, defaulting if user.date_joined is None
     member_since_year = user.date_joined.year if user.date_joined else 'N/A'
@@ -192,7 +197,7 @@ def profile(request):
                                                                  return_date__isnull=True).count()
                 # Count favorite books
                 favorites_count = Favorites.objects.filter(user=customer).count()
-                books_favorited_count = favorites_count # Assign to the correct variable name
+                books_favorited_count = favorites_count  # Assign to the correct variable name
             except OperationalError:
                 # Log a warning or handle the error gracefully if tables are missing
                 logger.warning(
@@ -205,16 +210,15 @@ def profile(request):
                 books_borrowed_count = 0
                 books_favorited_count = 0
 
-
     context = {
         'user': user,  # Django's built-in User object
         'customer': customer,  # Our custom Customer profile object
-        'admin': admin, # Our custom Admin profile object
+        'admin': admin,  # Our custom Admin profile object
         'books_borrowed_count': books_borrowed_count,
         'books_favorited_count': books_favorited_count,
         'member_since_year': member_since_year,
         'is_admin': is_admin,  # Pass the admin status to the template
-        'profile_picture_url': profile_picture_url, # Pass the correct profile picture URL
+        'profile_picture_url': profile_picture_url,  # Pass the correct profile picture URL
     }
     return render(request, 'frontend/pages/profile.html', context)
 
@@ -254,10 +258,12 @@ def book_details(request):
     except Books.DoesNotExist:
         return render(request, 'frontend/pages/book_details.html', {'error': 'Book not found.'})
 
+
 def borrowed(request):
     # The data for the borrowed page is now fetched via AJAX by borrowed.js
     # This view just needs to render the HTML structure
     return render(request, 'frontend/pages/borrowed.html')
+
 
 def sign_up(request):
     context = {}
@@ -511,33 +517,136 @@ def sign_in(request):
             # --- ADD THESE LINES TO EXPLICITLY CONSUME MESSAGES ---
             from django.contrib.messages import get_messages
             storage = get_messages(request)
-            for _ in storage:
-                pass # Iterate through messages to consume them
             # --- END ADDITION ---
             return render(request, "frontend/pages/sign-in.html", context)
 
     return render(request, "frontend/pages/sign-in.html", context)
+
+
+@login_required
+@require_http_methods(["GET"])
+def get_notifications(request):
+    try:
+        notifications = Notifications.objects.filter(
+            user=request.user.customer_profile
+        ).order_by('-timestamp')[:10]  # Get last 10 notifications
+
+        notifications_data = [{
+            'message': notification.message,
+            'category': notification.notification_category.name,
+            'timestamp': notification.timestamp.strftime('%Y-%m-%d %H:%M:%S'),
+            'is_read': notification.is_read
+        } for notification in notifications]
+
+        return JsonResponse(notifications_data, safe=False)
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+@require_http_methods(["POST"])
+def create_notification(request):
+    try:
+        data = json.loads(request.body)
+        message = data.get('message')
+        category_name = data.get('category', 'Friend alert')
+
+        # Get or create the notification category
+        category, _ = Notificationcategories.objects.get_or_create(
+            name=category_name,
+            defaults={'priority': 1}
+        )
+
+        # Create the notification
+        notification = Notifications.objects.create(
+            user=request.user.customer_profile,
+            notification_category=category,
+            message=message,
+            is_read=False
+        )
+
+        return JsonResponse({
+            'message': 'Notification created successfully',
+            'notification_id': notification.notification_id
+        })
+    except Exception as e:
+        return JsonResponse({'error': str(e)}, status=500)
+
 
 def user_dashboard(request):
     if not request.user.is_authenticated:
         messages.error(request, 'You must be logged in to access the user dashboard')
         return redirect('sign_in')
 
-    # Ensure the logged-in user has a customer profile
-    # This check is redundant if access is restricted by login_required and URL pattern
-    # but kept for clarity or if this view might be accessed differently
     if not hasattr(request.user, 'customer_profile'):
         messages.error(request, 'You do not have permission to access the user dashboard')
-        return redirect('home') # Or redirect to profile with a message
+        return redirect('home')
 
-    # You would typically fetch user-specific data for the dashboard here
-    # e.g., recent borrowings, notifications, etc.
-    # For now, just rendering the template
-    return render(request, 'frontend/pages/user_dashboard.html')
+    notifications = Notifications.objects.filter(
+        user=request.user.customer_profile
+    ).order_by('-timestamp')[:10]
+
+    return render(request, 'frontend/pages/user_dashboard.html', {
+        'notifications': notifications
+    })
 
 
+@require_http_methods(["GET", "POST"])
 def forgot_password(request):
-    # This view is for password reset functionality (not implemented here)
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            username_or_email = data.get('username', '').strip()
+
+            if not username_or_email:
+                return JsonResponse({'status': 'error', 'message': 'Username or Email is required.'}, status=400)
+
+            user = None
+            # Try to find user by username (case-insensitive)
+            try:
+                user = User.objects.get(username__iexact=username_or_email)
+            except User.DoesNotExist:
+                pass # Continue to try email
+
+            # If not found by username, and input contains '@', try to find by email (case-insensitive)
+            if user is None and '@' in username_or_email:
+                try:
+                    user = User.objects.get(email__iexact=username_or_email)
+                except User.DoesNotExist:
+                    pass # User not found by email either
+
+            if user is None:
+                return JsonResponse({'status': 'error', 'message': 'No user found with that username or email.'}, status=404)
+
+            # Delete any existing valid tokens for this user to ensure only one is active
+            PasswordResetToken.objects.filter(user=user, is_used=False, expires_at__gt=timezone.now()).delete()
+
+            # Generate a 6-digit token
+            token = ''.join(random.choices(string.digits, k=6))
+            expires_at = timezone.now() + timedelta(minutes=15) # Token valid for 15 minutes
+
+            # Save the token
+            PasswordResetToken.objects.create(user=user, token=token, expires_at=expires_at)
+
+            # Send email
+            subject = 'Password Reset Verification Code for Online Library'
+            # Assuming you have a template at frontend/emails/password_reset_email.html
+            html_message = render_to_string('frontend/emails/password_reset_email.html', {'user': user, 'token': token})
+            plain_message = strip_tags(html_message) # Fallback for plain text email
+            from_email = settings.EMAIL_HOST_USER # Your configured email in settings.py
+            to_email = user.email
+
+            send_mail(subject, plain_message, from_email, [to_email], html_message=html_message)
+
+            return JsonResponse({'status': 'success', 'message': 'A verification code has been sent to your email.'})
+
+        except json.JSONDecodeError:
+            return JsonResponse({'status': 'error', 'message': 'Invalid JSON in request body.'}, status=400)
+        except Exception as e:
+            logger.error(f"Error in forgot_password: {e}", exc_info=True)
+            return JsonResponse({'status': 'error', 'message': 'An unexpected error occurred.'}, status=500)
+
+    # Handle GET request for forgot_password (just render the template)
     return render(request, 'frontend/pages/forgetPassword.html')
 
 
@@ -565,18 +674,17 @@ def update_profile_picture(request):
         if hasattr(user, 'admin_profile'):
             profile_obj = user.admin_profile
         else:
-             # This case should ideally not happen if user is superuser but lacks admin_profile
-             # Log a warning or handle appropriately
-             logger.warning(f"Superuser {user.username} attempting profile update without admin_profile.")
-             messages.error(request, 'Admin profile not found.')
-             return JsonResponse({'success': False, 'message': 'Admin profile not found'}, status=400)
+            # This case should ideally not happen if user is superuser but lacks admin_profile
+            # Log a warning or handle appropriately
+            logger.warning(f"Superuser {user.username} attempting profile update without admin_profile.")
+            messages.error(request, 'Admin profile not found.')
+            return JsonResponse({'success': False, 'message': 'Admin profile not found'}, status=400)
 
     elif hasattr(user, 'customer_profile'):
         profile_obj = user.customer_profile
     else:
         messages.error(request, 'User profile not found.')
         return JsonResponse({'success': False, 'message': 'User profile not found'}, status=400)
-
 
     if 'profile_picture' in request.FILES:
         # Handle uploading a new profile picture
@@ -601,7 +709,6 @@ def update_profile_picture(request):
         subdirectory = 'profile_pictures/admins' if is_admin else 'profile_pictures/customers'
         filename = fs.save(os.path.join(subdirectory, uploaded_file.name), uploaded_file)
 
-
         # Get the URL to the saved file
         file_url = fs.url(filename)
 
@@ -621,7 +728,7 @@ def update_profile_picture(request):
                     os.remove(saved_file_path)
                     logger.info(f"Cleaned up saved file after DB error: {saved_file_path}")
             except Exception as cleanup_e:
-                 logger.error(f"Error cleaning up file after DB save failure: {cleanup_e}", exc_info=True)
+                logger.error(f"Error cleaning up file after DB save failure: {cleanup_e}", exc_info=True)
 
             return JsonResponse({'success': False, 'message': 'Failed to save profile picture to database.'},
                                 status=500)
@@ -726,7 +833,6 @@ def add_book(request):
     else:
         print(traceback.format_exc())
         return JsonResponse({'error': 'Invalid request method'}, status=405)
-
 
 
 @csrf_exempt
@@ -866,7 +972,6 @@ def add_copies(request):
                     # is_borrowed and in_inventory default to False/True respectively
                 )
 
-
             book.ebook_availability = ebook
             book.audiobook_availability = audiobook
             book.save()
@@ -882,7 +987,7 @@ def add_copies(request):
         return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
-def get_copies(request,book_id):
+def get_copies(request, book_id):
     try:
         book = Books.objects.get(book_id=book_id)
 
@@ -901,7 +1006,7 @@ def get_copies(request,book_id):
         return JsonResponse({'error': str(e)}, status=400)
 
 
-def get_borrowers(request,book_id):
+def get_borrowers(request, book_id):
     try:
         book = Books.objects.get(book_id=book_id)
 
@@ -942,7 +1047,6 @@ def get_book_details(request, book_id):
         # Determine overall availability
         is_available = available_physical_copies > 0 or book.ebook_availability > 0 or book.audiobook_availability > 0
 
-
         data = {
             'id': book.book_id,
             'title': book.title,
@@ -951,13 +1055,13 @@ def get_book_details(request, book_id):
             'genre': GENRE_MAPPING_REV.get(book_genre.genre.name) if book_genre and book_genre.genre else "Unknown",
             'publication_year': book.publication_year,
             'description': book.description,
-            'is_available': is_available, # Overall availability (physical or digital)
-            'available_physical_copies': available_physical_copies, # Specific count for physical
+            'is_available': is_available,  # Overall availability (physical or digital)
+            'available_physical_copies': available_physical_copies,  # Specific count for physical
             'ebook_available': book.ebook_availability > 0,
             'audiobook_available': book.audiobook_availability > 0,
-            'isbn': book.isbn, # Include ISBN for details page
-            'page_count': book.page_count, # Include page count
-            'language': book.language, # Include language
+            'isbn': book.isbn,  # Include ISBN for details page
+            'page_count': book.page_count,  # Include page count
+            'language': book.language,  # Include language
         }
         return JsonResponse(data)
     except Books.DoesNotExist:
@@ -983,19 +1087,19 @@ def get_current_user(request):
             'first_name': user.first_name,
             'last_name': user.last_name,
             'is_admin': is_admin,
-             # You could add profile picture URL here if needed for frontend
+            # You could add profile picture URL here if needed for frontend
         }
 
         # If customer profile exists, add relevant customer info
         if hasattr(user, 'customer_profile'):
-             customer = user.customer_profile
-             user_data['customer_id'] = customer.pk # Use primary key of Customer
-             user_data['is_a_member'] = customer.is_a_member
-             if customer.membership_type:
-                  user_data['membership_type_name'] = customer.membership_type.name
-                  user_data['max_renewal_count'] = customer.membership_type.max_renewal_count
-                  user_data['borrow_duration_in_days'] = customer.membership_type.borrow_duration_in_days
-                  user_data['renewal_duration_in_days'] = customer.membership_type.renewal_duration_in_days
+            customer = user.customer_profile
+            user_data['customer_id'] = customer.pk  # Use primary key of Customer
+            user_data['is_a_member'] = customer.is_a_member
+            if customer.membership_type:
+                user_data['membership_type_name'] = customer.membership_type.name
+                user_data['max_renewal_count'] = customer.membership_type.max_renewal_count
+                user_data['borrow_duration_in_days'] = customer.membership_type.borrow_duration_in_days
+                user_data['renewal_duration_in_days'] = customer.membership_type.renewal_duration_in_days
 
         return JsonResponse(user_data)
     except User.DoesNotExist:
@@ -1007,8 +1111,6 @@ def get_current_user(request):
         return JsonResponse({'error': str(e)}, status=500)
 
 
-
-
 @csrf_exempt
 def get_books(request):
     try:
@@ -1016,15 +1118,14 @@ def get_books(request):
         books = Books.objects.filter(is_deleted=False).prefetch_related(
             'bookauthor_set__author',
             'bookgenre_set__genre',
-            'bookcopies_set' # Prefetch book copies
+            'bookcopies_set'  # Prefetch book copies
         )
 
         query = request.GET.get('q')
-        genre_param = request.GET.get('genre') # Get the parameter value (e.g., 'fiction')
+        genre_param = request.GET.get('genre')  # Get the parameter value (e.g., 'fiction')
         sort = request.GET.get('sort')
         availability = request.GET.get('availability')
-        format_filter = request.GET.get('format') # Get format filter
-
+        format_filter = request.GET.get('format')  # Get format filter
 
         if query:
             books = books.filter(
@@ -1035,7 +1136,7 @@ def get_books(request):
 
         if genre_param:
             # Map the URL parameter back to the database name if necessary
-            genre_name = GENRE_MAPPING.get(genre_param.lower(), genre_param) # Default to parameter if not in map
+            genre_name = GENRE_MAPPING.get(genre_param.lower(), genre_param)  # Default to parameter if not in map
             books = books.filter(bookgenre__genre__name__iexact=genre_name).distinct()
 
         # Apply format filtering - this requires checking the related Bookcopies
@@ -1048,10 +1149,9 @@ def get_books(request):
                 # Filter books that have at least one copy of the specified physical format
                 books = books.filter(bookcopies__format__iexact=format_filter).distinct()
 
-
         # Sorting - Popularity requires annotation/aggregation or sorting a pre-calculated list
         if sort == 'newest':
-            books = books.order_by('-publication_year', '-added_date') # Sort by year then added date
+            books = books.order_by('-publication_year', '-added_date')  # Sort by year then added date
         elif sort == 'oldest':
             books = books.order_by('publication_year', 'added_date')
         elif sort == 'title-asc':
@@ -1065,7 +1165,6 @@ def get_books(request):
             books = books.order_by('bookauthor__author__name').distinct()
         elif sort == 'author-desc':
             books = books.order_by('-bookauthor__author__name').distinct()
-
 
         # Prepare data and apply availability/popularity filtering after fetching related data
         books_data = []
@@ -1082,12 +1181,11 @@ def get_books(request):
             # Calculate popularity (count of active borrowings for this book)
             popularity_count = Borrowings.objects.filter(copy__book=book, return_date__isnull=True).count()
 
-
             # Apply availability filter here
             if availability == 'unavailable' and is_available:
-                continue # Skip if filtering for unavailable and book is available
+                continue  # Skip if filtering for unavailable and book is available
             if availability == 'available' and not is_available:
-                continue # Skip if filtering for available and book is not available
+                continue  # Skip if filtering for available and book is not available
             # Note: 'low-stock' filtering would require checking available_physical_copies here
 
             books_data.append({
@@ -1098,28 +1196,27 @@ def get_books(request):
                 'genre_name': book_genre.genre.name if book_genre and book_genre.genre else "Unknown",
                 'publication_year': book.publication_year,
                 'description': book.description,
-                'is_available': is_available, # Overall availability
+                'is_available': is_available,  # Overall availability
                 'available_physical_copies': available_physical_copies,
                 'ebook_available': book.ebook_availability > 0,
                 'audiobook_available': book.audiobook_availability > 0,
-                'popularity': popularity_count, # Include popularity
+                'popularity': popularity_count,  # Include popularity
             })
 
         # Apply 'low-stock' availability filter and 'popular' sort to the list after data preparation
         if availability == 'low-stock':
             # Filter after calculating available physical copies
-            books_data = [book for book in books_data if book['available_physical_copies'] <= 10 and book['available_physical_copies'] > 0]
+            books_data = [book for book in books_data if
+                          book['available_physical_copies'] <= 10 and book['available_physical_copies'] > 0]
 
         if sort == 'popular':
             # Sort the prepared list by popularity
             books_data.sort(key=lambda x: x['popularity'], reverse=True)
 
-
         return JsonResponse(books_data, safe=False)
     except Exception as e:
         logger.error(f"Error fetching books: {e}", exc_info=True)
         return JsonResponse({'error': str(e)}, status=500)
-
 
 
 
@@ -1131,27 +1228,19 @@ def get_books(request):
 def send_verification_email_view(request):
     """
     Handles the AJAX request to send a password reset verification email.
-    Expects a POST request with JSON data containing the 'username_or_email'.
+    Expects a POST request with JSON data containing the 'username'.
     Generates and saves a verification token and sends an HTML email.
     """
     if request.method == 'POST':
         try:
             data = json.loads(request.body)
-            username_or_email = data.get('username_or_email')
+            username = data.get('username')
 
-            if not username_or_email:
-                return JsonResponse({'success': False, 'error': 'Username or Email is required.'}, status=400)
+            if not username:
+                return JsonResponse({'success': False, 'error': 'Username is required.'}, status=400)
 
             try:
-                # Try to find user by username or email
-                user = User.objects.filter(
-                    Q(username=username_or_email) | Q(email__iexact=username_or_email)
-                ).first()
-
-                if user is None:
-                    # Generic message for security, don't reveal if user exists
-                    return JsonResponse({'success': False, 'error': 'If a user with that username or email exists, a verification email has been sent.'}, status=200)
-
+                user = User.objects.get(username=username)
 
                 # --- Generate and Save Verification Token ---
                 # Delete any existing unused tokens for this user
@@ -1191,16 +1280,18 @@ def send_verification_email_view(request):
                 email.send() # Send the email
 
                 # Set session variable after successful email sending and token creation
-                # Store the username for the next step
-                request.session['password_reset_username'] = user.username
+                request.session['password_reset_username'] = username
 
 
                 return JsonResponse({'success': True, 'message': 'Verification code sent to your email.'})
 
+            except User.DoesNotExist:
+                 # Generic message for security
+                 return JsonResponse({'success': False, 'error': 'If a user with that username exists, a verification email has been sent.'}, status=200)
             except Exception as e:
                 # Log the error and print the full traceback
-                logger.error(f"Error sending verification email: {e}", exc_info=True)
-                # traceback.print_exc() # <--- This will print the detailed error!
+                print(f"Error sending verification email: {e}")
+                traceback.print_exc() # <--- This will print the detailed error!
                 return JsonResponse({'success': False, 'error': 'An error occurred while trying to send the verification email. Please try again.'}, status=500)
 
         except json.JSONDecodeError:
@@ -1223,7 +1314,7 @@ def verify_reset_code_view(request):
             username = request.session.get('password_reset_username') # Get username from session
 
             # Log details for debugging
-            logger.debug(f"Verification code attempt for username: {username} with code: {code}")
+            print(f"Verification code attempt for username: {username} with code: {code}")
 
             if not code or not username:
                 # Clear session data if prerequisites are not met unexpectedly
@@ -1246,22 +1337,19 @@ def verify_reset_code_view(request):
                     request.session['password_reset_code_verified'] = True
                     # You might store a token ID or user ID here for extra security in a production system
 
-                    logger.info(f"Verification code successful for user: {username}")
                     return JsonResponse({'success': True, 'message': 'Code verified successfully.'})
                 else:
-                    logger.warning(f"Invalid or expired verification code attempt for user {username} with code {code}")
                     return JsonResponse({'success': False, 'error': 'Invalid or expired verification code.'}, status=400)
 
             except User.DoesNotExist:
-                # Should not happen if username is from session, but handle defensively
-                logger.error(f"User not found during code verification for username from session: {username}", exc_info=True)
+                 # Should not happen if username is from session, but handle defensively
                 request.session.pop('password_reset_username', None) # Clear session data
                 request.session.pop('password_reset_code_verified', None)
                 return JsonResponse({'success': False, 'error': 'User not found during code verification.'}, status=404)
             except Exception as e:
-                logger.error(f"Error verifying reset code: {e}", exc_info=True)
+                print(f"Error verifying reset code: {e}")
                 # Log the traceback for better debugging
-                # traceback.print_exc() # <--- This will print the detailed error!
+                traceback.print_exc() # <--- This will print the detailed error!
                 # Clear session data on error to force restart of reset flow
                 request.session.pop('password_reset_username', None)
                 request.session.pop('password_reset_code_verified', None)
@@ -1288,28 +1376,24 @@ def reset_password_confirm_view(request):
             code_verified = request.session.get('password_reset_code_verified') # Check session for verification status
 
             # Log details for debugging
-            logger.debug(f"Reset password attempt for username: {username}")
-            logger.debug(f"Code verified status in session: {code_verified}")
+            print(f"Reset password attempt for username: {username}")
+            print(f"Code verified status in session: {code_verified}")
 
 
             if not new_password or not username or not code_verified:
-                # Return appropriate error if prerequisites are not met
-                error_message = 'New password is required.'
-                if not username:
-                    error_message = 'Password reset flow not initiated or session expired. Please start again.'
-                elif not code_verified:
-                    error_message = 'Code verification is required before setting a new password. Please go back and verify the code.'
+                 # Return appropriate error if prerequisites are not met
+                 error_message = 'Password and username are required.'
+                 if not username:
+                      error_message = 'Password reset flow not initiated or session expired. Please start again.'
+                 elif not code_verified:
+                     error_message = 'Code verification is required before setting a new password. Please go back and verify the code.'
 
-                # Clear session data if prerequisites are not met unexpectedly
-                request.session.pop('password_reset_username', None)
-                request.session.pop('password_reset_code_verified', None)
+                 # Clear session data if prerequisites are not met unexpectedly
+                 request.session.pop('password_reset_username', None)
+                 request.session.pop('password_reset_code_verified', None)
 
 
-                return JsonResponse({'success': False, 'error': error_message}, status=400)
-
-            # Optional: Add password complexity validation here
-            if len(new_password) < 8:
-                return JsonResponse({'success': False, 'error': 'New password must be at least 8 characters long.'}, status=400)
+                 return JsonResponse({'success': False, 'error': error_message}, status=400)
 
 
             try:
@@ -1323,20 +1407,19 @@ def reset_password_confirm_view(request):
                 request.session.pop('password_reset_username', None)
                 request.session.pop('password_reset_code_verified', None)
 
-                logger.info(f"Password reset successful for user: {username}")
+
                 return JsonResponse({'success': True, 'message': 'Password has been reset successfully. You can now log in with your new password.'})
 
             except User.DoesNotExist:
-                # This case should ideally not happen if username is from a verified session,
-                # but handle defensively.
-                logger.error(f"User not found during password reset confirmation for username from session: {username}", exc_info=True)
+                 # This case should ideally not happen if username is from a verified session,
+                 # but handle defensively.
                 request.session.pop('password_reset_username', None) # Clear session data
                 request.session.pop('password_reset_code_verified', None)
                 return JsonResponse({'success': False, 'error': 'User not found during password reset.'}, status=404)
             except Exception as e:
-                logger.error(f"Error resetting password: {e}", exc_info=True)
+                print(f"Error resetting password: {e}")
                 # Log the traceback for better debugging
-                # traceback.print_exc() # <--- This will print the detailed error!
+                traceback.print_exc() # <--- This will print the detailed error!
                 # Clear session data on error to force restart of reset flow
                 request.session.pop('password_reset_username', None)
                 request.session.pop('password_reset_code_verified', None)
@@ -1347,13 +1430,11 @@ def reset_password_confirm_view(request):
     else:
         return JsonResponse({'success': False, 'error': 'Invalid request method. Only POST is allowed.'}, status=405)
 
-
-
 # Replace the existing borrow_book function with this version in your views.py
 
 @csrf_exempt
-@login_required # Ensure the user is logged in to borrow
-@require_POST # Ensure this view only accepts POST requests
+@login_required  # Ensure the user is logged in to borrow
+@require_POST  # Ensure this view only accepts POST requests
 def borrow_book(request, book_id):
     if request.method != 'POST':
         logger.warning(f"Borrow attempt with incorrect method: {request.method}.")
@@ -1362,10 +1443,12 @@ def borrow_book(request, book_id):
     user = request.user
     if not hasattr(user, 'customer_profile'):
         logger.warning(f"Borrow attempt by user {user.username} without customer profile.")
-        return JsonResponse({'error': 'User profile not found. Please ensure your account has a customer profile.'}, status=400)
+        return JsonResponse({'error': 'User profile not found. Please ensure your account has a customer profile.'},
+                            status=400)
 
     customer = user.customer_profile
-    logger.info(f"Borrow attempt for book_id {book_id} by user {user.username} (Customer ID: {customer.pk}).") # Log borrow attempt
+    logger.info(
+        f"Borrow attempt for book_id {book_id} by user {user.username} (Customer ID: {customer.pk}).")  # Log borrow attempt
 
     try:
         # Use get_object_or_404 to handle book not found
@@ -1381,18 +1464,19 @@ def borrow_book(request, book_id):
         ).first()
 
         if existing_user_unreturned_borrow:
-            logger.warning(f"Borrow failed: User {user.username} already has an unreturned borrowing (ID: {existing_user_unreturned_borrow.borrowing_id}) for book \"{book.title}\".")
-            return JsonResponse({'error': 'You have already borrowed a copy of this book that has not yet been returned.'}, status=400)
-        logger.debug(f"User {user.username} does not have an active (unreturned) borrowing for book \"{book.title}\". Proceeding to check for available copies.")
-
+            logger.warning(
+                f"Borrow failed: User {user.username} already has an unreturned borrowing (ID: {existing_user_unreturned_borrow.borrowing_id}) for book \"{book.title}\".")
+            return JsonResponse(
+                {'error': 'You have already borrowed a copy of this book that has not yet been returned.'}, status=400)
+        logger.debug(
+            f"User {user.username} does not have an active (unreturned) borrowing for book \"{book.title}\". Proceeding to check for available copies.")
 
         # Find an available physical copy that is not currently borrowed and is in inventory
         available_copy = Bookcopies.objects.filter(
             book=book,
-            is_borrowed=False, # Filter for copies marked as not borrowed
+            is_borrowed=False,  # Filter for copies marked as not borrowed
             in_inventory=True  # Filter for copies marked as in inventory
-        ).first() # Get the first available copy
-
+        ).first()  # Get the first available copy
 
         # Handle cases where no physical copy is available for borrowing
         if not available_copy:
@@ -1401,27 +1485,32 @@ def borrow_book(request, book_id):
             borrowed_copies = Bookcopies.objects.filter(book=book, is_borrowed=True).count()
             not_in_inventory_copies = Bookcopies.objects.filter(book=book, in_inventory=False).count()
             logger.warning(f"Borrow failed: No available physical copies for book \"{book.title}\" (ID: {book_id}). "
-                            f"Total copies: {total_copies}, Borrowed: {borrowed_copies}, Not in inventory: {not_in_inventory_copies}. "
-                            f"Available physical copies count found: {Bookcopies.objects.filter(book=book, is_borrowed=False, in_inventory=True).count()}.")
+                           f"Total copies: {total_copies}, Borrowed: {borrowed_copies}, Not in inventory: {not_in_inventory_copies}. "
+                           f"Available physical copies count found: {Bookcopies.objects.filter(book=book, is_borrowed=False, in_inventory=True).count()}.")
 
             # Check for digital format availability if no physical copies
             if book.ebook_availability > 0:
                 logger.info(f"Ebook available for book \"{book.title}\". Digital borrowing not fully implemented.")
                 # --- Handle Ebook Borrowing Logic Here ---
-                return JsonResponse({'error': 'No physical copies available. Ebook is available - digital borrowing coming soon!'}, status=400)
+                return JsonResponse(
+                    {'error': 'No physical copies available. Ebook is available - digital borrowing coming soon!'},
+                    status=400)
             # Check for audiobook availability
             elif book.audiobook_availability > 0:
                 logger.info(f"Audiobook available for book \"{book.title}\". Digital borrowing not fully implemented.")
                 # --- Handle Audiobook Borrowing Logic Here ---
-                return JsonResponse({'error': 'No physical copies available. Audiobook is available - digital borrowing coming soon!'}, status=400)
+                return JsonResponse(
+                    {'error': 'No physical copies available. Audiobook is available - digital borrowing coming soon!'},
+                    status=400)
             else:
                 # No copies (physical or digital via this method) available
-                logger.warning(f"Borrow failed: No physical or digital copies marked as available for book \"{book.title}\" (ID: {book_id}).")
+                logger.warning(
+                    f"Borrow failed: No physical or digital copies marked as available for book \"{book.title}\" (ID: {book_id}).")
                 return JsonResponse({'error': 'No available copies for borrowing'}, status=400)
 
-
         # If an available physical copy is found:
-        logger.debug(f"Available copy (ID: {available_copy.copy_id}, Format: {available_copy.format}) found for book \"{book.title}\".")
+        logger.debug(
+            f"Available copy (ID: {available_copy.copy_id}, Format: {available_copy.format}) found for book \"{book.title}\".")
 
         # Optional but recommended check: Verify that this 'available' copy is NOT already linked to an unreturned Borrowing
         # This checks for data inconsistency before the DB unique constraint on Borrowings.copy hits.
@@ -1432,52 +1521,55 @@ def borrow_book(request, book_id):
 
         if unexpected_active_borrowing_for_copy:
             # This indicates a critical data inconsistency - a copy is marked as not borrowed but has an active borrowing record.
-            logger.critical(f"Data inconsistency: Found an 'available' copy (ID: {available_copy.copy_id}) that is linked to an active borrowing (ID: {unexpected_active_borrowing_for_copy.borrowing_id}) for user {unexpected_active_borrowing_for_copy.user.user.username}. Fixing BookCopies status for this copy.")
+            logger.critical(
+                f"Data inconsistency: Found an 'available' copy (ID: {available_copy.copy_id}) that is linked to an active borrowing (ID: {unexpected_active_borrowing_for_copy.borrowing_id}) for user {unexpected_active_borrowing_for_copy.user.user.username}. Fixing BookCopies status for this copy.")
             # Attempt to fix the BookCopies status automatically
             available_copy.is_borrowed = True
-            available_copy.borrower = unexpected_active_borrowing_for_copy.user # Link to the actual borrower profile
+            available_copy.borrower = unexpected_active_borrowing_for_copy.user  # Link to the actual borrower profile
             available_copy.save()
             # Return an error indicating the book is not actually available due to inconsistency
-            return JsonResponse({'error': 'Data inconsistency detected: The selected copy is currently borrowed. Please try again later or contact support.'}, status=500) # Use 500 for server issue
-
+            return JsonResponse({
+                                    'error': 'Data inconsistency detected: The selected copy is currently borrowed. Please try again later or contact support.'},
+                                status=500)  # Use 500 for server issue
 
         # Proceed with creating the borrowing record and updating the copy within a transaction
-        with transaction.atomic(): # Ensure atomicity for updating copy and creating borrowing
+        with transaction.atomic():  # Ensure atomicity for updating copy and creating borrowing
             # Create borrowing record
             borrow_date = timezone.now()
 
             # Calculate initial due date based on membership type borrow duration
             # Default duration if no membership type or duration is None
-            borrow_duration_days = 14 # Default to 14 days if no membership config
+            borrow_duration_days = 14  # Default to 14 days if no membership config
             if customer.membership_type and customer.membership_type.borrow_duration_in_days is not None:
                 borrow_duration_days = customer.membership_type.borrow_duration_in_days
 
             calculated_due_date = borrow_date + timezone.timedelta(days=borrow_duration_days)
 
             # Create the new Borrowings record
-            new_borrowing = Borrowings.objects.create( # Capture the created object
-                user=customer, # Link to the Customer object
-                copy=available_copy, # Link to the specific Bookcopy
-                format=available_copy.format, # Store the format of the borrowed copy
+            new_borrowing = Borrowings.objects.create(  # Capture the created object
+                user=customer,  # Link to the Customer object
+                copy=available_copy,  # Link to the specific Bookcopy
+                format=available_copy.format,  # Store the format of the borrowed copy
                 borrow_date=borrow_date,
-                due_date=calculated_due_date, # Set the initial due_date
-                current_renew_count=0 # Start with 0 renewals
+                due_date=calculated_due_date,  # Set the initial due_date
+                current_renew_count=0  # Start with 0 renewals
             )
 
             # Update the status of the specific book copy that was borrowed
             available_copy.is_borrowed = True
-            available_copy.borrower = customer # Link the copy to the customer profile
+            available_copy.borrower = customer  # Link the copy to the customer profile
             available_copy.save()
-            logger.debug(f"Borrowing record (ID: {new_borrowing.borrowing_id}) created and copy status updated for copy ID: {available_copy.copy_id}.")
-
+            logger.debug(
+                f"Borrowing record (ID: {new_borrowing.borrowing_id}) created and copy status updated for copy ID: {available_copy.copy_id}.")
 
         # Log successful borrowing
-        logger.info(f"Book \"{book.title}\" (ID: {book_id}, Copy ID: {available_copy.copy_id}) borrowed successfully by user {request.user.username} (Borrowing ID: {new_borrowing.borrowing_id}).")
-
+        logger.info(
+            f"Book \"{book.title}\" (ID: {book_id}, Copy ID: {available_copy.copy_id}) borrowed successfully by user {request.user.username} (Borrowing ID: {new_borrowing.borrowing_id}).")
 
         # Return success response including the due date
         # The due date might be needed by the frontend to display to the user
-        return JsonResponse({'message': 'Book borrowed successfully', 'due_date': calculated_due_date.strftime('%Y-%m-%d')}) # Return date in YYYY-MM-DD format
+        return JsonResponse({'message': 'Book borrowed successfully',
+                             'due_date': calculated_due_date.strftime('%Y-%m-%d')})  # Return date in YYYY-MM-DD format
 
     except Books.DoesNotExist:
         logger.warning(f"Borrow failed: Book with ID {book_id} not found.")
@@ -1486,7 +1578,10 @@ def borrow_book(request, book_id):
         # Log the specific error for debugging
         logger.error(f"Unexpected error borrowing book {book_id} for user {request.user.username}: {e}", exc_info=True)
         # Return a generic error message to the user to avoid exposing internal details
-        return JsonResponse({'error': 'An internal server error occurred while trying to borrow the book. Please try again later.'}, status=500)
+        return JsonResponse(
+            {'error': 'An internal server error occurred while trying to borrow the book. Please try again later.'},
+            status=500)
+
 
 @csrf_exempt
 @login_required
@@ -1506,7 +1601,8 @@ def add_remove_favorite(request, book_id):
 
         if created:
             # Favorite was added
-            return JsonResponse({'message': 'Book added to favorites', 'favorited': True, 'favorite_id': favorite.favorite_id})
+            return JsonResponse(
+                {'message': 'Book added to favorites', 'favorited': True, 'favorite_id': favorite.favorite_id})
         else:
             # Favorite already existed, so remove it
             favorite.delete()
@@ -1552,16 +1648,15 @@ def get_user_favorites(request):
             ).count()
             is_available = available_physical_copies > 0 or book.ebook_availability > 0 or book.audiobook_availability > 0
 
-
             # Include necessary book details
             favorites_data.append({
-                'id': favorite.favorite_id, # The favorite object ID
+                'id': favorite.favorite_id,  # The favorite object ID
                 'book_id': book.book_id,
                 'title': book.title,
-                'author': author_name, # Author name
+                'author': author_name,  # Author name
                 'cover_path': book.cover_image_url,
                 'description': book.description,
-                'is_available': is_available, # Indicate if *any* copy (physical or digital) is available
+                'is_available': is_available,  # Indicate if *any* copy (physical or digital) is available
                 # Add other details as needed for display in borrowed.html
             })
         return JsonResponse(favorites_data, safe=False)
@@ -1570,7 +1665,6 @@ def get_user_favorites(request):
     except Exception as e:
         logger.error(f"Error fetching user favorites for user {user.username}: {e}", exc_info=True)
         return JsonResponse({'error': f'An internal server error occurred: {e}'}, status=500)
-
 
 
 @csrf_exempt
@@ -1586,7 +1680,8 @@ def get_current_user_borrowings(request):
     user = request.user
     if not hasattr(user, 'customer_profile'):
         logger.warning(f"Attempted to get current borrowings for user {user.username} without customer profile.")
-        return JsonResponse({'error': 'User profile not found. Please ensure your account has a customer profile.'}, status=400)
+        return JsonResponse({'error': 'User profile not found. Please ensure your account has a customer profile.'},
+                            status=400)
 
     customer = user.customer_profile
     logger.info(f"Fetching current borrowings for user: {user.username} (Customer ID: {customer.pk})")
@@ -1597,12 +1692,12 @@ def get_current_user_borrowings(request):
         current_borrowings = Borrowings.objects.filter(
             user=customer,
             return_date__isnull=True
-        ).select_related('copy__book', 'user__membership_type') # Select related membership type via user
+        ).select_related('copy__book', 'user__membership_type')  # Select related membership type via user
 
         borrowings_data = []
         # Pre-fetch favorite book IDs for the current user to optimize the loop
         favorited_book_ids = Favorites.objects.filter(user=customer).values_list('book__book_id', flat=True)
-        favorited_book_ids_set = set(favorited_book_ids) # Use a set for faster lookups
+        favorited_book_ids_set = set(favorited_book_ids)  # Use a set for faster lookups
 
         for borrowing in current_borrowings:
             book = borrowing.copy.book
@@ -1611,25 +1706,23 @@ def get_current_user_borrowings(request):
             author_name = book_author.author.name if book_author and book_author.author else "Unknown"
 
             # Get membership type details for borrow duration and renewal rules
-            membership_type = customer.membership_type # Use the customer's membership type
+            membership_type = customer.membership_type  # Use the customer's membership type
             # Default values if membership type is None or attributes are not set
             borrow_duration_days = getattr(membership_type, 'borrow_duration_in_days', 14) if membership_type else 14
             renewal_duration_days = getattr(membership_type, 'renewal_duration_in_days', 14) if membership_type else 14
             max_renewals = getattr(membership_type, 'max_renewal_count', 2) if membership_type else 2
 
-
             # Calculate the current due date based on borrow_date or last_renewal_date
             # This is the actual date the book is due
             current_calculated_due_date = borrowing.borrow_date + timezone.timedelta(days=borrow_duration_days)
             if borrowing.last_renewal_date:
-                current_calculated_due_date = borrowing.last_renewal_date + timezone.timedelta(days=renewal_duration_days)
-
+                current_calculated_due_date = borrowing.last_renewal_date + timezone.timedelta(
+                    days=renewal_duration_days)
 
             # Determine status relative to *today*
             today = timezone.now().date()
             # Calculate days left until the current calculated due date
             days_left = (current_calculated_due_date.date() - today).days
-
 
             is_overdue = days_left < 0
             due_soon = days_left >= 0 and days_left <= 3
@@ -1639,41 +1732,46 @@ def get_current_user_borrowings(request):
             # --- END ADDED ---
 
             # Debugging log for renewal counts (keep or remove as needed)
-            logger.debug(f"Borrowing ID {borrowing.borrowing_id}: current_renew_count={borrowing.current_renew_count}, max_renewal_count={max_renewals}, is_favorited={is_favorited}")
-
+            logger.debug(
+                f"Borrowing ID {borrowing.borrowing_id}: current_renew_count={borrowing.current_renew_count}, max_renewal_count={max_renewals}, is_favorited={is_favorited}")
 
             borrowings_data.append({
-                'id': borrowing.borrowing_id, # Corrected: Use borrowing_id
+                'id': borrowing.borrowing_id,  # Corrected: Use borrowing_id
                 'book_id': book.book_id,
                 'book_title': book.title,
                 'book_author': author_name,
                 'book_cover_path': book.cover_image_url,
                 # Use the stored borrow_date and the *calculated* current_calculated_due_date for display
                 'borrow_date': borrowing.borrow_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.borrow_date else None,
-                'due_date': current_calculated_due_date.strftime('%Y-%m-%dT%H:%M:%SZ') if current_calculated_due_date else None,
-                'return_date': borrowing.return_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.return_date else None, # Should be null for current borrows
+                'due_date': current_calculated_due_date.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ') if current_calculated_due_date else None,
+                'return_date': borrowing.return_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.return_date else None,
+                # Should be null for current borrows
                 'current_renew_count': borrowing.current_renew_count,
-                'max_renewal_count': max_renewals, # Pass max renewals to frontend
+                'max_renewal_count': max_renewals,  # Pass max renewals to frontend
                 'format': borrowing.format,
                 'is_overdue': is_overdue,
                 'due_soon': due_soon,
                 'days_until_due': days_left,
                 # Pass whether the book can be renewed
                 'can_renew': borrowing.current_renew_count < max_renewals and not is_overdue,
-                'is_favorited': is_favorited, # *** ADDED THIS FIELD ***
+                'is_favorited': is_favorited,  # *** ADDED THIS FIELD ***
             })
 
         # Optional: Sort current borrowings by due date
-        borrowings_data.sort(key=lambda x: x['due_date'] or '9999-12-31T00:00:00Z') # Sort by due date, nulls last
+        borrowings_data.sort(key=lambda x: x['due_date'] or '9999-12-31T00:00:00Z')  # Sort by due date, nulls last
 
         return JsonResponse(borrowings_data, safe=False)
 
     except Customer.DoesNotExist:
-        logger.error(f"Customer profile not found for authenticated user {user.username} while fetching current borrowings.", exc_info=True)
+        logger.error(
+            f"Customer profile not found for authenticated user {user.username} while fetching current borrowings.",
+            exc_info=True)
         return JsonResponse({'error': 'User profile not found.'}, status=404)
     except Exception as e:
         logger.error(f"Error fetching current borrowings for user {user.username}: {e}", exc_info=True)
-        return JsonResponse({'error': f'An internal server error occurred while fetching borrowed books: {e}'}, status=500)
+        return JsonResponse({'error': f'An internal server error occurred while fetching borrowed books: {e}'},
+                            status=500)
 
 
 # Existing get_user_borrowing_history function, modified to include is_favorited
@@ -1706,8 +1804,7 @@ def get_user_borrowing_history(request):
         history_data = []
         # Pre-fetch favorite book IDs for the current user to optimize the loop
         favorited_book_ids = Favorites.objects.filter(user=customer).values_list('book__book_id', flat=True)
-        favorited_book_ids_set = set(favorited_book_ids) # Use a set for faster lookups
-
+        favorited_book_ids_set = set(favorited_book_ids)  # Use a set for faster lookups
 
         for borrowing in history_borrowings:
             book = borrowing.copy.book
@@ -1729,8 +1826,7 @@ def get_user_borrowing_history(request):
             # Need to reconstruct the *final* due date this borrowing was supposed to have before returning.
             # This is a bit tricky - the 'due_date' field on the Borrowings model should store the current final due date.
             # Assuming the 'due_date' field on the Borrowings model was correctly updated during renewals and on initial borrow.
-            final_due_date = borrowing.due_date # Use the due_date stored on the model
-
+            final_due_date = borrowing.due_date  # Use the due_date stored on the model
 
             # Determine if returned late by comparing the return_date to the final_due_date
             returned_late = False
@@ -1744,7 +1840,6 @@ def get_user_borrowing_history(request):
                     # Ensure fine is not negative
                     fine_amount = max(0, fine_amount)
 
-
             # Check if the book was renewed at least once for history display
             was_renewed = borrowing.current_renew_count > 0
 
@@ -1753,11 +1848,11 @@ def get_user_borrowing_history(request):
             # --- END ADDED ---
 
             # Debugging log for history item data
-            logger.debug(f"History Borrowing ID {borrowing.borrowing_id}: Returned Late={returned_late}, Fine=${fine_amount:.2f}, Was Renewed={was_renewed}, is_favorited={is_favorited}")
-
+            logger.debug(
+                f"History Borrowing ID {borrowing.borrowing_id}: Returned Late={returned_late}, Fine=${fine_amount:.2f}, Was Renewed={was_renewed}, is_favorited={is_favorited}")
 
             history_data.append({
-                'id': borrowing.borrowing_id, # Use borrowing_id
+                'id': borrowing.borrowing_id,  # Use borrowing_id
                 'book_id': book.book_id,
                 'book_title': book.title,
                 'book_author': author_name,
@@ -1767,14 +1862,16 @@ def get_user_borrowing_history(request):
                 'due_date': final_due_date.strftime('%Y-%m-%dT%H:%M:%SZ') if final_due_date else None,
                 'return_date': borrowing.return_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.return_date else None,
                 'format': borrowing.format,
-                'returned_late': returned_late, # Pass boolean
-                'fine_amount': float(f'{fine_amount:.2f}'), # Pass formatted fine as float
-                'renewed': was_renewed, # Pass boolean
-                'current_renew_count': borrowing.current_renew_count, # Include used count for history detail/modal
-                'max_renewal_count': getattr(membership_type, 'max_renewal_count', 2) if membership_type else 2, # Include max for history detail/modal
+                'returned_late': returned_late,  # Pass boolean
+                'fine_amount': float(f'{fine_amount:.2f}'),  # Pass formatted fine as float
+                'renewed': was_renewed,  # Pass boolean
+                'current_renew_count': borrowing.current_renew_count,  # Include used count for history detail/modal
+                'max_renewal_count': getattr(membership_type, 'max_renewal_count', 2) if membership_type else 2,
+                # Include max for history detail/modal
                 # The last_renewal_date might be useful for modal display in history
-                'last_renewal_date': borrowing.last_renewal_date.strftime('%Y-%m-%dT%H:%M:%SZ') if borrowing.last_renewal_date else None,
-                'is_favorited': is_favorited, # *** ADDED THIS FIELD ***
+                'last_renewal_date': borrowing.last_renewal_date.strftime(
+                    '%Y-%m-%dT%H:%M:%SZ') if borrowing.last_renewal_date else None,
+                'is_favorited': is_favorited,  # *** ADDED THIS FIELD ***
             })
 
         # History is already ordered by return_date descending by the query
@@ -1782,15 +1879,17 @@ def get_user_borrowing_history(request):
         return JsonResponse(history_data, safe=False)
 
     except Customer.DoesNotExist:
-        logger.error(f"Customer profile not found for authenticated user {user.username} while fetching borrowing history.", exc_info=True)
+        logger.error(
+            f"Customer profile not found for authenticated user {user.username} while fetching borrowing history.",
+            exc_info=True)
         return JsonResponse({'error': 'User profile not found.'}, status=404)
     except Exception as e:
         logger.error(f"Error fetching borrowing history for user {user.username}: {e}", exc_info=True)
-        return JsonResponse({'error': f'An internal server error occurred while fetching borrowing history: {e}'}, status=500)
+        return JsonResponse({'error': f'An internal server error occurred while fetching borrowing history: {e}'},
+                            status=500)
 
 
-
-@csrf_exempt # Consider if you need csrf_exempt here or handle CSRF properly
+@csrf_exempt  # Consider if you need csrf_exempt here or handle CSRF properly
 @login_required
 @require_POST
 def renew_book(request, borrowing_id):
@@ -1812,12 +1911,12 @@ def renew_book(request, borrowing_id):
         )
 
         # Get membership type details for renewal rules
-        membership_type = customer.membership_type # Use the customer's membership type
+        membership_type = customer.membership_type  # Use the customer's membership type
         # Default values if membership type is None or attributes are not set
         max_renewals = getattr(membership_type, 'max_renewal_count', 2) if membership_type else 2
         renewal_duration_days = getattr(membership_type, 'renewal_duration_in_days', 14) if membership_type else 14
-        borrow_duration_days = getattr(membership_type, 'borrow_duration_in_days', 14) if membership_type else 14 # Need initial borrow duration
-
+        borrow_duration_days = getattr(membership_type, 'borrow_duration_in_days',
+                                       14) if membership_type else 14  # Need initial borrow duration
 
         # Calculate the current due date based on the last renewal date or borrow date if no renewals yet
         current_due_date_base = borrowing.last_renewal_date if borrowing.last_renewal_date else borrowing.borrow_date
@@ -1825,7 +1924,6 @@ def renew_book(request, borrowing_id):
         # If not, the current period duration is borrow_duration_days
         current_period_duration = renewal_duration_days if borrowing.last_renewal_date else borrow_duration_days
         current_calculated_due_date = current_due_date_base + timezone.timedelta(days=current_period_duration)
-
 
         # Check if the book is already overdue (prevent renewal if overdue)
         if current_calculated_due_date < timezone.now():
@@ -1837,15 +1935,18 @@ def renew_book(request, borrowing_id):
             borrowing.current_renew_count += 1
             borrowing.last_renewal_date = timezone.now()
             # Calculate new due date from the last renewal date
-            borrowing.due_date = borrowing.last_renewal_date + timezone.timedelta(days=renewal_duration_days) # Update the due_date field
+            borrowing.due_date = borrowing.last_renewal_date + timezone.timedelta(
+                days=renewal_duration_days)  # Update the due_date field
             borrowing.save()
 
         # Log successful renewal
-        logger.info(f"Book borrowing {borrowing_id} renewed by user {user.username}. New due date: {borrowing.due_date}")
+        logger.info(
+            f"Book borrowing {borrowing_id} renewed by user {user.username}. New due date: {borrowing.due_date}")
 
         # Return updated borrowing information for frontend update
         # Re-fetch the updated borrowing to ensure data is correct (optional but safer)
-        updated_borrowing = Borrowings.objects.select_related('copy__book', 'user__membership_type').get(pk=borrowing.borrowing_id)
+        updated_borrowing = Borrowings.objects.select_related('copy__book', 'user__membership_type').get(
+            pk=borrowing.borrowing_id)
         book = updated_borrowing.copy.book
         book_author = book.bookauthor_set.filter(author__isnull=False).first()
         author_name = book_author.author.name if book_author and book_author.author else "Unknown"
@@ -1858,8 +1959,8 @@ def renew_book(request, borrowing_id):
 
         # Get updated max renewals in case membership changed
         updated_membership_type = updated_borrowing.user.membership_type
-        updated_max_renewals = getattr(updated_membership_type, 'max_renewal_count', 2) if updated_membership_type else 2
-
+        updated_max_renewals = getattr(updated_membership_type, 'max_renewal_count',
+                                       2) if updated_membership_type else 2
 
         borrowings_data = {
             'id': updated_borrowing.borrowing_id,
@@ -1869,14 +1970,16 @@ def renew_book(request, borrowing_id):
             'book_cover_path': book.cover_image_url,
             'borrow_date': updated_borrowing.borrow_date.strftime('%Y-%m-%dT%H:%M:%SZ'),
             'due_date': updated_borrowing.due_date.strftime('%Y-%m-%dT%H:%M:%SZ'),
-            'return_date': updated_borrowing.return_date.strftime('%Y-%m-%dT%H:%M:%SZ') if updated_borrowing.return_date else None,
+            'return_date': updated_borrowing.return_date.strftime(
+                '%Y-%m-%dT%H:%M:%SZ') if updated_borrowing.return_date else None,
             'current_renew_count': updated_borrowing.current_renew_count,
-            'max_renewal_count': updated_max_renewals, # Use updated max renewals
+            'max_renewal_count': updated_max_renewals,  # Use updated max renewals
             'format': updated_borrowing.format,
             'is_overdue': updated_is_overdue,
             'due_soon': updated_due_soon,
             'days_until_due': updated_days_left,
-            'can_renew': updated_borrowing.current_renew_count < updated_max_renewals and not updated_is_overdue, # Update can_renew status
+            'can_renew': updated_borrowing.current_renew_count < updated_max_renewals and not updated_is_overdue,
+            # Update can_renew status
         }
 
         return JsonResponse({'message': 'Book renewed successfully', 'borrowing': borrowings_data})
@@ -1885,11 +1988,11 @@ def renew_book(request, borrowing_id):
         return JsonResponse({'error': 'Borrowing record not found or already returned.'}, status=404)
     except Exception as e:
         logger.error(f"Error renewing book borrowing {borrowing_id} for user {user.username}: {e}", exc_info=True)
-        return JsonResponse({'error': f'An internal server error occurred while trying to renew the book: {e}'}, status=500)
+        return JsonResponse({'error': f'An internal server error occurred while trying to renew the book: {e}'},
+                            status=500)
 
 
-
-@csrf_exempt # Keep csrf_exempt for this test if needed, but recommended to handle CSRF
+@csrf_exempt  # Keep csrf_exempt for this test if needed, but recommended to handle CSRF
 @login_required
 @require_POST
 def return_book(request, borrowing_id):
@@ -1920,7 +2023,7 @@ def return_book(request, borrowing_id):
             # Update associated book copy
             book_copy = borrowing.copy
             book_copy.is_borrowed = False
-            book_copy.borrower = None # Remove the borrower link
+            book_copy.borrower = None  # Remove the borrower link
             book_copy.save()
 
             # Check if returned late (comparing return_date to due_date)
@@ -1943,13 +2046,208 @@ def return_book(request, borrowing_id):
                     # For now, just returning the information.
 
         # Log successful return
-        logger.info(f"Book borrowing {borrowing_id} returned by user {user.username}. Returned late: {returned_late}, Fine: ${fine_amount:.2f}")
+        logger.info(
+            f"Book borrowing {borrowing_id} returned by user {user.username}. Returned late: {returned_late}, Fine: ${fine_amount:.2f}")
 
-        return JsonResponse({'message': 'Book returned successfully', 'returned_late': returned_late, 'fine_amount': fine_amount})
+        return JsonResponse(
+            {'message': 'Book returned successfully', 'returned_late': returned_late, 'fine_amount': fine_amount})
 
     except Borrowings.DoesNotExist:
-        logger.warning(f"Attempted to return borrowing {borrowing_id} not found or already returned for user {user.username}")
+        logger.warning(
+            f"Attempted to return borrowing {borrowing_id} not found or already returned for user {user.username}")
         return JsonResponse({'error': 'Borrowing record not found or already returned.'}, status=404)
     except Exception as e:
         logger.error(f"Error returning book borrowing {borrowing_id} for user {user.username}: {e}", exc_info=True)
-        return JsonResponse({'error': f'An internal server error occurred while trying to return the book: {e}'}, status=500)
+        return JsonResponse({'error': f'An internal server error occurred while trying to return the book: {e}'},
+                            status=500)
+
+
+@require_GET
+@login_required
+def get_all_users(request):
+    if not request.user.is_authenticated:
+        return JsonResponse({'error': 'Not authenticated'}, status=401)
+
+    try:
+        users = User.objects.all()
+        user_list = []
+
+        for user in users:
+            profile_picture = None
+            if hasattr(user, 'customer_profile') and user.customer_profile.profile_picture_url:
+                profile_picture = user.customer_profile.profile_picture_url
+
+            user_data = {
+                'username': user.username,
+                'email': user.email,
+                'photo': profile_picture or '/static/default-avatar.png',  # Fallback to default avatar
+            }
+            user_list.append(user_data)
+
+        return JsonResponse({'users': user_list}, safe=False)
+
+    except Exception as e:
+        logger.error(f"Error fetching users data: {e}", exc_info=True)
+        return JsonResponse({'error': str(e)}, status=500)
+
+
+@login_required
+def list_friends(request):
+    try:
+        # Get the current user's customer profile
+        current_user = request.user.customer_profile
+
+        # Get all friendships where the current user is either user_1 or user_2
+        friendships = Friendships.objects.filter(
+            (Q(user_1=current_user) | Q(user_2=current_user)) &
+            Q(status='accepted')
+        )
+
+        friends_list = []
+        for friendship in friendships:
+            # Determine which user is the friend (not the current user)
+            friend = friendship.user_2 if friendship.user_1 == current_user else friendship.user_1
+
+            # Get the friend's user profile to access their photo
+            friend_user = friend.user
+
+            friends_list.append({
+                'id': friend.user.id,
+                'name': friend_user.username,
+                'email': friend_user.email,
+                'photo': friend.profile_picture_url or None,
+                'status': 'Online' if friend.last_seen and (timezone.now() - friend.last_seen) < timedelta(
+                    minutes=5) else 'Offline'
+            })
+
+        return JsonResponse(friends_list, safe=False)
+    except Exception as e:
+        return JsonResponse({
+            'status': 'error',
+            'message': str(e)
+        }, status=500)
+
+
+@csrf_exempt
+@login_required
+def add_friend(request):
+    if request.method == 'POST':
+        try:
+            data = json.loads(request.body)
+            friend_name = data.get('name')
+            friend_email = data.get('email')
+
+            # Get the current user's customer profile
+            current_user = request.user.customer_profile
+
+            # Get the friend's user profile
+            friend_user = User.objects.get(email=friend_email)
+            friend_profile = friend_user.customer_profile
+
+            # Add validation to prevent adding yourself
+            if current_user == friend_profile:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'You cannot add yourself as a friend'
+                }, status=400)
+
+            # Create the friendship
+            friendship = Friendships.objects.create(
+                user_1=current_user,
+                user_2=friend_profile,
+                status='accepted'
+            )
+
+            return JsonResponse({
+                'status': 'success',
+                'message': 'Friend added successfully'
+            })
+        except User.DoesNotExist:
+            return JsonResponse({
+                'status': 'error',
+                'message': 'User not found'
+            }, status=404)
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)
+
+@csrf_exempt
+@login_required
+def delete_friend(request, friend_id):
+    if request.method == 'DELETE':
+        try:
+            # Get the current user's customer profile
+            current_user = request.user.customer_profile
+
+            # Find and delete the friendship
+            friendship = Friendships.objects.filter(
+                (Q(user_1=current_user, user_2_id=friend_id) |
+                 Q(user_1_id=friend_id, user_2=current_user)) &
+                Q(status='accepted')
+            ).first()
+
+            if friendship:
+                friendship.delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Friend removed successfully'
+                })
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Friendship not found'
+                }, status=404)
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)
+
+
+@csrf_exempt
+@login_required
+def delete_friend(request, friend_id):
+    if request.method == 'DELETE':
+        try:
+            # Get the current user's customer profile
+            current_user = request.user.customer_profile
+
+            # Find and delete the friendship
+            friendship = Friendships.objects.filter(
+                (Q(user_1=current_user, user_2_id=friend_id) |
+                 Q(user_1_id=friend_id, user_2=current_user)) &
+                Q(status='accepted')
+            ).first()
+
+            if friendship:
+                friendship.delete()
+                return JsonResponse({
+                    'status': 'success',
+                    'message': 'Friend removed successfully'
+                })
+            else:
+                return JsonResponse({
+                    'status': 'error',
+                    'message': 'Friendship not found'
+                }, status=404)
+
+        except Exception as e:
+            return JsonResponse({
+                'status': 'error',
+                'message': str(e)
+            }, status=500)
+    return JsonResponse({
+        'status': 'error',
+        'message': 'Invalid request method'
+    }, status=400)

@@ -65,12 +65,10 @@ let friends = JSON.parse(localStorage.getItem('friends')) || [];
 
 function showPopup() {
     document.getElementById('popup').style.display = 'block';
-    document.getElementById('overlay').style.display = 'block';
 }
 
 function hidePopup() {
     document.getElementById('popup').style.display = 'none';
-    document.getElementById('overlay').style.display = 'none';
     document.getElementById('friend-name').value = '';
     document.getElementById('friend-email').value = '';
 }
@@ -96,158 +94,566 @@ function showMessagePopup(message) {
 }
 
 
-function submitForm() {
+async function submitForm() {
     const type = document.getElementById('entry-type').value;
     const name = document.getElementById('friend-name').value.trim();
     const email = document.getElementById('friend-email').value.trim().toLowerCase();
-    
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-    if (!loggedInUser) {
-        showMessagePopup("You need to be logged in to add friends.");
-        return;
+
+    try {
+        // Get all users to verify if the user exists
+        const usersResponse = await fetch('/api/usersList', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+
+        if (!usersResponse.ok) {
+            showMessagePopup("Failed to fetch users list. Please try again.");
+            return;
+        }
+
+        const userList = await usersResponse.json();
+        console.log("Users list:", userList);
+
+        // Make sure we're accessing the users array correctly
+        const users = userList.users || userList;
+
+        const matchedUser = users.find(user =>
+            type === 'name'
+                ? user.username.toLowerCase() === name.toLowerCase()
+                : user.email.toLowerCase() === email.toLowerCase()
+        );
+
+        if (!matchedUser) {
+            showMessagePopup("No user found with the provided info.");
+            return;
+        }
+
+
+        // Get current friend list
+        const friendsResponse = await fetch('/api/friends/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
+        });
+
+        if (!friendsResponse.ok) {
+            showMessagePopup("Failed to fetch your friends list. Please try again.");
+            return;
+        }
+
+        const friends = await friendsResponse.json();
+        console.log("Current friends:", friends);
+
+        const alreadyFriend = friends.some(friend =>
+            friend.email && matchedUser.email &&
+            friend.email.toLowerCase() === matchedUser.email.toLowerCase()
+        );
+        console.log(matchedUser);
+
+        if (alreadyFriend) {
+            showMessagePopup("This user is already in your friend list.");
+            return;
+        }
+
+        // Get CSRF token from cookie
+        const csrftoken = getCookie('csrftoken');
+
+        // Add friend via API
+        const addResponse = await fetch('/api/friends/add/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': csrftoken
+            },
+            credentials: 'include',
+            body: JSON.stringify({
+                name: matchedUser.username,
+                email: matchedUser.email,
+                photo: matchedUser.photo || '/static/assets/default-avatar.png'
+            })
+        });
+
+        if (!addResponse.ok) {
+            const errorData = await addResponse.json().catch(() => ({}));
+            showMessagePopup(errorData.message || "Failed to add friend. Please try again.");
+            return;
+        }
+         // Create notification for successful friend addition
+        await handleNotification(`👥 Added ${matchedUser.username} as a friend!`, 'Friend alert');
+
+        showMessagePopup("Friend added successfully!");
+        await updateFriendList();
+        hidePopup();
+
+    } catch (error) {
+        console.error('Error submitting form:', error);
+        showMessagePopup("Something went wrong. Please try again.");
     }
-
-    let friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
-
-    if (type === 'name') {
-        if (name.length < 2) {
-            showMessagePopup("Please enter a valid name.");
-            return;
-        }
-
-        const nameIsValid = /^[A-Za-z]+$/.test(name);
-        if (!nameIsValid) {
-            showMessagePopup("Please enter a name with alphabetic characters only.");
-            return;
-        }
-
-        const exists = friends.some(friend => friend.name.toLowerCase() === name.toLowerCase());
-        if (exists) {
-            showMessagePopup(`"${name}" is already in your friend list.`);
-            return;
-        }
-
-        friends.push({ name, email: '' });
-
-    } else if (type === 'email') {
-        if (!email || !email.includes('@')) {
-            showMessagePopup("Please enter a valid email.");
-            return;
-        }
-
-        const exists = friends.some(friend => friend.email === email);
-        if (exists) {
-            showMessagePopup("This email is already associated with a friend.");
-            return;
-        }
-
-        const friendIndex = friends.findIndex(friend => friend.name && !friend.email);
-        if (friendIndex === -1) {
-            showMessagePopup("Please enter a valid name before adding an email.");
-            return;
-        }
-
-        friends[friendIndex].email = email;
-    }
-
-    localStorage.setItem(`friends_${loggedInUser.username}`, JSON.stringify(friends));
-
-    updateFriendList();
-    hidePopup();
 }
 
+async function handleNotification(message, category = 'Friend alert') {
+    try {
+        const response = await fetch('/api/notifications/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message,
+                category: category
+            })
+        });
 
+        if (!response.ok) {
+            console.error('Failed to create notification:', await response.text());
+            return;
+        }
+
+        // Add the new notification to the list
+        const notificationList = document.querySelector('.notification-list');
+        const emptyMessage = notificationList.querySelector('.empty');
+        if (emptyMessage) {
+            emptyMessage.remove();
+        }
+
+        const newNotification = document.createElement('li');
+        newNotification.className = 'new';
+        newNotification.innerHTML = `
+            <span class="notification-category">${category}</span>
+            <span class="notification-message">${message}</span>
+        `;
+        notificationList.insertBefore(newNotification, notificationList.firstChild);
+
+        // Show temporary notification
+        showTemporaryNotification(message);
+
+    } catch (error) {
+        console.error('Error creating notification:', error);
+    }
+}
+
+async function loadNotifications() {
+    try {
+        const response = await fetch('/api/notifications/', {
+            method: 'GET',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            credentials: 'include'
+        });
+
+        if (!response.ok) {
+            throw new Error('Failed to fetch notifications');
+        }
+
+        const notifications = await response.json();
+        const notificationList = document.querySelector('.notification-list');
+        notificationList.innerHTML = '';
+
+        if (notifications.length === 0) {
+            notificationList.innerHTML = '<li class="empty">No new notifications</li>';
+            return;
+        }
+
+        notifications.forEach(notification => {
+            const li = document.createElement('li');
+            li.innerHTML = `
+                <span class="notification-category">${notification.category}</span>
+                <span class="notification-message">${notification.message}</span>
+            `;
+            notificationList.appendChild(li);
+        });
+
+    } catch (error) {
+        console.error('Error loading notifications:', error);
+        const notificationList = document.querySelector('.notification-list');
+        notificationList.innerHTML = '<li class="empty">Failed to load notifications</li>';
+    }
+}
+
+// Helper function to get CSRF token from cookies
+function getCookie(name) {
+    let cookieValue = null;
+    if (document.cookie && document.cookie !== '') {
+        const cookies = document.cookie.split(';');
+        for (let i = 0; i < cookies.length; i++) {
+            const cookie = cookies[i].trim();
+            if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                break;
+            }
+        }
+    }
+    return cookieValue;
+}
 
 let friendIndexToDelete = null;
-function updateFriendList() {
+async function updateFriendList() {
     const listDiv = document.querySelector('.friend-list');
-    listDiv.innerHTML = '';
+    listDiv.innerHTML = '<div class="loading">Loading friends...</div>';
 
-    const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-    if (!loggedInUser) {
-        showMessagePopup("You need to be logged in to view your friends.");
-        return;
-    }
-
-    const friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
-
-    if (friends.length === 0) {
-        listDiv.innerHTML = 'No friends available';
-        listDiv.style.color = 'red';
-        listDiv.style.fontSize = '24px';
-        return;
-    }
-
-    let x = 0;
-    friends.forEach((friend, index) => {
-        const container = document.createElement('div');
-        container.classList.add('friend-entry');
-        container.style.display = 'flex';
-        container.style.alignItems = 'center';
-        container.style.marginBottom = '2%';
-
-        const img = document.createElement('img');
-        img.src = "../CSS/assets/blue.avif";
-        img.alt = "Friend Avatar";
-
-        const span = document.createElement('span');
-        span.textContent = friend.email ? `${friend.name} (${friend.email})` : friend.name;
-
-
-        const statusSpan = document.createElement('span');
-        if (x % 2 === 0) {
-            statusSpan.textContent = 'Finished';
-            statusSpan.style.color = 'green';
-        }
-        else {
-            statusSpan.textContent = 'On Reading';
-            statusSpan.style.color = 'red';
-        }
-        x++;
-        statusSpan.style.marginLeft = '10px';
-        
-        container.appendChild(img);
-        container.appendChild(span);
-        container.appendChild(statusSpan);
-
-        const deleteBtn = document.createElement('button');
-        deleteBtn.textContent = 'Delete';
-        deleteBtn.classList.add('delete-friend');
-        deleteBtn.style.marginLeft = 'auto';
-        deleteBtn.addEventListener('click', () => {
-            const friendName = span.textContent;
-            friendIndexToDelete = index;
-            document.getElementById('confirm-text').textContent =
-                `Are you sure you want to delete "${friendName}"?`;
-            document.getElementById('confirm-modal').classList.remove('hidden');
-            document.getElementById('overlay').classList.remove('hidden');
+    try {
+        const response = await fetch('/api/friends/', {
+            method: 'GET',
+            headers: { 'Content-Type': 'application/json' },
+            credentials: 'include'
         });
-        container.appendChild(deleteBtn);
-        listDiv.appendChild(container);
-    });
+
+        if (!response.ok) {
+            throw new Error(`Error: ${response.status} ${response.statusText}`);
+        }
+
+        const friends = await response.json();
+        console.log("Friends list response:", friends);
+
+        // Clear loading message
+        listDiv.innerHTML = '';
+
+        // Make sure friends is an array
+        const friendsList = Array.isArray(friends) ? friends : [];
+
+        if (!friendsList.length) {
+            listDiv.innerHTML = '<div class="no-friends">No friends available</div>';
+            return;
+        }
+
+        friendsList.forEach((friend) => {
+            const container = document.createElement('li');
+            // Matches: .friends-list li
+            container.style.display = 'flex';
+            container.style.alignItems = 'center';
+            container.style.padding = '8px';
+            container.style.borderBottom = '1px solid var(--form-bg-color)';
+
+            const img = document.createElement('img');
+            img.src = friend.photo || '/static/assets/blue.avif';
+            img.alt = "Friend Avatar";
+            img.style.width = '40px';
+            img.style.height = '40px';
+            img.style.borderRadius = '50%';
+            img.style.marginRight = '10px';
+
+            const infoDiv = document.createElement('div');
+            infoDiv.style.flex = '1';
+
+            const nameSpan = document.createElement('span');
+            nameSpan.textContent = friend.name;
+            nameSpan.style.fontWeight = 'bold';
+            nameSpan.style.display = 'block';
+            nameSpan.style.color = 'var(--text-color)';
+            nameSpan.style.fontSize = '14px';
+
+            const emailSpan = document.createElement('span');
+            emailSpan.textContent = friend.email;
+            emailSpan.style.display = 'block';
+            emailSpan.style.color = 'var(--text-secondary)';
+            emailSpan.style.fontSize = '14px';
+
+            infoDiv.appendChild(nameSpan);
+            infoDiv.appendChild(emailSpan);
+
+            const statusSpan = document.createElement('span');
+            const isOnline = friend.status === 'Online';
+            statusSpan.textContent = friend.status || 'Online';
+            statusSpan.style.color = isOnline ? 'green' : 'var(--text-secondary)';
+            statusSpan.style.marginRight = '10px';
+            statusSpan.style.fontSize = '14px';
+            statusSpan.style.display = 'none';
+
+            const deleteBtn = document.createElement('button');
+            deleteBtn.textContent = 'Remove';
+            deleteBtn.classList.add('delete-friend');
+
+            deleteBtn.addEventListener('click', () => {
+                friendIdToDelete = friend.id;
+                const friendLabel = friend.name;
+                document.getElementById('confirm-text').textContent =
+                    `Are you sure you want to remove "${friendLabel}" from your friends list?`;
+                document.getElementById('confirm-modal').classList.remove('hidden');
+            });
+
+            container.appendChild(img);
+            container.appendChild(infoDiv);
+            container.appendChild(statusSpan);
+            container.appendChild(deleteBtn);
+
+            listDiv.appendChild(container);
+        });
+
+    } catch (err) {
+        console.error("Failed to load friends list", err);
+        listDiv.innerHTML = '<div class="error">Failed to load friends list. Please refresh the page.</div>';
+        showMessagePopup("Failed to load friends list.");
+    }
 }
+
+// Add a debug function to check API responses
+function debugAPIResponse(apiName, response) {
+    console.log(`${apiName} Response:`, response);
+}
+
 
 updateFriendList();
 
 
-document.getElementById('confirm-yes').addEventListener('click', () => {
-    if (friendIndexToDelete !== null) {
-        // Remove the friend from storage
-        const loggedInUser = JSON.parse(localStorage.getItem('loggedIn_user'));
-        let friends = JSON.parse(localStorage.getItem(`friends_${loggedInUser.username}`)) || [];
-        friends.splice(friendIndexToDelete, 1);
-        // Save on local storage
-        localStorage.setItem(`friends_${loggedInUser.username}`, JSON.stringify(friends));
+document.getElementById('confirm-yes').addEventListener('click', async () => {
+    if (friendIdToDelete !== null) {
+        try {
+            // Get CSRF token from cookie
+            const csrftoken = getCookie('csrftoken');
 
-        updateFriendList();
-        friendIndexToDelete = null;
+            await fetch(`/api/friends/${friendIdToDelete}/`, {
+                method: 'DELETE',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'X-CSRFToken': csrftoken
+                },
+                credentials: 'include'
+            });
+
+            updateFriendList(); // Refresh the list after deletion
+        } catch (error) {
+            console.error("Error deleting friend:", error);
+            showMessagePopup("Failed to delete friend.");
+        } finally {
+            friendIdToDelete = null;
+            document.getElementById('confirm-modal').classList.add('hidden');
+        }
     }
-    document.getElementById('confirm-modal').classList.add('hidden');
-    document.getElementById('overlay').classList.add('hidden');
 });
 
 document.getElementById('confirm-no').addEventListener('click', () => {
-    friendIndexToDelete = null;
+    friendIdToDelete = null;
     document.getElementById('confirm-modal').classList.add('hidden');
-    document.getElementById('overlay').classList.add('hidden');
+});
+let currentUserFavorites = []; // Array to store IDs of books the current user has favorited
+let currentUserBorrowedBooks = [];
+
+function addBookToDisplay(book) {
+    const bookItem = document.createElement('div');
+    bookItem.className = 'book-card';
+    bookItem.id = `book_${book.book_id}`;
+
+    const isFavorite = currentUserFavorites.includes(book.book_id);
+    const starClass = isFavorite ? 'active' : '';
+
+    bookItem.innerHTML = `
+        <button class="star-button ${starClass}" data-book-id="${book.book_id}">
+            <i class="fas fa-star"></i>
+        </button>
+        ${book.cover_image_url ?
+            `<img src="${book.cover_image_url}" alt="${book.title} book cover">` :
+            `<i class="fas fa-book-open"></i>`
+        }
+        <div class="book-info">
+            <h3>${book.title}</h3>
+            <p>By ${book.author_name}</p>
+            <p>${book.genre_name || 'Unknown'}</p>
+        </div>
+    `;
+    return bookItem;
+}
+
+
+document.addEventListener('DOMContentLoaded', async function () {
+    // Add custom notification styles if they don't exist
+    if (!document.getElementById('custom-notification-styles')) {
+        const notificationStyles = document.createElement('style');
+        notificationStyles.id = 'custom-notification-styles';
+        notificationStyles.textContent = `
+            .custom-notification {
+                position: fixed;
+                top: 20px;
+                right: 20px;
+                background-color: #333;
+                color: white;
+                padding: 15px 25px;
+                border-radius: 5px;
+                box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+                z-index: 9999;
+                /* Animation defined in showNotification function */
+            }
+
+            @keyframes slide-in {
+                from { transform: translateX(100%); opacity: 0; }
+                to { transform: translateX(0); opacity: 1; }
+            }
+
+            @keyframes fade-out {
+                from { opacity: 1; }
+                to { opacity: 0; }
+            }
+             /* Style for disabled borrow button */
+            .book-btn.borrow-btn:disabled {
+                background-color: #ccc; /* Grey out */
+                cursor: not-allowed;
+                opacity: 0.7;
+            }
+             .book-btn.borrow-btn:disabled:hover {
+                background-color: #ccc; /* Keep grey on hover */
+                box-shadow: none;
+             }
+
+             /* Optional: Styles for availability badges */
+             .availability-badge.available {
+                 background-color: #4CAF50; /* Green */
+             }
+             .availability-badge.unavailable {
+                 background-color: #F44336; /* Red */
+             }
+              .availability-badge {
+                 display: inline-block;
+                 padding: 4px 8px;
+                 border-radius: 4px;
+                 color: white;
+                 font-size: 0.8em;
+                 margin-right: 5px;
+                 margin-bottom: 5px; /* Add margin for better spacing with other indicators */
+             }
+             .format-indicator {
+                 display: inline-block;
+                 padding: 2px 6px;
+                 border: 1px solid #ccc;
+                 border-radius: 4px;
+                 font-size: 0.7em;
+                 margin-right: 5px;
+                 margin-bottom: 5px;
+             }
+              .copies-count {
+                display: inline-block;
+                padding: 2px 6px;
+                border: 1px solid #ccc;
+                border-radius: 4px;
+                font-size: 0.7em;
+                margin-right: 5px;
+                margin-bottom: 5px;
+            }
+             .availability {
+                margin-top: 10px; /* Space above availability info */
+             }
+             .book-details p {
+                 margin-bottom: 5px; /* Space below author */
+             }
+             .book-details h3 {
+                 margin-bottom: 5px; /* Space below title */
+             }
+             /* Style for the Low Stock badge, which we will now also use for "Digital Available" */
+             .availability-badge.low-stock {
+                 background-color: #f39c12; /* Orange */
+                 color: white;
+             }
+
+        `;
+
+        document.head.appendChild(notificationStyles);
+        loadNotifications();
+    }
+
+
+    const bookGrid = document.querySelectorAll('.book-grid');
+    // Clear loading message or initial content
+
+    // --- Fetch User's Favorite Book IDs ---
+    // This should ideally happen only if the user is authenticated.
+    // Assuming your Django views handle authentication and return 401 if not logged in.
+    try {
+    const response = await fetch('/api/user/favorites/');
+    if (response.ok) {
+        const favorites = await response.json();
+        currentUserFavorites = favorites.map(fav => fav.book_id);
+    } else {
+        console.warn('Could not fetch user favorites. User might not be logged in or an error occurred.');
+    }
+    } catch (error) {
+        console.error('Error fetching user favorites:', error);
+    }
+
+    try {
+        const response = await fetch('/api/borrowings/current/');
+        if (response.ok) {
+            const borrowings = await response.json();
+            currentUserBorrowedBooks = borrowings.map(b => b.book_id);
+        } else {
+            console.warn('Could not fetch current borrowings. User might not be logged in or an error occurred.');
+        }
+    } catch (error) {
+        console.error('Error fetching borrowed books:', error);
+    }
+
+
+    // --- Fetch Books and Display ---
+async function fetchAndDisplayFavouriteBooks(params = new URLSearchParams()) {
+    bookGrid[0].innerHTML = '<div class="loading-message">Loading books...</div>'; // Show loading message
+
+    try {
+        const response = await fetch(`/api/books/?${params.toString()}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch books');
+        }
+        const books = await response.json();
+
+        bookGrid[0].innerHTML = ''; // Clear loading message and previous books
+
+        // ✅ Filter books to only include favorites
+        const favoriteBooks = books.filter(book => currentUserFavorites.includes(book.book_id));
+
+        if (favoriteBooks.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'You have not favorited any books yet.';
+            bookGrid[0].appendChild(noResults);
+        } else {
+            // ✅ Limit to the first 4 favorite books
+            favoriteBooks.slice(0, 4).forEach(book => {
+                const bookItem = addBookToDisplay(book);
+                bookGrid[0].appendChild(bookItem);
+            });
+        }
+
+    } catch (error) {
+        console.error('Error fetching books:', error);
+        bookGrid[0].innerHTML = '<div class="error-message">Failed to load books. Please try again later.</div>';
+        showNotification("❌ Failed to load books");
+    }
+}
+async function fetchAndDisplayBorrowedBooks(params = new URLSearchParams()) {
+    bookGrid[1].innerHTML = '<div class="loading-message">Loading books...</div>'; // Show loading message
+
+    try {
+        const response = await fetch(`/api/books/?${params.toString()}`);
+        if (!response.ok) {
+            throw new Error('Failed to fetch borrowed books');
+        }
+
+        const books = await response.json();
+        const borrowedBooks = books.filter(book => currentUserBorrowedBooks.includes(book.book_id));
+        bookGrid[1].innerHTML = ''; // Clear loading message
+
+        if (borrowedBooks.length === 0) {
+            const noResults = document.createElement('div');
+            noResults.className = 'no-results';
+            noResults.textContent = 'You have not borrowed any books.';
+            bookGrid[1].appendChild(noResults);
+        } else {
+            borrowedBooks.slice(0, 4).forEach(book => {
+                const bookItem = addBookToDisplay(book);
+                bookGrid[1].appendChild(bookItem);
+            });
+        }
+
+    } catch (error) {
+        console.error('Error fetching borrowed books:', error);
+        bookGrid[1].innerHTML = '<div class="error-message">Failed to load borrowed books. Please try again later.</div>';
+        showNotification("❌ Failed to load borrowed books");
+    }
+}
+
+
+
+    // Initial fetch and display of books
+    fetchAndDisplayFavouriteBooks();
+    fetchAndDisplayBorrowedBooks();
+
 });

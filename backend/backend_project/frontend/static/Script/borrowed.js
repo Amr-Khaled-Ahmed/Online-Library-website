@@ -14,8 +14,7 @@ function getCookie(name) {
     return cookieValue;
 }
 
-// Function to show notifications (same as in books.js)
-function showNotification(message) {
+function showNotification(message, category = 'Borrowed book alert') {
     const notif = document.createElement('div');
     notif.className = 'custom-notification';
     notif.textContent = message;
@@ -26,7 +25,33 @@ function showNotification(message) {
     // Remove the notification after the animation ends
     setTimeout(() => {
         notif.remove();
-    }, 3000); // Matches total animation duration (0.5s slide-in + 2.5s display + 0.5s fade-out)
+    }, 3000);
+
+    // Call backend to store notification
+    handleNotification(message, category);
+}
+
+
+async function handleNotification(message, category = 'Borrowed book alert') {
+    try {
+        const response = await fetch('/api/notifications/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message,
+                category: category
+            })
+        });
+
+        if (!response.ok) {
+            console.error('Failed to create notification:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error creating notification:', error);
+    }
 }
 
 // Helper function to format dates in a user-friendly way

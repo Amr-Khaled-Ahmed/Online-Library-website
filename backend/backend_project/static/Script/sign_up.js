@@ -56,6 +56,7 @@ signupForm.addEventListener('submit', (e) => {
       'Content-Type': 'application/x-www-form-urlencoded',
       'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value,
     },
+
     body: new URLSearchParams({
       username,
       fullName,
@@ -63,10 +64,11 @@ signupForm.addEventListener('submit', (e) => {
       password,
       'pass-confirm': confirmPassword,
     }),
+
   })
     .then((response) => {
       if (response.ok) {
-        window.location.href = '/sign-in'; // Correct URL
+        window.location.href = '/sign-in';
       } else {
         return response.json();
       }

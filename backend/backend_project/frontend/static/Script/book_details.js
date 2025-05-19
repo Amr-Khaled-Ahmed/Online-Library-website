@@ -96,12 +96,37 @@ document.addEventListener('DOMContentLoaded', async function () {
 
 });
 
-function showNotification(message) {
+async function handleNotification(message, category = 'New book alert') {
+    try {
+        const response = await fetch('/api/notifications/create/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': getCookie('csrftoken')
+            },
+            body: JSON.stringify({
+                message: message,
+                category: category
+            })
+        });
+
+        if (!response.ok) {
+            console.error('Failed to create notification:', await response.text());
+        }
+    } catch (error) {
+        console.error('Error creating notification:', error);
+    }
+}
+
+function showNotification(message , category = 'New book alert') {
     const notif = document.createElement('div');
     notif.className = 'custom-notification';
     notif.textContent = message;
     document.body.appendChild(notif);
     setTimeout(() => notif.remove(), 3000);
+
+    handleNotification(message, category);
+
 }
 
 // Helper function to get CSRF token

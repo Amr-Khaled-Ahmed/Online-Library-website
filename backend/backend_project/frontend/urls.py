@@ -58,6 +58,14 @@ urlpatterns = [
     path('api/user/favorites/', views.get_user_favorites, name='get_user_favorites'), # API to get user favorites
 
     # Add other URLs here
+    path('api/usersList', views.get_all_users, name='get_all_users'),
+    path('api/friends/', views.list_friends, name='list_friends'),
+    path('api/friends/add/', views.add_friend, name='add_friend'),
+    path('api/friends/<int:friend_id>/', views.delete_friend, name='delete_friend'),
+
+
+    path('api/notifications/', views.get_notifications, name='get_notifications'),
+    path('api/notifications/create/', views.create_notification, name='create_notification'),
 ]
 
 # Add this to serve media files during development
