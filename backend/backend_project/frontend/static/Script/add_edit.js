@@ -80,8 +80,13 @@ document.addEventListener('DOMContentLoaded', function() {
 
     function existISBN() {
         let isbn = document.getElementById('isbn').value;
+        let bookId = window.sessionStorage.getItem('bookId')
 
-        return fetch(`api/books/check-isbn/${isbn}`)
+        let url = bookId
+        ? `api/books/check-isbn/${isbn}/${bookId}`
+        : `api/books/check-isbn/${isbn}`;
+
+        return fetch(url)
         .then(response => {
             if (!response.ok) {
                 throw new Error("Book not found");
@@ -215,8 +220,6 @@ document.addEventListener('DOMContentLoaded', function() {
         else {
             document.querySelector('.upload').style.display = 'flex';
             document.getElementById('genre').value = '';
-            document.getElementById('format').value = '';
-            document.getElementById('availability').value = '';
             document.getElementById('pub-year').value = '';
         }
     });

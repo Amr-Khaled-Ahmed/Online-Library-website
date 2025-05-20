@@ -767,13 +767,14 @@ def update_profile_picture(request):
     return JsonResponse({'success': False, 'message': 'No image file provided'}, status=400)
 
 
-def check_isbn(request, isbn):
+def check_isbn(request, isbn, book_id=None):
     try:
-        book = Books.objects.filter(isbn=isbn)
-        data = {
-            'exist': book.exists()
-        }
-        return JsonResponse(data)
+        if book_id:
+            book = Books.objects.filter(isbn=isbn).exclude(book_id=book_id)
+        else:
+            book = Books.objects.filter(isbn=isbn)
+
+        return JsonResponse({'exist': book.exists()})
     except Exception as e:
         print(traceback.format_exc())
         return JsonResponse({'error': str(e)}, status=400)
