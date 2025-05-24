@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="./frontend/CSS/_variables.css">
+    <link rel="stylesheet" href="./frontend/CSS/header.css">
+    <link rel="stylesheet" href="./frontend/CSS/footer.css">
+    <link rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+      rel="stylesheet">
+    <link rel="icon"
+      href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>📖</text></svg>">
+    <title>Online Library</title>
+    <link rel="stylesheet" href="./frontend/CSS/index.css">
+
+  </head>
+  <body>
+    <header>
+      <div class="header-container">
+        <div class="logo">
+          <i class="fas fa-book-open"></i>
+          <span style="color: var(--text-color);">Online Library</span>
+        </div>
+        <nav>
+          <ul class="nav-bar">
+            <li><a href="#hero" class="active"><i class="fas fa-home"></i>
+                Home</a></li>
+            <li><a href="#features"><i class="fas fa-info-circle"></i>
+                About</a></li>
+            <li><a href="#books"><i class="fas fa-book"></i> Books</a></li>
+            <li><a href="./frontend/pages/sign-in.html" id="login-link"><i
+                  class="fas fa-sign-in-alt"></i> Login</a></li>
+            <li><a href="./frontend/pages/sign-up.html" id="register-link"><i
+                  class="fas fa-user-plus"></i> Register</a></li>
+            <li><a href="#contact"><i class="fas fa-envelope"></i>
+                Contact</a></li>
+          </ul>
+        </nav>
+        <!-- Add the menu toggle button -->
+        <button class="menu-toggle">
+          <i class="fas fa-bars"></i>
+        </button>
+      </div>
+    </header>
+
+    <!-- Mobile Menu Side Panel -->
+    <div class="mobile-menu">
+      <ul class="mobile-nav">
+        <li><a href="#hero" class="active"><i class="fas fa-home"></i>
+            Home</a></li>
+        <li><a href="#features"><i class="fas fa-info-circle"></i>
+            About</a></li>
+        <li><a href="#books"><i class="fas fa-book"></i> Books</a></li>
+        <li><a href="./frontend/pages/sign-in.html" id="mobile-login-link"><i
+              class="fas fa-sign-in-alt"></i> Login</a></li>
+        <li><a href="./frontend/pages/sign-up.html" id="mobile-register-link"><i
+              class="fas fa-user-plus"></i> Register</a></li>
+        <li><a href="#contact"><i class="fas fa-envelope"></i> Contact</a></li>
+      </ul>
+    </div>
+
+    <!-- Overlay for Mobile Menu -->
+    <div class="overlay"></div>
+
+    <main>
+      <section class="hero" id="hero">
+        <div class="hero-content">
+          <h1>Discover Your Next <span class="accent-text">Great
+              Read</span></h1>
+          <p>Access thousands of books from the comfort of your home. Browse,
+            borrow, and explore our extensive collection.</p>
+          <div class="hero-buttons">
+            <a href="./frontend/pages/sign-in.html" class="btn primary-btn">Sign
+              in to see
+              more books</a>
+            <a href="./frontend/pages/sign-up.html"
+              class="btn secondary-btn">Sign Up
+              Free</a>
+          </div>
+        </div>
+        <div class="hero-image">
+          <img src="./frontend/CSS/assets/online-education.gif"
+            alt="Books illustration">
+        </div>
+      </section>
+
+      <section id="features">
+        <h2 class="feature-header">
+          our Features
+        </h2>
+        <section class="features-container">
+          <div class="feature-card">
+            <i class="fas fa-globe"></i>
+            <h3>Access Anywhere</h3>
+            <p>Read from any device, anytime, anywhere.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-users"></i>
+            <h3>Community</h3>
+            <p>Join reading groups and discuss your favorite books.</p>
+          </div>
+          <div class="feature-card">
+            <i class="fas fa-bell"></i>
+            <h3>Notifications</h3>
+            <p>Get alerts for new releases and due dates.</p>
+          </div>
+        </section>
+
+      </section>
+
+      <section class="available-books" id="books">
+        <div class="section-header">
+          <h2>Available Books</h2>
+          <a href="./frontend/pages/sign-up.html" class="view-all">View All <i
+              class="fas fa-arrow-right"></i></a>
+        </div>
+        <div id="book-list" class="book-container">
+          <!-- Books will be dynamically inserted here by books.js -->
+          <div class="book-card">
+            <a href="./frontend/pages/sign-up.html">
+              <img src="./frontend/CSS/assets/book1.jpeg" alt="book1">
+            </a>
+          </div>
+          <div class="book-card">
+
+            <a href="./frontend/pages/sign-up.html">
+              <img src="./frontend/CSS/assets/book2.jpeg" alt="book2">
+            </a>
+          </div>
+          <div class="book-card">
+            <a href="./frontend/pages/sign-up.html">
+              <img src="./frontend/CSS/assets/book3.jpeg" alt="book3">
+            </a>
+          </div>
+          <div class="book-card">
+            <a href="./frontend/pages/sign-up.html">
+              <img src="./frontend/CSS/assets/book4.jpeg" alt="book4">
+            </a>
+          </div>
+
+        </div>
+      </section>
+
+      <section class="newsletter">
+        <div class="newsletter-content">
+          <h2>Stay Updated</h2>
+          <p>Subscribe to our newsletter for new arrivals, reading
+            recommendations, and library news.</p>
+          <form class="newsletter-form">
+            <input type="email" placeholder="Your email address" required>
+            <button type="submit" class="btn primary-btn">Subscribe</button>
+          </form>
+        </div>
+      </section>
+    </main>
+
+    <footer>
+      <div class="footer-content" id="contact">
+        <div class="footer-section">
+          <h3>Online Library</h3>
+          <p>Your gateway to knowledge and imagination.</p>
+          <div class="social-icons">
+            <a href="#"><i class="fab fa-facebook"></i></a>
+            <a href="#"><i class="fab fa-twitter"></i></a>
+            <a href="#"><i class="fab fa-instagram"></i></a>
+          </div>
+        </div>
+        <div class="footer-section">
+          <h3>Quick Links</h3>
+          <ul>
+            <li><a href="index.html">Home</a></li>
+            <li><a href="#books">Books</a></li>
+            <li><a href="#features">features</a></li>
+<!--             <li><a href="./frontend/pages/add_edit.html">add edit</a></li> -->
+<!--             <li><a href="./frontend/pages/admin_dashboard.html">admin board</a></li> -->
+<!--             <li><a href="./frontend/pages/user_dashboard.html">User dash board</a></li> -->
+<!--             <li><a href="./frontend/pages/book_details.html">book details</a></li> -->
+<!--             <li><a href="./frontend/pages/borrowed.html">borrow page</a></li> -->
+<!--             <li><a href="./frontend/pages/admin_dashboard.html">admin board</a></li> -->
+<!--             <li><a href="./frontend/pages/profile.html">profile</a></li> -->
+                  
+          </ul>
+        </div>
+        <div class="footer-section">
+          <h3>Contact Us</h3>
+          <p><i class="fas fa-envelope"></i> support@libraryonline.com</p>
+          <p><i class="fas fa-phone"></i> +20100100100</p>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>&copy; <span id="current-year">2025</span> Online Library. All rights
+          reserved.</p>
+      </div>
+      <!-- Back to Top Button -->
+      <a href="#" class="scroll-top">
+        <i class="fas fa-arrow-up"></i>
+      </a>
+    </footer>
+
+    <!-- JavaScript Files -->
+    <!-- <script src="./frontend/Script/await.js"></script> -->
+    <script src="./frontend/Script/theme.js"></script>
+    <script src="./frontend/Script/header.js"></script>
+    <script src="./frontend/Script/footer.js"></script>
+  </body>
+</html>
